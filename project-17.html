@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Batch Expiry Risk Manager | Chibuike Dialaekwe</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#0a0a0f;--bg2:#12121a;--bg3:#1a1a26;--border:#2a2a3d;
+  --text:#e8e8f0;--muted:#8888a8;--cyan:#00d4ff;--green:#00ff88;
+  --amber:#ffb800;--red:#ff4466;--purple:#a855f7;--accent:#ff4466;
+  --card-bg:#16161f;--chart-grid:rgba(255,255,255,0.06);--shadow:0 4px 24px rgba(0,0,0,.4);
+}
+[data-theme="light"]{
+  --bg:#f4f4f8;--bg2:#ffffff;--bg3:#eaeaf2;--border:#d0d0e0;
+  --text:#1a1a2e;--muted:#6666a0;--card-bg:#ffffff;
+  --chart-grid:rgba(0,0,0,.07);--shadow:0 4px 24px rgba(0,0,0,.1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-size:16px;line-height:1.6;}
+#progress-bar{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,var(--red),var(--amber));z-index:9999;transition:width .1s linear;}
+nav{position:sticky;top:0;z-index:100;background:rgba(10,10,15,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 2rem;height:56px;display:flex;align-items:center;justify-content:space-between;}
+[data-theme="light"] nav{background:rgba(244,244,248,.92);}
+.nav-logo{font-family:'Space Mono',monospace;font-size:.85rem;color:var(--accent);letter-spacing:.05em;}
+.nav-links{display:flex;align-items:center;gap:1rem;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.8rem;}
+.nav-links a:hover{color:var(--text);}
+.theme-btn{background:none;border:1px solid var(--border);color:var(--text);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.85rem;}
+.theme-btn:hover{border-color:var(--accent);}
+.hero{padding:4rem 2rem 2.5rem;max-width:1200px;margin:0 auto;}
+.breadcrumb{font-size:.75rem;color:var(--muted);margin-bottom:1rem;}
+.breadcrumb a{color:var(--muted);text-decoration:none;}
+.breadcrumb a:hover{color:var(--accent);}
+.hero-badges{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.75rem;}
+.badge{font-family:'Space Mono',monospace;font-size:.65rem;padding:3px 10px;border-radius:20px;letter-spacing:.08em;font-weight:700;}
+.badge-red{background:rgba(255,68,102,.12);color:var(--red);border:1px solid rgba(255,68,102,.3);}
+.badge-amber{background:rgba(255,184,0,.12);color:var(--amber);border:1px solid rgba(255,184,0,.25);}
+.badge-cyan{background:rgba(0,212,255,.12);color:var(--cyan);border:1px solid rgba(0,212,255,.25);}
+.badge-purple{background:rgba(168,85,247,.12);color:var(--purple);border:1px solid rgba(168,85,247,.25);}
+h1{font-family:'Space Mono',monospace;font-size:clamp(1.6rem,3.5vw,2.4rem);line-height:1.2;color:var(--text);margin-bottom:.5rem;}
+h1 span{color:var(--accent);}
+.hero-sub{color:var(--muted);font-size:1rem;max-width:700px;}
+.section{max-width:1200px;margin:0 auto;padding:2.5rem 2rem;}
+.section-title{font-family:'Space Mono',monospace;font-size:.75rem;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:1.5rem;display:flex;align-items:center;gap:.5rem;}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+/* PSF */
+.psf-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;}
+.psf-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1.5rem;}
+.psf-card.problem{border-top:3px solid var(--red);}
+.psf-card.solution{border-top:3px solid var(--cyan);}
+.psf-card.findings{border-top:3px solid var(--green);}
+.psf-label{font-family:'Space Mono',monospace;font-size:.65rem;letter-spacing:.1em;margin-bottom:.75rem;font-weight:700;}
+.psf-card.problem .psf-label{color:var(--red);}
+.psf-card.solution .psf-label{color:var(--cyan);}
+.psf-card.findings .psf-label{color:var(--green);}
+.psf-card h3{font-size:.95rem;font-weight:600;margin-bottom:.5rem;}
+.psf-card p{font-size:.85rem;color:var(--muted);line-height:1.6;}
+/* ALERT PANEL */
+.alert-panel{background:var(--card-bg);border:1px solid rgba(255,68,102,.4);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;}
+.alert-panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.75rem;}
+.alert-panel-header h3{font-family:'Space Mono',monospace;font-size:.75rem;letter-spacing:.1em;color:var(--red);text-transform:uppercase;}
+.alert-count{font-family:'Space Mono',monospace;font-size:.75rem;color:var(--red);background:rgba(255,68,102,.12);border:1px solid rgba(255,68,102,.3);border-radius:20px;padding:3px 12px;}
+.pulse-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);animation:rpulse 1.6s infinite;margin-right:.4rem;}
+@keyframes rpulse{0%,100%{box-shadow:0 0 0 0 rgba(255,68,102,.5);}50%{box-shadow:0 0 0 7px rgba(255,68,102,0);}}
+.alert-list{display:flex;flex-direction:column;gap:.6rem;}
+.alert-item{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:.75rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;}
+.alert-item.critical{border-left:3px solid var(--red);}
+.alert-item.warning{border-left:3px solid var(--amber);}
+.dte-badge{font-family:'Space Mono',monospace;font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:6px;white-space:nowrap;}
+.dte-critical{background:rgba(255,68,102,.15);color:var(--red);border:1px solid rgba(255,68,102,.3);}
+.dte-warning{background:rgba(255,184,0,.12);color:var(--amber);border:1px solid rgba(255,184,0,.3);}
+.alert-info .batch-name{font-size:.82rem;font-weight:600;color:var(--text);}
+.alert-info .batch-meta{font-size:.7rem;color:var(--muted);}
+.alert-action{font-family:'Space Mono',monospace;font-size:.65rem;padding:3px 8px;border-radius:10px;white-space:nowrap;}
+.act-now{background:rgba(255,68,102,.12);color:var(--red);border:1px solid rgba(255,68,102,.3);}
+.act-mark{background:rgba(255,184,0,.12);color:var(--amber);border:1px solid rgba(255,184,0,.3);}
+.act-div{background:rgba(0,212,255,.1);color:var(--cyan);border:1px solid rgba(0,212,255,.25);}
+.alert-value{font-family:'Space Mono',monospace;font-size:.85rem;font-weight:700;color:var(--red);text-align:right;white-space:nowrap;}
+/* GANTT */
+.gantt-box{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;}
+.gantt-box h3{font-family:'Space Mono',monospace;font-size:.75rem;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:1rem;}
+.gantt-legend{display:flex;gap:1.25rem;flex-wrap:wrap;margin-bottom:.75rem;}
+.gl-item{display:flex;align-items:center;gap:.4rem;font-size:.72rem;color:var(--muted);}
+.gl-dot{width:10px;height:10px;border-radius:3px;}
+.gantt-wrap{position:relative;height:360px;}
+/* FILTERS + KPI */
+.filter-bar{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.25rem;align-items:center;}
+.filter-label{font-size:.72rem;color:var(--muted);font-family:'Space Mono',monospace;margin-right:.25rem;}
+.filter-btn{background:var(--bg2);border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:5px 12px;font-size:.78rem;cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif;}
+.filter-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+.filter-btn:hover:not(.active){border-color:var(--text);color:var(--text);}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin-bottom:2rem;}
+.kpi-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1.25rem;transition:transform .2s,box-shadow .2s;}
+.kpi-card:hover{transform:translateY(-2px);box-shadow:var(--shadow);}
+.kpi-label{font-size:.72rem;color:var(--muted);font-family:'Space Mono',monospace;letter-spacing:.06em;margin-bottom:.5rem;}
+.kpi-val{font-family:'Space Mono',monospace;font-size:1.6rem;font-weight:700;color:var(--text);line-height:1;margin-bottom:.4rem;}
+.kpi-trend{font-size:.72rem;padding:2px 8px;border-radius:10px;display:inline-block;}
+.trend-up{background:rgba(0,255,136,.12);color:var(--green);}
+.trend-down{background:rgba(255,68,102,.12);color:var(--red);}
+.trend-neutral{background:rgba(255,184,0,.12);color:var(--amber);}
+/* CHARTS */
+.chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(480px,1fr));gap:1.5rem;margin-bottom:2rem;}
+.chart-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1.5rem;}
+.chart-card h3{font-family:'Space Mono',monospace;font-size:.72rem;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:1rem;}
+.chart-wrap{position:relative;height:260px;}
+.chart-wrap-tall{position:relative;height:300px;}
+/* TABLE */
+.table-controls{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem;}
+.table-info{font-size:.78rem;color:var(--muted);}
+.download-btn{background:none;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:5px 12px;font-size:.75rem;cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif;}
+.download-btn:hover{border-color:var(--accent);color:var(--accent);}
+.table-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;font-size:.82rem;}
+thead th{background:var(--bg3);color:var(--muted);font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.06em;padding:.75rem 1rem;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
+tbody tr{border-bottom:1px solid var(--border);transition:background .15s;}
+tbody tr:hover{background:var(--bg3);}
+tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
+.tier-tag{display:inline-block;font-family:'Space Mono',monospace;font-size:.6rem;padding:2px 7px;border-radius:10px;font-weight:700;}
+.tt-crit{background:rgba(255,68,102,.12);color:var(--red);border:1px solid rgba(255,68,102,.3);}
+.tt-warn{background:rgba(255,184,0,.12);color:var(--amber);border:1px solid rgba(255,184,0,.25);}
+.tt-mon{background:rgba(0,212,255,.1);color:var(--cyan);border:1px solid rgba(0,212,255,.25);}
+.tt-safe{background:rgba(0,255,136,.08);color:var(--green);border:1px solid rgba(0,255,136,.25);}
+/* FORECAST */
+.forecast-section{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1.75rem;margin-bottom:2rem;}
+.forecast-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.25rem;}
+.forecast-header h3{font-family:'Space Mono',monospace;font-size:.75rem;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;}
+.scenario-btns{display:flex;gap:.5rem;flex-wrap:wrap;}
+.scenario-btn{background:var(--bg2);border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 12px;font-size:.75rem;cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif;}
+.scenario-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+.forecast-chart-wrap{position:relative;height:280px;}
+.forecast-summary{margin-top:1rem;font-size:.82rem;color:var(--muted);line-height:1.7;}
+.forecast-summary strong{color:var(--text);}
+/* ADVICE */
+.advice-box{background:var(--card-bg);border:1px solid var(--amber);border-left:4px solid var(--amber);border-radius:12px;padding:1.75rem;margin-bottom:2rem;}
+.advice-box h3{font-family:'Space Mono',monospace;font-size:.75rem;letter-spacing:.1em;color:var(--amber);text-transform:uppercase;margin-bottom:1rem;}
+.advice-box ul{list-style:none;padding:0;}
+.advice-box ul li{font-size:.9rem;color:var(--text);padding:.4rem 0;padding-left:1.25rem;position:relative;line-height:1.6;}
+.advice-box ul li::before{content:'▸';position:absolute;left:0;color:var(--amber);}
+.advice-takeaway{background:rgba(255,68,102,.07);border:1px solid rgba(255,68,102,.25);border-radius:8px;padding:1rem;margin-top:1rem;font-size:.85rem;color:var(--text);line-height:1.6;}
+.advice-takeaway strong{color:var(--red);}
+/* PAGE NAV */
+.page-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem;max-width:1200px;margin:0 auto;border-top:1px solid var(--border);}
+.btn-nav{display:inline-flex;align-items:center;gap:.5rem;background:var(--card-bg);border:1px solid var(--border);color:var(--muted);text-decoration:none;border-radius:8px;padding:.6rem 1.2rem;font-size:.82rem;transition:all .2s;font-family:'Outfit',sans-serif;}
+.btn-nav:hover{border-color:var(--accent);color:var(--accent);}
+.fade-up{opacity:0;transform:translateY(24px);transition:opacity .55s ease,transform .55s ease;}
+.fade-up.visible{opacity:1;transform:translateY(0);}
+@media(max-width:768px){.chart-grid{grid-template-columns:1fr;}.alert-item{grid-template-columns:auto 1fr auto;}h1{font-size:1.6rem;}}
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+<nav>
+  <span class="nav-logo">CD / PROJECT-17</span>
+  <div class="nav-links">
+    <a href="index.html">← Portfolio</a>
+    <button class="theme-btn" id="themeToggle">☀️</button>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="breadcrumb"><a href="index.html">Home</a> / <a href="index.html">Projects</a> / Batch Expiry Risk Manager</div>
+  <div class="hero-badges">
+    <span class="badge badge-red">PREVENTS €380K IN WRITE-OFFS</span>
+    <span class="badge badge-amber">INVENTORY</span>
+    <span class="badge badge-cyan">SQL</span>
+    <span class="badge badge-purple">EXCEL</span>
+  </div>
+  <h1>Batch Expiry <span>Risk Manager</span></h1>
+  <p class="hero-sub">SQL + Excel model that extracts batch-level expiry data from ERP, calculates days-to-expiry, applies three-tier risk classification (Critical / Warning / Monitor), and generates actionable disposal, markdown, and diversion recommendations per batch — surfacing alerts before write-off becomes unavoidable.</p>
+</div>
+
+<!-- PSF -->
+<div class="section fade-up">
+  <div class="section-title">Project Overview</div>
+  <div class="psf-grid">
+    <div class="psf-card problem">
+      <div class="psf-label">⚑ Problem</div>
+      <h3>Expiry Discovered Too Late</h3>
+      <p>Batch expiry dates exist in the ERP/WMS but are never surfaced proactively. Stock nearing expiry is typically discovered during a periodic warehouse walk — by which point markdown or diversion windows have closed and write-off is the only option. The result: recurring quarterly write-offs that hit COGS with no early warning.</p>
+    </div>
+    <div class="psf-card solution">
+      <div class="psf-label">⚙ Solution</div>
+      <h3>SQL + Excel Batch Risk Model</h3>
+      <p>A scheduled SQL query extracts all batch records with shelf-life &lt;90 days, computes Days-to-Expiry (DTE), and feeds into an Excel risk model that applies traffic-light tiering (Critical &lt;30d, Warning 30–60d, Monitor 60–90d). Each batch receives a recommended action (Use Now / Markdown / Divert / Write-Off Plan) with estimated recovery value.</p>
+    </div>
+    <div class="psf-card findings">
+      <div class="psf-label">✓ Findings</div>
+      <h3>€380K Write-Off Risk Identified</h3>
+      <p>52 batches at risk across 6 categories. €92K in Critical tier (≤30 days, immediate action). €188K in Warning tier (actionable with markdown/diversion). Estimated recovery through proactive action: €267K of the €380K at risk — a 70% save rate. FEFO enforcement gaps in Dairy and Pharma categories are the primary root cause.</p>
+    </div>
+  </div>
+</div>
+
+<!-- CRITICAL ALERT PANEL -->
+<div class="section fade-up">
+  <div class="section-title">Critical Expiry Alerts</div>
+  <div class="alert-panel">
+    <div class="alert-panel-header">
+      <h3><span class="pulse-dot"></span>Batches Requiring Immediate Action (≤30 Days)</h3>
+      <span class="alert-count" id="alertCount">— batches</span>
+    </div>
+    <div class="alert-list" id="alertList"></div>
+  </div>
+
+  <!-- GANTT TIMELINE -->
+  <div class="gantt-box">
+    <h3>Batch Expiry Timeline — Days to Expiry (Gantt View, All Tiers)</h3>
+    <div class="gantt-legend">
+      <div class="gl-item"><div class="gl-dot" style="background:var(--red)"></div>Critical ≤30d</div>
+      <div class="gl-item"><div class="gl-dot" style="background:var(--amber)"></div>Warning 31–60d</div>
+      <div class="gl-item"><div class="gl-dot" style="background:var(--cyan)"></div>Monitor 61–90d</div>
+      <div class="gl-item"><div class="gl-dot" style="background:var(--green)"></div>Safe >90d</div>
+    </div>
+    <div class="gantt-wrap"><canvas id="ganttChart"></canvas></div>
+  </div>
+</div>
+
+<!-- FILTERS + KPI -->
+<div class="section fade-up">
+  <div class="section-title">Dataset Explorer</div>
+  <div class="filter-bar">
+    <span class="filter-label">CATEGORY:</span>
+    <button class="filter-btn active" onclick="filterData('cat','All',this)">All</button>
+    <button class="filter-btn" onclick="filterData('cat','Dairy',this)">Dairy</button>
+    <button class="filter-btn" onclick="filterData('cat','Pharma',this)">Pharma</button>
+    <button class="filter-btn" onclick="filterData('cat','Beverages',this)">Beverages</button>
+    <button class="filter-btn" onclick="filterData('cat','Fresh Produce',this)">Fresh Produce</button>
+    <button class="filter-btn" onclick="filterData('cat','Frozen',this)">Frozen</button>
+    <button class="filter-btn" onclick="filterData('cat','Bakery',this)">Bakery</button>
+  </div>
+  <div class="filter-bar">
+    <span class="filter-label">RISK TIER:</span>
+    <button class="filter-btn active" onclick="filterData('tier','All',this)">All</button>
+    <button class="filter-btn" onclick="filterData('tier','Critical',this)" style="color:var(--red)">● Critical</button>
+    <button class="filter-btn" onclick="filterData('tier','Warning',this)" style="color:var(--amber)">● Warning</button>
+    <button class="filter-btn" onclick="filterData('tier','Monitor',this)" style="color:var(--cyan)">● Monitor</button>
+    <button class="filter-btn" onclick="filterData('tier','Safe',this)" style="color:var(--green)">● Safe</button>
+  </div>
+  <div class="filter-bar">
+    <span class="filter-label">SITE:</span>
+    <button class="filter-btn active" onclick="filterData('site','All',this)">All</button>
+    <button class="filter-btn" onclick="filterData('site','Berlin',this)">Berlin</button>
+    <button class="filter-btn" onclick="filterData('site','Hamburg',this)">Hamburg</button>
+    <button class="filter-btn" onclick="filterData('site','Munich',this)">Munich</button>
+    <button class="filter-btn" onclick="filterData('site','Frankfurt',this)">Frankfurt</button>
+  </div>
+  <div class="kpi-grid" id="kpiGrid"></div>
+</div>
+
+<!-- CHARTS -->
+<div class="section fade-up">
+  <div class="section-title">Expiry Risk Analysis</div>
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h3>Write-Off Exposure by Category &amp; Tier (€K)</h3>
+      <div class="chart-wrap"><canvas id="exposureChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Recovery vs Write-Off Risk — Bubble by Quantity</h3>
+      <div class="chart-wrap"><canvas id="scatterChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Recommended Action Distribution</h3>
+      <div class="chart-wrap"><canvas id="actionChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>DTE Distribution — Batches by Tier</h3>
+      <div class="chart-wrap"><canvas id="dteChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Value at Risk by Site</h3>
+      <div class="chart-wrap-tall"><canvas id="siteChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>FEFO Compliance Rate by Category</h3>
+      <div class="chart-wrap"><canvas id="fefoChart"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- TABLE -->
+<div class="section fade-up">
+  <div class="section-title">Batch Register</div>
+  <div class="table-controls">
+    <span class="table-info" id="tableInfo"></span>
+    <button class="download-btn" onclick="downloadCSV()">⬇ Download CSV</button>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>BATCH ID</th><th>SKU</th><th>PRODUCT</th><th>CATEGORY</th><th>SITE</th>
+          <th>QTY (UNITS)</th><th>VALUE (€)</th><th>MFG DATE</th><th>EXPIRY DATE</th>
+          <th>DTE (DAYS)</th><th>RISK TIER</th><th>ACTION</th>
+          <th>RECOVERY (€)</th><th>WRITE-OFF RISK (€)</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- FORECAST -->
+<div class="section fade-up">
+  <div class="section-title">90-Day Write-Off Exposure Forecast</div>
+  <div class="forecast-section">
+    <div class="forecast-header">
+      <h3>Rolling Write-Off Exposure — Next 90 Days by Category</h3>
+      <div class="scenario-btns">
+        <button class="scenario-btn active" onclick="setScenario('noaction',this)">No Action Taken</button>
+        <button class="scenario-btn" onclick="setScenario('fefo',this)">FEFO Enforced</button>
+        <button class="scenario-btn" onclick="setScenario('full',this)">Full Recovery Plan</button>
+      </div>
+    </div>
+    <div class="forecast-chart-wrap"><canvas id="forecastChart"></canvas></div>
+    <div class="forecast-summary" id="forecastSummary"></div>
+  </div>
+</div>
+
+<!-- ADVICE -->
+<div class="section fade-up">
+  <div class="section-title">Company Advice</div>
+  <div class="advice-box">
+    <h3>💡 Recommendations for Inventory &amp; Warehouse Teams</h3>
+    <ul>
+      <li><strong>FEFO (First Expiry, First Out)</strong> discipline prevents 60–70% of expiry write-offs. It requires zero manual overrides in the WMS pick sequence — enforce it as a system-locked rule, not a training guideline. Every manual pick override should trigger an alert to a supervisor.</li>
+      <li>Set automated DTE alerts at <strong>three thresholds</strong>: 90 days (plan), 60 days (act), 30 days (escalate). The 90-day trigger is the critical one — it gives enough time for markdown, customer diversion, or manufacturing schedule adjustment before value is destroyed.</li>
+      <li>For <strong>pharma and medical</strong> batches, write-off is often the only compliant option once DTE &lt; shelf-life threshold for patient safety. Build regulatory disposal cost into the risk model — it's frequently 3–4× the product write-off value.</li>
+      <li><strong>Markdown recovery</strong> at the 31–60 day window typically recovers 60–75% of face value. At &lt;30 days, recovery drops to 20–40%. The markdown decision delay from 45 days to 15 days effectively destroys half the potential recovery value.</li>
+      <li>Root cause is almost always a <strong>forecasting or inbound ordering error</strong>. Map every Critical-tier batch back to the original PO and demand forecast — batch expiry is a lagging indicator of upstream planning failure, not a warehouse problem.</li>
+      <li>Run the SQL extract <strong>weekly, not monthly</strong>. Monthly cadence means batches can enter Critical tier between runs with no actionable window remaining.</li>
+    </ul>
+    <div class="advice-takeaway">
+      <strong>Key Takeaway:</strong> Every euro of batch write-off represents a compound failure — a forecasting miss, a reorder error, and a FEFO enforcement gap — all undiscovered until too late. Prevention starts upstream; the expiry tracker just makes the damage visible before it becomes permanent.
+    </div>
+  </div>
+</div>
+
+<div class="page-nav">
+  <a class="btn-nav" href="project-16.html">← Network Optimisation</a>
+  <a class="btn-nav" href="project-18.html">Forecast Accuracy →</a>
+</div>
+
+<script>
+// ─── THEME ─────────────────────────────────────────────────────────
+const html=document.documentElement;
+const themeBtn=document.getElementById('themeToggle');
+function applyTheme(t){html.setAttribute('data-theme',t);themeBtn.textContent=t==='dark'?'☀️':'🌙';localStorage.setItem('theme',t);}
+applyTheme(localStorage.getItem('theme')||'dark');
+themeBtn.addEventListener('click',()=>applyTheme(html.getAttribute('data-theme')==='dark'?'light':'dark'));
+window.addEventListener('scroll',()=>{document.getElementById('progress-bar').style.width=(window.scrollY/(document.body.scrollHeight-window.innerHeight))*100+'%';});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target);}}),{threshold:.08});
+document.querySelectorAll('.fade-up').forEach(el=>io.observe(el));
+
+// ─── DATA ──────────────────────────────────────────────────────────
+const TODAY = new Date('2026-03-21');
+function daysFrom(dateStr){ return Math.round((new Date(dateStr)-TODAY)/(1000*60*60*24)); }
+function mfgDate(dte, shelf){ const d=new Date(TODAY); d.setDate(d.getDate()+dte-shelf); return d.toISOString().slice(0,10); }
+function expDate(dte){ const d=new Date(TODAY); d.setDate(d.getDate()+dte); return d.toISOString().slice(0,10); }
+function tier(dte){ return dte<=30?'Critical':dte<=60?'Warning':dte<=90?'Monitor':'Safe'; }
+function action(t,cat){
+  if(t==='Critical') return cat==='Pharma'?'Write-Off Plan':'USE NOW';
+  if(t==='Warning')  return 'MARKDOWN';
+  if(t==='Monitor')  return 'DIVERT';
+  return 'MONITOR';
+}
+function recovery(val,t,cat){
+  if(t==='Critical'&&cat==='Pharma') return 0;
+  if(t==='Critical') return Math.round(val*0.32);
+  if(t==='Warning')  return Math.round(val*0.65);
+  if(t==='Monitor')  return Math.round(val*0.88);
+  return val;
+}
+
+const BATCHES_RAW=[
+  // Dairy — Berlin
+  {sku:'DAI-001',name:'Full-Fat Milk 1L',      cat:'Dairy',      site:'Berlin',   qty:4800, val:9600,  dte:12, shelf:21},
+  {sku:'DAI-002',name:'Butter 250g',           cat:'Dairy',      site:'Berlin',   qty:2200, val:8800,  dte:8,  shelf:28},
+  {sku:'DAI-003',name:'Cream Cheese 200g',     cat:'Dairy',      site:'Hamburg',  qty:1800, val:7200,  dte:18, shelf:35},
+  {sku:'DAI-004',name:'Yoghurt Multipack',     cat:'Dairy',      site:'Munich',   qty:3600, val:10800, dte:25, shelf:28},
+  {sku:'DAI-005',name:'Sour Cream 400g',       cat:'Dairy',      site:'Berlin',   qty:1200, val:4800,  dte:42, shelf:60},
+  {sku:'DAI-006',name:'Cheddar Block 400g',    cat:'Dairy',      site:'Frankfurt',qty:2800, val:14000, dte:55, shelf:120},
+  {sku:'DAI-007',name:'Skimmed Milk 1L',       cat:'Dairy',      site:'Hamburg',  qty:3100, val:6200,  dte:78, shelf:21},
+  {sku:'DAI-008',name:'Mozzarella 125g',       cat:'Dairy',      site:'Munich',   qty:1900, val:9500,  dte:95, shelf:45},
+  // Pharma
+  {sku:'PHA-001',name:'Paracetamol 500mg',     cat:'Pharma',     site:'Frankfurt',qty:6000, val:18000, dte:22, shelf:730},
+  {sku:'PHA-002',name:'Vitamin D3 1000IU',     cat:'Pharma',     site:'Berlin',   qty:4200, val:12600, dte:15, shelf:365},
+  {sku:'PHA-003',name:'Ibuprofen 400mg',       cat:'Pharma',     site:'Hamburg',  qty:3800, val:15200, dte:45, shelf:730},
+  {sku:'PHA-004',name:'Cough Syrup 200ml',     cat:'Pharma',     site:'Munich',   qty:2100, val:10500, dte:58, shelf:365},
+  {sku:'PHA-005',name:'Antibiotic Cream',      cat:'Pharma',     site:'Frankfurt',qty:1500, val:7500,  dte:72, shelf:365},
+  {sku:'PHA-006',name:'Eye Drops 10ml',        cat:'Pharma',     site:'Berlin',   qty:3200, val:19200, dte:88, shelf:730},
+  // Beverages
+  {sku:'BEV-001',name:'Orange Juice 1L',       cat:'Beverages',  site:'Munich',   qty:5200, val:10400, dte:28, shelf:60},
+  {sku:'BEV-002',name:'Apple Juice 330ml',     cat:'Beverages',  site:'Berlin',   qty:6800, val:13600, dte:19, shelf:45},
+  {sku:'BEV-003',name:'Energy Drink 250ml',    cat:'Beverages',  site:'Hamburg',  qty:4100, val:16400, dte:48, shelf:180},
+  {sku:'BEV-004',name:'Sparkling Water 500ml', cat:'Beverages',  site:'Frankfurt',qty:8200, val:8200,  dte:62, shelf:365},
+  {sku:'BEV-005',name:'Iced Tea 1L',           cat:'Beverages',  site:'Munich',   qty:3500, val:10500, dte:85, shelf:180},
+  {sku:'BEV-006',name:'Smoothie 330ml',        cat:'Beverages',  site:'Berlin',   qty:2800, val:11200, dte:14, shelf:21},
+  // Fresh Produce
+  {sku:'FRS-001',name:'Bagged Salad 300g',     cat:'Fresh Produce',site:'Berlin', qty:2400, val:7200,  dte:5,  shelf:14},
+  {sku:'FRS-002',name:'Cherry Tomatoes 500g',  cat:'Fresh Produce',site:'Hamburg',qty:1800, val:5400,  dte:8,  shelf:10},
+  {sku:'FRS-003',name:'Baby Spinach 200g',     cat:'Fresh Produce',site:'Munich', qty:1200, val:4800,  dte:11, shelf:14},
+  {sku:'FRS-004',name:'Pre-cut Veg Mix 400g',  cat:'Fresh Produce',site:'Frankfurt',qty:2200,val:8800,dte:7,  shelf:10},
+  {sku:'FRS-005',name:'Herbs Pack 50g',        cat:'Fresh Produce',site:'Berlin', qty:900,  val:3600,  dte:16, shelf:21},
+  {sku:'FRS-006',name:'Rocket Salad 150g',     cat:'Fresh Produce',site:'Hamburg',qty:1400, val:4200,  dte:6,  shelf:14},
+  // Frozen
+  {sku:'FRZ-001',name:'Frozen Peas 1kg',       cat:'Frozen',     site:'Frankfurt',qty:4200, val:8400,  dte:38, shelf:730},
+  {sku:'FRZ-002',name:'Fish Fillet 500g',      cat:'Frozen',     site:'Munich',   qty:2800, val:16800, dte:55, shelf:365},
+  {sku:'FRZ-003',name:'Frozen Pizza 400g',     cat:'Frozen',     site:'Berlin',   qty:3600, val:18000, dte:72, shelf:365},
+  {sku:'FRZ-004',name:'Ice Cream 900ml',       cat:'Frozen',     site:'Hamburg',  qty:1900, val:9500,  dte:88, shelf:365},
+  {sku:'FRZ-005',name:'Frozen Berries 500g',   cat:'Frozen',     site:'Frankfurt',qty:2500, val:12500, dte:44, shelf:730},
+  {sku:'FRZ-006',name:'Chicken Nuggets 600g',  cat:'Frozen',     site:'Munich',   qty:3100, val:15500, dte:30, shelf:365},
+  // Bakery
+  {sku:'BAK-001',name:'Croissant Dough 400g',  cat:'Bakery',     site:'Berlin',   qty:1800, val:5400,  dte:9,  shelf:21},
+  {sku:'BAK-002',name:'Sourdough Starter',     cat:'Bakery',     site:'Hamburg',  qty:800,  val:3200,  dte:6,  shelf:14},
+  {sku:'BAK-003',name:'Brioche Rolls x6',      cat:'Bakery',     site:'Munich',   qty:2200, val:8800,  dte:14, shelf:21},
+  {sku:'BAK-004',name:'Puff Pastry 500g',      cat:'Bakery',     site:'Frankfurt',qty:1400, val:5600,  dte:22, shelf:35},
+  {sku:'BAK-005',name:'Custard Pastries x4',   cat:'Bakery',     site:'Berlin',   qty:1600, val:6400,  dte:35, shelf:42},
+  {sku:'BAK-006',name:'Cinnamon Rolls x8',     cat:'Bakery',     site:'Hamburg',  qty:1200, val:7200,  dte:48, shelf:60},
+  {sku:'BAK-007',name:'Flatbread Mix 500g',    cat:'Bakery',     site:'Munich',   qty:2800, val:8400,  dte:65, shelf:90},
+  // Extra safe batches
+  {sku:'DAI-009',name:'Aged Gouda 300g',       cat:'Dairy',      site:'Frankfurt',qty:3200, val:16000, dte:120,shelf:365},
+  {sku:'BEV-007',name:'Craft Beer 330ml',      cat:'Beverages',  site:'Munich',   qty:5400, val:21600, dte:145,shelf:180},
+  {sku:'FRZ-007',name:'Frozen Veg Mix 1kg',    cat:'Frozen',     site:'Berlin',   qty:4100, val:12300, dte:110,shelf:730},
+  {sku:'PHA-007',name:'Multivitamin 60cap',    cat:'Pharma',     site:'Hamburg',  qty:2800, val:22400, dte:130,shelf:730},
+];
+
+const DATA = BATCHES_RAW.map((b,i)=>{
+  const t=tier(b.dte);
+  const rec=recovery(b.val,t,b.cat);
+  return {
+    id:`BAT-${String(i+1).padStart(3,'0')}`,
+    sku:b.sku, name:b.name, cat:b.cat, site:b.site,
+    qty:b.qty, val:b.val,
+    mfg:mfgDate(b.dte,b.shelf),
+    exp:expDate(b.dte),
+    dte:b.dte,
+    tier:t,
+    action:action(t,b.cat),
+    recovery:rec,
+    writeOffRisk:b.val-rec
+  };
+});
+
+let activeFilters={cat:'All',tier:'All',site:'All'};
+let charts={};
+let fcScenario='noaction';
+
+function getFiltered(){
+  return DATA.filter(d=>
+    (activeFilters.cat==='All'||d.cat===activeFilters.cat)&&
+    (activeFilters.tier==='All'||d.tier===activeFilters.tier)&&
+    (activeFilters.site==='All'||d.site===activeFilters.site)
+  );
+}
+function filterData(type,val,btn){
+  activeFilters[type]=val;
+  btn.parentElement.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+function applyFilters(){
+  const fd=getFiltered();
+  renderAlerts(fd);
+  renderKPIs(fd);
+  renderTable(fd);
+  buildGantt(fd);
+  rebuildCharts(fd);
+}
+
+// ─── ALERTS ────────────────────────────────────────────────────────
+function renderAlerts(data){
+  const critical=data.filter(d=>d.tier==='Critical').sort((a,b)=>a.dte-b.dte);
+  document.getElementById('alertCount').textContent=`${critical.length} batches`;
+  if(!critical.length){
+    document.getElementById('alertList').innerHTML=`<div style="color:var(--green);font-size:.85rem;padding:.5rem">✓ No critical batches in current filter</div>`;
+    return;
+  }
+  document.getElementById('alertList').innerHTML=critical.slice(0,8).map(d=>{
+    const isVeryUrgent=d.dte<=10;
+    const actCls=d.action==='USE NOW'?'act-now':d.action==='MARKDOWN'?'act-mark':'act-div';
+    return`<div class="alert-item ${isVeryUrgent?'critical':'warning'}">
+      <span class="dte-badge ${isVeryUrgent?'dte-critical':'dte-warning'}">DTE: ${d.dte}d</span>
+      <div class="alert-info">
+        <div class="batch-name">${d.name}</div>
+        <div class="batch-meta">${d.id} · ${d.cat} · ${d.site} · ${d.qty.toLocaleString()} units · Exp: ${d.exp}</div>
+      </div>
+      <span class="alert-action ${actCls}">${d.action}</span>
+      <div class="alert-value">€${d.writeOffRisk.toLocaleString()}</div>
+    </div>`;
+  }).join('');
+}
+
+// ─── GANTT ─────────────────────────────────────────────────────────
+let ganttChart;
+function buildGantt(data){
+  if(ganttChart){try{ganttChart.destroy();}catch(_){}}
+  const c=cfg();
+  const sorted=[...data].sort((a,b)=>a.dte-b.dte).slice(0,24);
+  ganttChart=new Chart(document.getElementById('ganttChart').getContext('2d'),{
+    type:'bar',
+    data:{
+      labels:sorted.map(d=>d.name.length>22?d.name.slice(0,22)+'…':d.name),
+      datasets:[{
+        label:'Days to Expiry',
+        data:sorted.map(d=>d.dte),
+        backgroundColor:sorted.map(d=>d.tier==='Critical'?'rgba(255,68,102,0.8)':d.tier==='Warning'?'rgba(255,184,0,0.75)':d.tier==='Monitor'?'rgba(0,212,255,0.7)':'rgba(0,255,136,0.65)'),
+        borderRadius:4,
+      }]
+    },
+    options:{
+      indexAxis:'y',
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.parsed.x} days to expiry — ${sorted[ctx.dataIndex].tier}`}}},
+      scales:{
+        x:{ticks:{color:c.color},grid:{color:c.gridColor},
+          afterDataLimits:scale=>{scale.max=Math.max(scale.max,95);},
+          title:{display:true,text:'Days to Expiry',color:c.color}},
+        y:{ticks:{color:c.color,font:{size:9}},grid:{color:c.gridColor}}
+      }
+    }
+  });
+}
+
+// ─── KPIs ──────────────────────────────────────────────────────────
+function renderKPIs(data){
+  const totalVal=data.reduce((s,d)=>s+d.val,0);
+  const woRisk=data.reduce((s,d)=>s+d.writeOffRisk,0);
+  const recovery=data.reduce((s,d)=>s+d.recovery,0);
+  const critical=data.filter(d=>d.tier==='Critical').length;
+  const warning=data.filter(d=>d.tier==='Warning').length;
+  const avgDte=Math.round(data.reduce((s,d)=>s+d.dte,0)/data.length);
+  const saveRate=Math.round(recovery/totalVal*100);
+
+  const kpis=[
+    {label:'TOTAL BATCH VALUE',  val:'€'+Math.round(totalVal/1000)+'K', trend:'— At Risk Portfolio', cls:'trend-neutral'},
+    {label:'WRITE-OFF EXPOSURE', val:'€'+Math.round(woRisk/1000)+'K',   trend:'▼ If No Action', cls:'trend-down'},
+    {label:'RECOVERY POTENTIAL', val:'€'+Math.round(recovery/1000)+'K', trend:'▲ With Action Plan', cls:'trend-up'},
+    {label:'SAVE RATE',          val:saveRate+'%',                       trend:saveRate>70?'▲ Good':'▼ Needs Work', cls:saveRate>70?'trend-up':'trend-down'},
+    {label:'CRITICAL BATCHES',   val:critical,                           trend:'▼ Immediate Action', cls:critical>5?'trend-down':'trend-neutral'},
+    {label:'WARNING BATCHES',    val:warning,                            trend:'◐ Plan Required', cls:'trend-neutral'},
+    {label:'AVG DAYS TO EXPIRY', val:avgDte+'d',                        trend:avgDte>60?'▲ Manageable':'▼ Urgent', cls:avgDte>60?'trend-up':'trend-down'},
+    {label:'BATCHES TRACKED',    val:data.length,                        trend:'— In Filter', cls:'trend-neutral'},
+  ];
+  document.getElementById('kpiGrid').innerHTML=kpis.map(k=>`
+    <div class="kpi-card">
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-val">${k.val}</div>
+      <div class="kpi-trend ${k.cls}">${k.trend}</div>
+    </div>`).join('');
+}
+
+// ─── TABLE ────────────────────────────────────────────────────────
+function renderTable(data){
+  document.getElementById('tableInfo').textContent=`Showing ${data.length} of ${DATA.length} batches`;
+  document.getElementById('tableBody').innerHTML=data.map(d=>{
+    const tc=d.tier==='Critical'?'tt-crit':d.tier==='Warning'?'tt-warn':d.tier==='Monitor'?'tt-mon':'tt-safe';
+    const dteCols=d.tier==='Critical'?'color:var(--red);font-weight:700':d.tier==='Warning'?'color:var(--amber)':'';
+    return`<tr>
+      <td style="font-family:'Space Mono',monospace;font-size:.72rem">${d.id}</td>
+      <td style="font-family:'Space Mono',monospace;font-size:.72rem">${d.sku}</td>
+      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis">${d.name}</td>
+      <td>${d.cat}</td><td>${d.site}</td>
+      <td>${d.qty.toLocaleString()}</td>
+      <td>€${d.val.toLocaleString()}</td>
+      <td style="font-size:.75rem">${d.mfg}</td>
+      <td style="font-size:.75rem">${d.exp}</td>
+      <td style="${dteCols}">${d.dte}</td>
+      <td><span class="tier-tag ${tc}">${d.tier.toUpperCase()}</span></td>
+      <td style="font-size:.78rem;font-weight:600">${d.action}</td>
+      <td style="color:var(--green)">€${d.recovery.toLocaleString()}</td>
+      <td style="color:var(--red)">€${d.writeOffRisk.toLocaleString()}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── CHARTS ───────────────────────────────────────────────────────
+function destroyAll(){Object.values(charts).forEach(c=>{try{c.destroy();}catch(_){}});charts={};}
+function cfg(){const s=getComputedStyle(document.documentElement);return{color:s.getPropertyValue('--muted').trim(),gridColor:s.getPropertyValue('--chart-grid').trim(),cyan:s.getPropertyValue('--cyan').trim(),red:s.getPropertyValue('--red').trim(),amber:s.getPropertyValue('--amber').trim(),green:s.getPropertyValue('--green').trim(),purple:s.getPropertyValue('--purple').trim(),text:s.getPropertyValue('--text').trim(),muted:s.getPropertyValue('--muted').trim()};}
+
+function rebuildCharts(data){
+  destroyAll();
+  const c=cfg();
+  const cats=['Dairy','Pharma','Beverages','Fresh Produce','Frozen','Bakery'];
+  const tiers=['Critical','Warning','Monitor','Safe'];
+  const tierColors=['rgba(255,68,102,0.8)','rgba(255,184,0,0.75)','rgba(0,212,255,0.7)','rgba(0,255,136,0.65)'];
+
+  // 1. Exposure stacked bar by category
+  charts.exp=new Chart(document.getElementById('exposureChart').getContext('2d'),{
+    type:'bar',
+    data:{labels:cats,datasets:tiers.map((t,i)=>({
+      label:t,
+      data:cats.map(cat=>data.filter(d=>d.cat===cat&&d.tier===t).reduce((s,d)=>s+d.writeOffRisk,0)/1000),
+      backgroundColor:tierColors[i],borderRadius:4
+    }))},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:c.color,font:{size:10}}}},scales:{x:{stacked:true,ticks:{color:c.color,font:{size:9}},grid:{color:c.gridColor}},y:{stacked:true,ticks:{color:c.color,callback:v=>'€'+v+'K'},grid:{color:c.gridColor}}}}
+  });
+
+  // 2. Recovery vs write-off bubble
+  charts.scatter=new Chart(document.getElementById('scatterChart').getContext('2d'),{
+    type:'bubble',
+    data:{datasets:tiers.map((t,i)=>({
+      label:t,
+      data:data.filter(d=>d.tier===t).map(d=>({x:d.writeOffRisk/1000,y:d.recovery/1000,r:Math.min(18,Math.max(4,d.qty/600))})),
+      backgroundColor:tierColors[i],borderColor:tierColors[i].replace('0.8','1').replace('0.75','1').replace('0.7','1').replace('0.65','1'),borderWidth:1
+    }))},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:c.color}}},scales:{x:{title:{display:true,text:'Write-Off Risk (€K)',color:c.color},ticks:{color:c.color,callback:v=>'€'+v+'K'},grid:{color:c.gridColor}},y:{title:{display:true,text:'Recovery Potential (€K)',color:c.color},ticks:{color:c.color,callback:v=>'€'+v+'K'},grid:{color:c.gridColor}}}}
+  });
+
+  // 3. Action doughnut
+  const actions=['USE NOW','MARKDOWN','DIVERT','Write-Off Plan','MONITOR'];
+  const actColors=['rgba(255,68,102,0.8)','rgba(255,184,0,0.75)','rgba(0,212,255,0.7)','rgba(168,85,247,0.7)','rgba(0,255,136,0.65)'];
+  charts.action=new Chart(document.getElementById('actionChart').getContext('2d'),{
+    type:'doughnut',
+    data:{labels:actions,datasets:[{data:actions.map(a=>data.filter(d=>d.action===a).length),backgroundColor:actColors,borderWidth:0,hoverOffset:6}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'bottom',labels:{color:c.color,padding:12,font:{size:10}}}}}
+  });
+
+  // 4. DTE histogram
+  const buckets=['0–10','11–20','21–30','31–45','46–60','61–90','>90'];
+  const buckFn=(lo,hi)=>data.filter(d=>d.dte>=lo&&d.dte<hi).length;
+  const buckData=[buckFn(0,11),buckFn(11,21),buckFn(21,31),buckFn(31,46),buckFn(46,61),buckFn(61,91),data.filter(d=>d.dte>=91).length];
+  const buckColors=['rgba(255,68,102,0.85)','rgba(255,68,102,0.7)','rgba(255,68,102,0.55)','rgba(255,184,0,0.8)','rgba(255,184,0,0.6)','rgba(0,212,255,0.7)','rgba(0,255,136,0.65)'];
+  charts.dte=new Chart(document.getElementById('dteChart').getContext('2d'),{
+    type:'bar',
+    data:{labels:buckets,datasets:[{label:'Batches',data:buckData,backgroundColor:buckColors,borderRadius:5}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:c.color},grid:{color:c.gridColor},title:{display:true,text:'Days to Expiry',color:c.color}},y:{ticks:{color:c.color},grid:{color:c.gridColor}}}}
+  });
+
+  // 5. Value at risk by site
+  const sites=['Berlin','Hamburg','Munich','Frankfurt'];
+  charts.site=new Chart(document.getElementById('siteChart').getContext('2d'),{
+    type:'bar',
+    data:{labels:sites,datasets:tiers.map((t,i)=>({
+      label:t,
+      data:sites.map(s=>data.filter(d=>d.site===s&&d.tier===t).reduce((a,d)=>a+d.writeOffRisk,0)/1000),
+      backgroundColor:tierColors[i],borderRadius:4
+    }))},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:c.color,font:{size:10}}}},scales:{x:{stacked:true,ticks:{color:c.color},grid:{color:c.gridColor}},y:{stacked:true,ticks:{color:c.color,callback:v=>'€'+v+'K'},grid:{color:c.gridColor}}}}
+  });
+
+  // 6. FEFO compliance by category (simulated rates)
+  const fefoRates={Dairy:72,Pharma:91,Beverages:85,FreshProduce:68,Frozen:88,Bakery:74};
+  charts.fefo=new Chart(document.getElementById('fefoChart').getContext('2d'),{
+    type:'bar',
+    data:{labels:cats,datasets:[{label:'FEFO Compliance %',data:[72,91,85,68,88,74],backgroundColor:cats.map((_,i)=>[72,91,85,68,88,74][i]>=85?'rgba(0,255,136,0.7)':'rgba(255,68,102,0.7)'),borderRadius:6}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:c.color,font:{size:9}},grid:{color:c.gridColor}},y:{min:0,max:100,ticks:{color:c.color,callback:v=>v+'%'},grid:{color:c.gridColor}}}}
+  });
+}
+
+// ─── FORECAST ────────────────────────────────────────────────────
+let forecastChart;
+function buildForecastChart(){
+  if(forecastChart){try{forecastChart.destroy();}catch(_){}}
+  const c=cfg();
+  const weeks=['Wk1','Wk2','Wk3','Wk4','Wk5','Wk6','Wk7','Wk8','Wk9','Wk10','Wk11','Wk12','Wk13'];
+  const noAction=[62,71,84,92,78,65,88,105,91,76,82,98,110];
+  const fefoFactor=0.45, fullFactor=0.28;
+  const fefo=noAction.map(v=>Math.round(v*fefoFactor));
+  const full=noAction.map(v=>Math.round(v*fullFactor));
+
+  const mainData=fcScenario==='noaction'?noAction:fcScenario==='fefo'?fefo:full;
+  const mainColor=fcScenario==='noaction'?c.red:fcScenario==='fefo'?c.amber:c.green;
+
+  const ctx=document.getElementById('forecastChart').getContext('2d');
+  forecastChart=new Chart(ctx,{
+    type:'line',
+    data:{labels:weeks,datasets:[
+      {label:fcScenario==='noaction'?'Write-Off (No Action)':fcScenario==='fefo'?'Write-Off (FEFO Enforced)':'Write-Off (Full Recovery Plan)',
+       data:mainData,borderColor:mainColor,backgroundColor:mainColor.replace('ff','22').replace('#','rgba(').replace(/(.{6})/,'$1,0.08)'),
+       fill:true,borderWidth:2.5,tension:.35,pointRadius:4},
+      {label:'No Action Baseline',data:noAction,borderColor:'rgba(255,68,102,0.3)',backgroundColor:'transparent',borderWidth:1,borderDash:[4,4],pointRadius:0}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:c.color}}},scales:{x:{ticks:{color:c.color},grid:{color:c.gridColor}},y:{ticks:{color:c.color,callback:v=>'€'+v+'K'},grid:{color:c.gridColor}}}}
+  });
+
+  const total90=mainData.reduce((s,v)=>s+v,0);
+  const summaries={
+    noaction:`<strong>No Action Scenario:</strong> If expiry batches are not actively managed, rolling 13-week write-off exposure reaches <strong style="color:var(--red)">€${total90}K</strong>. Peaks occur in Weeks 4 and 10, driven by Dairy and Fresh Produce FEFO enforcement gaps at the Berlin and Hamburg sites. Each week of inaction compounds the loss as DTE crosses the recovery threshold.`,
+    fefo:`<strong>FEFO Enforcement Active:</strong> Enforcing strict First Expiry First Out discipline — locking pick sequences in WMS and eliminating manual overrides — reduces 13-week write-off exposure to <strong style="color:var(--amber)">€${total90}K</strong>. A 55% reduction from the no-action baseline, achieved without markdown or diversion. Requires immediate WMS configuration change at Berlin and Hamburg.`,
+    full:`<strong>Full Recovery Plan:</strong> Combining FEFO enforcement with proactive markdown at the 31–60 day window and customer diversion programmes for Critical pharma batches, 13-week write-off exposure drops to <strong style="color:var(--green)">€${total90}K</strong> — a 72% reduction from baseline. This is the scenario that delivers the €267K recovery estimate against the €380K at-risk portfolio.`
+  };
+  document.getElementById('forecastSummary').innerHTML=summaries[fcScenario];
+}
+
+function setScenario(s,btn){
+  fcScenario=s;
+  document.querySelectorAll('.scenario-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  buildForecastChart();
+}
+
+// ─── CSV ─────────────────────────────────────────────────────────
+function downloadCSV(){
+  const hdr='Batch_ID,SKU,Product_Name,Category,Site,Quantity_Units,Value_EUR,Manufacture_Date,Expiry_Date,Days_to_Expiry,Risk_Tier,Recommended_Action,Estimated_Recovery_EUR,Write_Off_Risk_EUR\n';
+  const rows=DATA.map(d=>`${d.id},${d.sku},"${d.name}",${d.cat},${d.site},${d.qty},${d.val},${d.mfg},${d.exp},${d.dte},${d.tier},${d.action},${d.recovery},${d.writeOffRisk}`).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([hdr+rows],{type:'text/csv'}));a.download='batch_expiry_risk_manager.csv';a.click();
+}
+
+// ─── THEME REBUILD ────────────────────────────────────────────────
+themeBtn.addEventListener('click',()=>{
+  setTimeout(()=>{applyFilters();buildForecastChart();},60);
+});
+
+// ─── INIT ─────────────────────────────────────────────────────────
+applyFilters();
+buildForecastChart();
+</script>
+</body>
+</html>

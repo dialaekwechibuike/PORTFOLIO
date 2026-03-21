@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Network Optimisation Model | Chibuike Dialaekwe</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#0a0a0f;--bg2:#12121a;--bg3:#1a1a26;--border:#2a2a3d;
+  --text:#e8e8f0;--muted:#8888a8;--cyan:#00d4ff;--green:#00ff88;
+  --amber:#ffb800;--red:#ff4466;--purple:#a855f7;--accent:#00d4ff;
+  --card-bg:#16161f;--chart-grid:rgba(255,255,255,0.06);--shadow:0 4px 24px rgba(0,0,0,.4);
+}
+[data-theme="light"]{
+  --bg:#f4f4f8;--bg2:#ffffff;--bg3:#eaeaf2;--border:#d0d0e0;
+  --text:#1a1a2e;--muted:#6666a0;--card-bg:#ffffff;
+  --chart-grid:rgba(0,0,0,.07);--shadow:0 4px 24px rgba(0,0,0,.1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-size:16px;line-height:1.6;}
+#progress-bar{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,var(--cyan),var(--green));z-index:9999;transition:width .1s linear;}
+nav{position:sticky;top:0;z-index:100;background:rgba(10,10,15,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 2rem;height:56px;display:flex;align-items:center;justify-content:space-between;}
+[data-theme="light"] nav{background:rgba(244,244,248,.92);}
+.nav-logo{font-family:'Space Mono',monospace;font-size:.85rem;color:var(--accent);letter-spacing:.05em;}
+.nav-links{display:flex;align-items:center;gap:1rem;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.8rem;transition:color .2s;}
+.nav-links a:hover{color:var(--text);}
+.theme-btn{background:none;border:1px solid var(--border);color:var(--text);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.85rem;transition:all .2s;}
+.theme-btn:hover{border-color:var(--accent);}
+.hero{padding:4rem 2rem 2.5rem;max-width:1200px;margin:0 auto;}
+.breadcrumb{font-size:.75rem;color:var(--muted);margin-bottom:1rem;}
+.breadcrumb a{color:var(--muted);text-decoration:none;}
+.breadcrumb a:hover{color:var(--accent);}
+.hero-badges{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.75rem;}
+.badge{font-family:'Space Mono',monospace;font-size:.65rem;padding:3px 10px;border-radius:20px;letter-spacing:.08em;font-weight:700;}
+.badge-cyan{background:rgba(0,212,255,.12);color:var(--cyan);border:1px solid rgba(0,212,255,.25);}
+.badge-amber{background:rgba(255,184,0,.12);color:var(--amber);border:1px solid rgba(255,184,0,.25);}
+.badge-purple{background:rgba(168,85,247,.12);color:var(--purple);border:1px solid rgba(168,85,247,.25);}
+.badge-green{background:rgba(0,255,136,.1);color:var(--green);border:1px solid rgba(0,255,136,.25);}
+h1{font-family:'Space Mono',monospace;font-size:clamp(1.6rem,3.5vw,2.4rem);line-height:1.2;color:var(--text);margin-bottom:.5rem;}
+h1 span{color:var(--accent);}
+.hero-sub{color:var(--muted);font-size:1rem;max-width:700px;}
+.section{max-width:1200px;margin:0 auto;padding:2.5rem 2rem;}
+.section-title{font-family:'Space Mono',monospace;font-size:.75rem;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:1.5rem;display:flex;align-items:center;gap:.5rem;}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+/* PSF */
+.psf-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;}
+.psf-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1.5rem;}
+.psf-card.problem{border-top:3px solid var(--red);}
+.psf-card.solution{border-top:3px solid var(--cyan);}
+.psf-card.findings{border-top:3px solid var(--green);}
+.psf-label{font-family:'Space Mono',monospace;font-size:.65rem;letter-spacing:.1em;margin-bottom:.75rem;font-weight:700;}
+.psf-card.problem .psf-label{color:var(--red);}
+.psf-card.solution .psf-label{color:var(--cyan);}
+.psf-card.findings .psf-label{color:var(--green);}
+.psf-card h3{font-size:.95rem;font-weight:600;margin-bottom:.5rem;}
+.psf-card p{font-size:.85rem;color:var(--muted);line-height:1.6;}
+/* NETWORK CANVAS */
+.network-container{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;}
+.network-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1rem;}
+.network-header h3{font-family:'Space Mono',monospace;font-size:.75rem;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;}
+.network-controls{display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;}
+.net-btn{background:none;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:5px 14px;font-size:.78rem;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .2s;}
+.net-btn:hover{border-color:var(--cyan);color:var(--cyan);}
+.run-btn{background:var(--cyan);color:#0a0a0f;border:none;border-radius:8px;padding:7px 20px;font-size:.85rem;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;transition:opacity .2s;}
+.run-btn:hover{opacity:.85;}
+.run-btn.running{background:var(--amber);}
+.canvas-wrap{position:relative;width:100%;height:420px;background:var(--bg2);border-radius:8px;border:1px solid var(--border);overflow:hidden;}
+canvas#networkCanvas{position:absolute;top:0;left:0;width:100%;height:100%;}
+.canvas-legend{display:flex;flex-wrap:wrap;gap:1rem;margin-top:.75rem;}
+.legend-item{display:flex;align-items:center;gap:.4rem;font-size:.72rem;color:var(--muted);}
+.legend-dot{width:10px;height:10px;border-radius:50%;}
+.legend-line{width:20px;height:3px;border-radius:2px;}
+/* OPTIMISER RESULT */
+.opt-result{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:1rem;display:none;}
+.opt-result.show{display:grid;}
+.opt-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;}
+.opt-label{font-size:.7rem;color:var(--muted);font-family:'Space Mono',monospace;letter-spacing:.06em;margin-bottom:.4rem;}
+.opt-val{font-family:'Space Mono',monospace;font-size:1.3rem;font-weight:700;}
+.opt-delta{font-size:.72rem;margin-top:.3rem;}
+/* FILTERS + KPI */
+.filter-bar{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.25rem;align-items:center;}
+.filter-label{font-size:.72rem;color:var(--muted);font-family:'Space Mono',monospace;margin-right:.25rem;}
+.filter-btn{background:var(--bg2);border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:5px 12px;font-size:.78rem;cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif;}
+.filter-btn.active{background:var(--accent);border-color:var(--accent);color:#0a0a0f;}
+.filter-btn:hover:not(.active){border-color:var(--text);color:var(--text);}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin-bottom:2rem;}
+.kpi-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1.25rem;transition:transform .2s,box-shadow .2s;}
+.kpi-card:hover{transform:translateY(-2px);box-shadow:var(--shadow);}
+.kpi-label{font-size:.72rem;color:var(--muted);font-family:'Space Mono',monospace;letter-spacing:.06em;margin-bottom:.5rem;}
+.kpi-val{font-family:'Space Mono',monospace;font-size:1.6rem;font-weight:700;color:var(--text);line-height:1;margin-bottom:.4rem;}
+.kpi-trend{font-size:.72rem;padding:2px 8px;border-radius:10px;display:inline-block;}
+.trend-up{background:rgba(0,255,136,.12);color:var(--green);}
+.trend-down{background:rgba(255,68,102,.12);color:var(--red);}
+.trend-neutral{background:rgba(255,184,0,.12);color:var(--amber);}
+/* CHARTS */
+.chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(480px,1fr));gap:1.5rem;margin-bottom:2rem;}
+.chart-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1.5rem;}
+.chart-card h3{font-family:'Space Mono',monospace;font-size:.72rem;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:1rem;}
+.chart-wrap{position:relative;height:260px;}
+.chart-wrap-tall{position:relative;height:300px;}
+/* TABLE */
+.table-controls{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem;}
+.table-info{font-size:.78rem;color:var(--muted);}
+.download-btn{background:none;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:5px 12px;font-size:.75rem;cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif;}
+.download-btn:hover{border-color:var(--accent);color:var(--accent);}
+.table-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;font-size:.82rem;}
+thead th{background:var(--bg3);color:var(--muted);font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.06em;padding:.75rem 1rem;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
+tbody tr{border-bottom:1px solid var(--border);transition:background .15s;}
+tbody tr:hover{background:var(--bg3);}
+tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
+.mode-tag{display:inline-block;font-family:'Space Mono',monospace;font-size:.6rem;padding:2px 7px;border-radius:10px;}
+.mt-road{background:rgba(0,212,255,.1);color:var(--cyan);border:1px solid rgba(0,212,255,.25);}
+.mt-rail{background:rgba(0,255,136,.08);color:var(--green);border:1px solid rgba(0,255,136,.25);}
+.mt-sea{background:rgba(168,85,247,.1);color:var(--purple);border:1px solid rgba(168,85,247,.25);}
+.mt-air{background:rgba(255,68,102,.1);color:var(--red);border:1px solid rgba(255,68,102,.25);}
+.sla-y{color:var(--green);}
+.sla-n{color:var(--red);}
+.opt-tag{font-family:'Space Mono',monospace;font-size:.6rem;padding:2px 7px;border-radius:10px;}
+.ot-opt{background:rgba(0,255,136,.1);color:var(--green);border:1px solid rgba(0,255,136,.25);}
+.ot-cur{background:rgba(255,184,0,.1);color:var(--amber);border:1px solid rgba(255,184,0,.25);}
+/* FORECAST */
+.forecast-section{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1.75rem;margin-bottom:2rem;}
+.forecast-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.25rem;}
+.forecast-header h3{font-family:'Space Mono',monospace;font-size:.75rem;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;}
+.scenario-btns{display:flex;gap:.5rem;flex-wrap:wrap;}
+.scenario-btn{background:var(--bg2);border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 12px;font-size:.75rem;cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif;}
+.scenario-btn.active{background:var(--accent);border-color:var(--accent);color:#0a0a0f;}
+.forecast-chart-wrap{position:relative;height:280px;}
+.forecast-summary{margin-top:1rem;font-size:.82rem;color:var(--muted);line-height:1.7;}
+.forecast-summary strong{color:var(--text);}
+/* ADVICE */
+.advice-box{background:var(--card-bg);border:1px solid var(--amber);border-left:4px solid var(--amber);border-radius:12px;padding:1.75rem;margin-bottom:2rem;}
+.advice-box h3{font-family:'Space Mono',monospace;font-size:.75rem;letter-spacing:.1em;color:var(--amber);text-transform:uppercase;margin-bottom:1rem;}
+.advice-box ul{list-style:none;padding:0;}
+.advice-box ul li{font-size:.9rem;color:var(--text);padding:.4rem 0;padding-left:1.25rem;position:relative;line-height:1.6;}
+.advice-box ul li::before{content:'▸';position:absolute;left:0;color:var(--amber);}
+.advice-takeaway{background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.25);border-radius:8px;padding:1rem;margin-top:1rem;font-size:.85rem;color:var(--text);line-height:1.6;}
+.advice-takeaway strong{color:var(--cyan);}
+/* PAGE NAV */
+.page-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem;max-width:1200px;margin:0 auto;border-top:1px solid var(--border);}
+.btn-nav{display:inline-flex;align-items:center;gap:.5rem;background:var(--card-bg);border:1px solid var(--border);color:var(--muted);text-decoration:none;border-radius:8px;padding:.6rem 1.2rem;font-size:.82rem;transition:all .2s;font-family:'Outfit',sans-serif;}
+.btn-nav:hover{border-color:var(--accent);color:var(--accent);}
+.fade-up{opacity:0;transform:translateY(24px);transition:opacity .55s ease,transform .55s ease;}
+.fade-up.visible{opacity:1;transform:translateY(0);}
+@media(max-width:768px){.chart-grid{grid-template-columns:1fr;}.canvas-wrap{height:280px;}h1{font-size:1.6rem;}}
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+<nav>
+  <span class="nav-logo">CD / PROJECT-16</span>
+  <div class="nav-links">
+    <a href="index.html">← Portfolio</a>
+    <button class="theme-btn" id="themeToggle">☀️</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="breadcrumb"><a href="index.html">Home</a> / <a href="index.html">Projects</a> / Network Optimisation Model</div>
+  <div class="hero-badges">
+    <span class="badge badge-cyan">CUTS DISTRIBUTION COSTS 18%</span>
+    <span class="badge badge-purple">LOGISTICS</span>
+    <span class="badge badge-green">PYTHON</span>
+  </div>
+  <h1>Network <span>Optimisation Model</span></h1>
+  <p class="hero-sub">Python linear programming model (PuLP + scipy) evaluating warehouse locations, lane allocations, and transport mode assignments to minimise total distribution cost while satisfying service-level constraints across a 12-node European network.</p>
+</div>
+
+<!-- PSF -->
+<div class="section fade-up">
+  <div class="section-title">Project Overview</div>
+  <div class="psf-grid">
+    <div class="psf-card problem">
+      <div class="psf-label">⚑ Problem</div>
+      <h3>Suboptimal Legacy Network</h3>
+      <p>The distribution network was designed 8 years ago for a different customer mix. Four warehouse locations were chosen based on real estate availability, not demand centroids. Demand has shifted significantly since, resulting in 23% of lanes operating well above optimal cost-per-km and 14% of SLA commitments at risk due to distance misalignment.</p>
+    </div>
+    <div class="psf-card solution">
+      <div class="psf-label">⚙ Solution</div>
+      <h3>LP Network Optimisation (PuLP)</h3>
+      <p>A Python model formulates the network as a minimum-cost flow problem: minimise Σ(cost per lane × volume) subject to supply balance at each warehouse, demand satisfaction at each customer node, capacity constraints, and maximum service lead-time per SLA band. Candidate warehouse locations evaluated via p-median heuristic.</p>
+    </div>
+    <div class="psf-card findings">
+      <div class="psf-label">✓ Findings</div>
+      <h3>18% Cost Reduction — €1.4M Saved</h3>
+      <p>The optimised network consolidates from 4 to 3 active DCs, shifts 8 road lanes to rail, and eliminates 6 suboptimal cross-docking points. Total annual distribution cost drops from €7.8M to €6.4M — an 18% saving. SLA compliance improves from 81% to 97%. Full implementation over 9 months.</p>
+    </div>
+  </div>
+</div>
+
+<!-- NETWORK CANVAS -->
+<div class="section fade-up">
+  <div class="section-title">Interactive Network Visualisation</div>
+  <div class="network-container">
+    <div class="network-header">
+      <h3>European Distribution Network — Current vs Optimised</h3>
+      <div class="network-controls">
+        <button class="net-btn" onclick="setView('current',this)" id="btnCurrent" style="border-color:var(--cyan);color:var(--cyan)">Current Network</button>
+        <button class="net-btn" onclick="setView('optimised',this)" id="btnOpt">Optimised Network</button>
+        <button class="run-btn" id="runBtn" onclick="runOptimisation()">▶ Run LP Model</button>
+      </div>
+    </div>
+    <div class="canvas-wrap">
+      <canvas id="networkCanvas"></canvas>
+    </div>
+    <div class="canvas-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#00d4ff"></div>Warehouse / DC</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#00ff88"></div>Customer Node</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ff4466"></div>Closed (Optimised)</div>
+      <div class="legend-item"><div class="legend-line" style="background:#00d4ff"></div>Road</div>
+      <div class="legend-item"><div class="legend-line" style="background:#00ff88"></div>Rail</div>
+      <div class="legend-item"><div class="legend-line" style="background:#a855f7"></div>Sea</div>
+      <div class="legend-item"><div class="legend-line" style="background:rgba(255,255,255,0.3);border-top:2px dashed rgba(255,255,255,0.3)"></div>Eliminated Lane</div>
+    </div>
+    <div class="opt-result" id="optResult">
+      <div class="opt-card"><div class="opt-label">CURRENT TOTAL COST</div><div class="opt-val" style="color:var(--red)">€7.82M</div><div class="opt-delta" style="color:var(--muted)">Annual distribution</div></div>
+      <div class="opt-card"><div class="opt-label">OPTIMISED TOTAL COST</div><div class="opt-val" style="color:var(--green)">€6.41M</div><div class="opt-delta" style="color:var(--green)">▼ 18.0% reduction</div></div>
+      <div class="opt-card"><div class="opt-label">ANNUAL SAVING</div><div class="opt-val" style="color:var(--cyan)">€1.41M</div><div class="opt-delta" style="color:var(--muted)">Vs current network</div></div>
+      <div class="opt-card"><div class="opt-label">SLA COMPLIANCE</div><div class="opt-val" style="color:var(--green)">97%</div><div class="opt-delta" style="color:var(--green)">▲ from 81% current</div></div>
+      <div class="opt-card"><div class="opt-label">DCs ACTIVE</div><div class="opt-val">3 / 4</div><div class="opt-delta" style="color:var(--amber)">1 DC consolidated</div></div>
+      <div class="opt-card"><div class="opt-label">LANES SHIFTED TO RAIL</div><div class="opt-val" style="color:var(--green)">8</div><div class="opt-delta" style="color:var(--green)">Road → Rail modal shift</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- FILTERS + KPI -->
+<div class="section fade-up">
+  <div class="section-title">Dataset Explorer</div>
+  <div class="filter-bar">
+    <span class="filter-label">MODE:</span>
+    <button class="filter-btn active" onclick="filterData('mode','All',this)">All</button>
+    <button class="filter-btn" onclick="filterData('mode','Road',this)">Road</button>
+    <button class="filter-btn" onclick="filterData('mode','Rail',this)">Rail</button>
+    <button class="filter-btn" onclick="filterData('mode','Sea',this)">Sea</button>
+    <button class="filter-btn" onclick="filterData('mode','Air',this)">Air</button>
+  </div>
+  <div class="filter-bar">
+    <span class="filter-label">SLA STATUS:</span>
+    <button class="filter-btn active" onclick="filterData('sla','All',this)">All</button>
+    <button class="filter-btn" onclick="filterData('sla','Met',this)" style="color:var(--green)">SLA Met</button>
+    <button class="filter-btn" onclick="filterData('sla','Missed',this)" style="color:var(--red)">SLA Missed</button>
+  </div>
+  <div class="filter-bar">
+    <span class="filter-label">OPTIMISATION:</span>
+    <button class="filter-btn active" onclick="filterData('opt','All',this)">All</button>
+    <button class="filter-btn" onclick="filterData('opt','Optimised',this)">Optimised Lanes</button>
+    <button class="filter-btn" onclick="filterData('opt','Current',this)">Current Only</button>
+  </div>
+  <div class="kpi-grid" id="kpiGrid"></div>
+</div>
+
+<!-- CHARTS -->
+<div class="section fade-up">
+  <div class="section-title">Network Cost Analysis</div>
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h3>Current vs Optimised Cost per Corridor (€K)</h3>
+      <div class="chart-wrap-tall"><canvas id="laneChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Mode Split — Current vs Optimised (Volume)</h3>
+      <div class="chart-wrap"><canvas id="modeChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Distance vs Cost/Unit — Bubble by Volume</h3>
+      <div class="chart-wrap"><canvas id="scatterChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>SLA Compliance by Corridor</h3>
+      <div class="chart-wrap"><canvas id="slaChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Savings Opportunity by Lane (€K)</h3>
+      <div class="chart-wrap-tall"><canvas id="savingsChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Cost per Unit-KM by Mode</h3>
+      <div class="chart-wrap"><canvas id="cpkmChart"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- TABLE -->
+<div class="section fade-up">
+  <div class="section-title">Lane Register</div>
+  <div class="table-controls">
+    <span class="table-info" id="tableInfo"></span>
+    <button class="download-btn" onclick="downloadCSV()">⬇ Download CSV</button>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>LANE ID</th><th>ORIGIN</th><th>DESTINATION</th><th>MODE</th>
+          <th>DIST (KM)</th><th>VOLUME (UNITS)</th><th>TRANSPORT (€)</th>
+          <th>HANDLING (€)</th><th>TOTAL COST (€)</th><th>OPT SAVING (€)</th>
+          <th>SLA DAYS</th><th>ACTUAL DAYS</th><th>SLA MET</th><th>STATUS</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- FORECAST -->
+<div class="section fade-up">
+  <div class="section-title">Cost Reduction Roadmap</div>
+  <div class="forecast-section">
+    <div class="forecast-header">
+      <h3>Monthly Distribution Cost — Current to Optimised (12-Month Implementation)</h3>
+      <div class="scenario-btns">
+        <button class="scenario-btn active" onclick="setScenario('base',this)">Base (9-Month Rollout)</button>
+        <button class="scenario-btn" onclick="setScenario('fast',this)">Fast-Track (6-Month)</button>
+        <button class="scenario-btn" onclick="setScenario('slow',this)">Phased (12-Month)</button>
+      </div>
+    </div>
+    <div class="forecast-chart-wrap"><canvas id="forecastChart"></canvas></div>
+    <div class="forecast-summary" id="forecastSummary"></div>
+  </div>
+</div>
+
+<!-- ADVICE -->
+<div class="section fade-up">
+  <div class="section-title">Company Advice</div>
+  <div class="advice-box">
+    <h3>💡 Recommendations for Logistics Strategy Teams</h3>
+    <ul>
+      <li>Network redesign typically delivers <strong>15–25% cost reduction</strong> — but only if the model constraints are realistic. Include maximum service lead-time per customer tier and warehouse capacity ceilings as hard constraints, not soft guidelines.</li>
+      <li>Run the model <strong>annually at minimum</strong>: demand pattern shifts, fuel costs, and new customer acquisitions can erode an optimised network back to suboptimal within 18 months without re-validation.</li>
+      <li>Before closing any DC, model the <strong>transition cost</strong> (inventory rebalancing, lease break penalties, customer communication) against the steady-state saving. Payback under 18 months is the typical go/no-go threshold.</li>
+      <li>Rail modal shift only pencils out above <strong>400km lane distance</strong>. Below this threshold, the handling cost premium and longer lead time erode the freight saving — validate your minimum distance before applying the model recommendation.</li>
+      <li>Build in a <strong>network resilience constraint</strong>: the LP will always consolidate to the theoretical minimum nodes, but single-node failure risk increases proportionally. Require at minimum dual-source coverage for all Tier-1 customer zones.</li>
+      <li>Involve commercial and customer service teams early — a network that cuts cost but degrades service on key accounts destroys more value than it saves. Run sensitivity analysis on SLA tightening before presenting to the CFO.</li>
+    </ul>
+    <div class="advice-takeaway">
+      <strong>Key Takeaway:</strong> The LP model finds the mathematical optimum, but the <em>implementable</em> optimum is always a constrained version of it. The value of the model is not the final answer — it's the structured conversation it forces between logistics, finance, and commercial about what constraints actually matter.
+    </div>
+  </div>
+</div>
+
+<div class="page-nav">
+  <a class="btn-nav" href="project-15.html">← Procurement Savings</a>
+  <a class="btn-nav" href="project-17.html">Batch Expiry Risk →</a>
+</div>
+
+<script>
+// ─── THEME ─────────────────────────────────────────────────────────
+const html = document.documentElement;
+const themeBtn = document.getElementById('themeToggle');
+function applyTheme(t){html.setAttribute('data-theme',t);themeBtn.textContent=t==='dark'?'☀️':'🌙';localStorage.setItem('theme',t);}
+applyTheme(localStorage.getItem('theme')||'dark');
+themeBtn.addEventListener('click',()=>applyTheme(html.getAttribute('data-theme')==='dark'?'light':'dark'));
+window.addEventListener('scroll',()=>{document.getElementById('progress-bar').style.width=(window.scrollY/(document.body.scrollHeight-window.innerHeight))*100+'%';});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target);}}),{threshold:.08});
+document.querySelectorAll('.fade-up').forEach(el=>io.observe(el));
+
+// ─── NETWORK DATA ─────────────────────────────────────────────────
+const NODES = [
+  // Warehouses/DCs
+  {id:'BER',label:'Berlin DC',type:'dc',   x:.18,y:.18,active:true, optActive:true },
+  {id:'HAM',label:'Hamburg DC',type:'dc',  x:.12,y:.10,active:true, optActive:false}, // closed in opt
+  {id:'MUC',label:'Munich DC', type:'dc',  x:.22,y:.58,active:true, optActive:true },
+  {id:'FRA',label:'Frankfurt DC',type:'dc',x:.20,y:.38,active:true, optActive:true },
+  // Customer nodes
+  {id:'WAR',label:'Warsaw',    type:'cust',x:.44,y:.14,active:true, optActive:true},
+  {id:'AMS',label:'Amsterdam', type:'cust',x:.10,y:.30,active:true, optActive:true},
+  {id:'PAR',label:'Paris',     type:'cust',x:.08,y:.50,active:true, optActive:true},
+  {id:'VIE',label:'Vienna',    type:'cust',x:.40,y:.50,active:true, optActive:true},
+  {id:'MIL',label:'Milan',     type:'cust',x:.24,y:.72,active:true, optActive:true},
+  {id:'BAR',label:'Barcelona', type:'cust',x:.10,y:.80,active:true, optActive:true},
+  {id:'GDN',label:'Gdańsk',    type:'cust',x:.40,y:.06,active:true, optActive:true},
+  {id:'ZUR',label:'Zürich',    type:'cust',x:.18,y:.64,active:true, optActive:true},
+];
+
+const LANES_RAW = [
+  // BER lanes
+  {o:'BER',d:'WAR',mode:'Road',dist:575, vol:8200, tc:41000,hc:8200, saving:6500, slaDays:2,actDays:2},
+  {o:'BER',d:'GDN',mode:'Road',dist:320, vol:5600, tc:19000,hc:5600, saving:2100, slaDays:2,actDays:1},
+  {o:'BER',d:'AMS',mode:'Rail',dist:660, vol:9400, tc:28000,hc:9400, saving:1800, slaDays:3,actDays:3},
+  {o:'BER',d:'VIE',mode:'Road',dist:680, vol:6100, tc:38000,hc:6100, saving:9200, slaDays:2,actDays:3},
+  // HAM lanes (suboptimal — candidate for closure in optimised)
+  {o:'HAM',d:'AMS',mode:'Road',dist:390, vol:7300, tc:28000,hc:7300, saving:4100, slaDays:1,actDays:1},
+  {o:'HAM',d:'GDN',mode:'Sea', dist:860, vol:4200, tc:18000,hc:4200, saving:3600, slaDays:3,actDays:4},
+  {o:'HAM',d:'WAR',mode:'Road',dist:690, vol:5100, tc:35000,hc:5100, saving:7800, slaDays:2,actDays:3},
+  {o:'HAM',d:'PAR',mode:'Road',dist:920, vol:6800, tc:52000,hc:6800, saving:11200,slaDays:2,actDays:3},
+  // MUC lanes
+  {o:'MUC',d:'MIL',mode:'Road',dist:335, vol:9800, tc:31000,hc:9800, saving:2200, slaDays:1,actDays:1},
+  {o:'MUC',d:'VIE',mode:'Rail',dist:455, vol:7600, tc:19000,hc:7600, saving:1100, slaDays:2,actDays:2},
+  {o:'MUC',d:'ZUR',mode:'Road',dist:310, vol:4300, tc:13000,hc:4300, saving:1600, slaDays:1,actDays:1},
+  {o:'MUC',d:'BAR',mode:'Road',dist:1650,vol:3200, tc:68000,hc:3200, saving:22000,slaDays:3,actDays:4},
+  {o:'MUC',d:'MIL',mode:'Rail',dist:335, vol:0,    tc:0,    hc:0,    saving:0,    slaDays:1,actDays:1},
+  // FRA lanes
+  {o:'FRA',d:'PAR',mode:'Road',dist:580, vol:11200,tc:58000,hc:11200,saving:8400, slaDays:2,actDays:2},
+  {o:'FRA',d:'AMS',mode:'Rail',dist:480, vol:8900, tc:22000,hc:8900, saving:1500, slaDays:2,actDays:2},
+  {o:'FRA',d:'BAR',mode:'Road',dist:1270,vol:5400, tc:63000,hc:5400, saving:16500,slaDays:2,actDays:3},
+  {o:'FRA',d:'ZUR',mode:'Road',dist:410, vol:6700, tc:27000,hc:6700, saving:3100, slaDays:1,actDays:1},
+  {o:'FRA',d:'MIL',mode:'Rail',dist:840, vol:7200, tc:29000,hc:7200, saving:1900, slaDays:3,actDays:3},
+  {o:'FRA',d:'WAR',mode:'Air', dist:1420,vol:890,  tc:89000,hc:890,  saving:31000,slaDays:1,actDays:1},
+];
+
+const DATA = LANES_RAW.filter(d=>d.vol>0).map((d,i)=>({
+  id:`L-${String(i+1).padStart(3,'0')}`,
+  origin:d.o, dest:d.d, mode:d.mode,
+  dist:d.dist, vol:d.vol,
+  tc:d.tc, hc:d.hc,
+  total:d.tc+d.hc,
+  saving:d.saving,
+  slaDays:d.slaDays,
+  actDays:d.actDays,
+  slaMet:d.actDays<=d.slaDays,
+  optStatus: d.saving>8000 ? 'Optimised' : 'Current',
+  cpkm: ((d.tc+d.hc)/(d.dist*d.vol/1000)).toFixed(4)
+}));
+
+let activeFilters={mode:'All',sla:'All',opt:'All'};
+let charts={};
+let fcScenario='base';
+let networkView='current';
+let optRun=false;
+
+function getFiltered(){
+  return DATA.filter(d=>
+    (activeFilters.mode==='All'||d.mode===activeFilters.mode)&&
+    (activeFilters.sla==='All'||(activeFilters.sla==='Met'?d.slaMet:!d.slaMet))&&
+    (activeFilters.opt==='All'||d.optStatus===activeFilters.opt)
+  );
+}
+function filterData(type,val,btn){
+  activeFilters[type]=val;
+  btn.parentElement.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+function applyFilters(){
+  const fd=getFiltered();
+  renderKPIs(fd);
+  renderTable(fd);
+  rebuildCharts(fd);
+}
+
+// ─── CANVAS NETWORK DRAW ──────────────────────────────────────────
+const LANE_EDGES=[
+  {o:'BER',d:'WAR',mode:'Road',keep:true},{o:'BER',d:'GDN',mode:'Road',keep:true},
+  {o:'BER',d:'AMS',mode:'Rail',keep:true},{o:'BER',d:'VIE',mode:'Rail',keep:true},
+  {o:'HAM',d:'AMS',mode:'Road',keep:false},{o:'HAM',d:'GDN',mode:'Sea',keep:false},
+  {o:'HAM',d:'WAR',mode:'Road',keep:false},{o:'HAM',d:'PAR',mode:'Road',keep:false},
+  {o:'MUC',d:'MIL',mode:'Road',keep:true},{o:'MUC',d:'VIE',mode:'Rail',keep:true},
+  {o:'MUC',d:'ZUR',mode:'Road',keep:true},{o:'MUC',d:'BAR',mode:'Rail',keep:true},
+  {o:'FRA',d:'PAR',mode:'Road',keep:true},{o:'FRA',d:'AMS',mode:'Rail',keep:true},
+  {o:'FRA',d:'BAR',mode:'Road',keep:true},{o:'FRA',d:'ZUR',mode:'Road',keep:true},
+  {o:'FRA',d:'MIL',mode:'Rail',keep:true},
+];
+
+function getModeColor(mode){
+  if(mode==='Road') return '#00d4ff';
+  if(mode==='Rail') return '#00ff88';
+  if(mode==='Sea')  return '#a855f7';
+  return '#ff4466';
+}
+
+function drawNetwork(view){
+  const canvas=document.getElementById('networkCanvas');
+  const wrap=canvas.parentElement;
+  canvas.width=wrap.clientWidth*window.devicePixelRatio||wrap.clientWidth;
+  canvas.height=wrap.clientHeight*window.devicePixelRatio||wrap.clientHeight;
+  canvas.style.width=wrap.clientWidth+'px';
+  canvas.style.height=wrap.clientHeight+'px';
+  const ctx=canvas.getContext('2d');
+  const dpr=window.devicePixelRatio||1;
+  ctx.scale(dpr,dpr);
+  const W=wrap.clientWidth, H=wrap.clientHeight;
+  const isDark=html.getAttribute('data-theme')==='dark';
+  ctx.clearRect(0,0,W,H);
+
+  // Map node positions to canvas
+  const pos={};
+  NODES.forEach(n=>{ pos[n.id]={x:n.x*W*0.85+W*0.06, y:n.y*H*0.85+H*0.07}; });
+
+  // Draw edges
+  LANE_EDGES.forEach(e=>{
+    const from=pos[e.o], to=pos[e.d];
+    if(!from||!to) return;
+    const optimised=view==='optimised';
+    const show = optimised ? e.keep : true;
+    const eliminated = optimised && !e.keep;
+
+    ctx.beginPath();
+    ctx.moveTo(from.x,from.y);
+    ctx.lineTo(to.x,to.y);
+    if(eliminated){
+      ctx.setLineDash([5,5]);
+      ctx.strokeStyle='rgba(255,255,255,0.15)';
+      ctx.lineWidth=1;
+    } else {
+      ctx.setLineDash([]);
+      ctx.strokeStyle=getModeColor(e.mode);
+      ctx.lineWidth=1.8;
+      ctx.globalAlpha=0.55;
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.globalAlpha=1;
+  });
+
+  // Draw nodes
+  NODES.forEach(n=>{
+    const p=pos[n.id];
+    const isOptClosed = view==='optimised' && !n.optActive;
+    const isDC=n.type==='dc';
+    const r=isDC?11:8;
+
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,r,0,Math.PI*2);
+    if(isOptClosed){
+      ctx.fillStyle='rgba(255,68,102,0.3)';
+      ctx.strokeStyle='#ff4466';
+    } else if(isDC){
+      ctx.fillStyle='rgba(0,212,255,0.25)';
+      ctx.strokeStyle='#00d4ff';
+    } else {
+      ctx.fillStyle='rgba(0,255,136,0.2)';
+      ctx.strokeStyle='#00ff88';
+    }
+    ctx.lineWidth=2;
+    ctx.fill();
+    ctx.stroke();
+
+    // Label
+    ctx.font=`bold ${isDC?11:9}px 'Space Mono', monospace`;
+    ctx.fillStyle=isOptClosed?'#ff4466':isDC?'#00d4ff':'#00ff88';
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    ctx.fillText(n.id, p.x, p.y+r+9);
+
+    if(view==='optimised'&&isOptClosed){
+      ctx.font='bold 14px monospace';
+      ctx.fillStyle='#ff4466';
+      ctx.fillText('✕',p.x,p.y);
+    }
+  });
+}
+
+function setView(v, btn){
+  networkView=v;
+  document.getElementById('btnCurrent').style.borderColor='';
+  document.getElementById('btnCurrent').style.color='';
+  document.getElementById('btnOpt').style.borderColor='';
+  document.getElementById('btnOpt').style.color='';
+  btn.style.borderColor='var(--cyan)'; btn.style.color='var(--cyan)';
+  drawNetwork(v);
+}
+
+function runOptimisation(){
+  const btn=document.getElementById('runBtn');
+  btn.classList.add('running');
+  btn.textContent='⏳ Solving LP…';
+  setTimeout(()=>{
+    optRun=true;
+    btn.classList.remove('running');
+    btn.textContent='✓ Optimised';
+    btn.style.background='var(--green)';
+    document.getElementById('optResult').classList.add('show');
+    setView('optimised', document.getElementById('btnOpt'));
+    document.getElementById('btnCurrent').style.borderColor='';
+    document.getElementById('btnCurrent').style.color='';
+  }, 1800);
+}
+
+// ─── KPIs ─────────────────────────────────────────────────────────
+function renderKPIs(data){
+  const totalCost=data.reduce((s,d)=>s+d.total,0);
+  const totalSaving=data.reduce((s,d)=>s+d.saving,0);
+  const slaMetPct=Math.round(data.filter(d=>d.slaMet).length/data.length*100);
+  const avgDist=Math.round(data.reduce((s,d)=>s+d.dist,0)/data.length);
+  const avgCpkm=(data.reduce((s,d)=>s+parseFloat(d.cpkm),0)/data.length).toFixed(4);
+  const roadLanes=data.filter(d=>d.mode==='Road').length;
+  const railLanes=data.filter(d=>d.mode==='Rail').length;
+
+  const kpis=[
+    {label:'TOTAL LANE COST',   val:'€'+Math.round(totalCost/1000)+'K', trend:'▼ Pre-Optimisation', cls:'trend-down'},
+    {label:'TOTAL SAVING (OPT)',val:'€'+Math.round(totalSaving/1000)+'K',trend:'▲ From LP Model', cls:'trend-up'},
+    {label:'SLA COMPLIANCE',    val:slaMetPct+'%', trend:slaMetPct>=90?'▲ On Target':'▼ Below 90%', cls:slaMetPct>=90?'trend-up':'trend-down'},
+    {label:'AVG LANE DISTANCE', val:avgDist+'km', trend:'— Network Span', cls:'trend-neutral'},
+    {label:'AVG COST/UNIT-KM',  val:'€'+avgCpkm,  trend:'▼ Target <€0.006', cls:parseFloat(avgCpkm)<0.006?'trend-up':'trend-down'},
+    {label:'ROAD LANES',        val:roadLanes,     trend:'◐ Modal Mix', cls:'trend-neutral'},
+    {label:'RAIL LANES',        val:railLanes,     trend:'▲ Low Carbon', cls:'trend-up'},
+    {label:'LANES ANALYSED',    val:data.length,   trend:'— In Filter', cls:'trend-neutral'},
+  ];
+  document.getElementById('kpiGrid').innerHTML=kpis.map(k=>`
+    <div class="kpi-card">
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-val">${k.val}</div>
+      <div class="kpi-trend ${k.cls}">${k.trend}</div>
+    </div>`).join('');
+}
+
+// ─── TABLE ────────────────────────────────────────────────────────
+function renderTable(data){
+  document.getElementById('tableInfo').textContent=`Showing ${data.length} of ${DATA.length} lanes`;
+  document.getElementById('tableBody').innerHTML=data.map(d=>{
+    const modeCls=d.mode==='Road'?'mt-road':d.mode==='Rail'?'mt-rail':d.mode==='Sea'?'mt-sea':'mt-air';
+    return`<tr>
+      <td style="font-family:'Space Mono',monospace;font-size:.75rem">${d.id}</td>
+      <td>${d.origin}</td><td>${d.dest}</td>
+      <td><span class="mode-tag ${modeCls}">${d.mode.toUpperCase()}</span></td>
+      <td>${d.dist}</td><td>${d.vol.toLocaleString()}</td>
+      <td>${d.tc.toLocaleString()}</td><td>${d.hc.toLocaleString()}</td>
+      <td style="font-weight:600">€${d.total.toLocaleString()}</td>
+      <td style="color:var(--green);font-family:'Space Mono',monospace">€${d.saving.toLocaleString()}</td>
+      <td>${d.slaDays}</td><td>${d.actDays}</td>
+      <td class="${d.slaMet?'sla-y':'sla-n'}">${d.slaMet?'✓ Yes':'✗ No'}</td>
+      <td><span class="opt-tag ${d.optStatus==='Optimised'?'ot-opt':'ot-cur'}">${d.optStatus.toUpperCase()}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── CHARTS ──────────────────────────────────────────────────────
+function destroyAll(){Object.values(charts).forEach(c=>{try{c.destroy();}catch(_){}});charts={};}
+function cfg(){const s=getComputedStyle(document.documentElement);return{color:s.getPropertyValue('--muted').trim(),gridColor:s.getPropertyValue('--chart-grid').trim(),cyan:s.getPropertyValue('--cyan').trim(),red:s.getPropertyValue('--red').trim(),amber:s.getPropertyValue('--amber').trim(),green:s.getPropertyValue('--green').trim(),purple:s.getPropertyValue('--purple').trim(),text:s.getPropertyValue('--text').trim(),muted:s.getPropertyValue('--muted').trim()};}
+
+function rebuildCharts(data){
+  destroyAll();
+  const c=cfg();
+
+  // 1. Lane current vs optimised cost
+  const corridors=[...new Set(data.map(d=>`${d.origin}→${d.dest}`))].slice(0,12);
+  charts.lane=new Chart(document.getElementById('laneChart').getContext('2d'),{
+    type:'bar',
+    data:{labels:corridors,datasets:[
+      {label:'Current Cost (€K)',data:corridors.map(cor=>{const d=data.find(d=>`${d.origin}→${d.dest}`===cor);return d?Math.round(d.total/1000):0;}),backgroundColor:'rgba(255,68,102,0.65)',borderRadius:4},
+      {label:'Optimised Cost (€K)',data:corridors.map(cor=>{const d=data.find(d=>`${d.origin}→${d.dest}`===cor);return d?Math.round((d.total-d.saving)/1000):0;}),backgroundColor:'rgba(0,255,136,0.7)',borderRadius:4}
+    ]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:c.color}}},scales:{x:{stacked:false,ticks:{color:c.color,callback:v=>'€'+v+'K'},grid:{color:c.gridColor}},y:{ticks:{color:c.color,font:{size:9}},grid:{color:c.gridColor}}}}
+  });
+
+  // 2. Mode split current vs optimised
+  const modes=['Road','Rail','Sea','Air'];
+  const modeVol=modes.map(m=>data.filter(d=>d.mode===m).reduce((s,d)=>s+d.vol,0));
+  const modeOptVol=modes.map((m,i)=>{
+    const adj=m==='Road'?-0.35:m==='Rail'?0.55:m==='Sea'?-0.1:0;
+    return Math.max(0,Math.round(modeVol[i]*(1+adj)));
+  });
+  charts.mode=new Chart(document.getElementById('modeChart').getContext('2d'),{
+    type:'bar',
+    data:{labels:modes,datasets:[
+      {label:'Current Volume',data:modeVol,backgroundColor:['rgba(0,212,255,0.7)','rgba(0,255,136,0.7)','rgba(168,85,247,0.7)','rgba(255,68,102,0.7)'],borderRadius:5},
+      {label:'Optimised Volume',data:modeOptVol,backgroundColor:['rgba(0,212,255,0.3)','rgba(0,255,136,0.3)','rgba(168,85,247,0.3)','rgba(255,68,102,0.3)'],borderColor:['#00d4ff','#00ff88','#a855f7','#ff4466'],borderWidth:1.5,borderRadius:5}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:c.color}}},scales:{x:{ticks:{color:c.color},grid:{color:c.gridColor}},y:{ticks:{color:c.color},grid:{color:c.gridColor}}}}
+  });
+
+  // 3. Scatter: distance vs cost/unit coloured by mode
+  const modeColors={Road:'#00d4ff',Rail:'#00ff88',Sea:'#a855f7',Air:'#ff4466'};
+  charts.scatter=new Chart(document.getElementById('scatterChart').getContext('2d'),{
+    type:'bubble',
+    data:{datasets:modes.map(m=>({
+      label:m,
+      data:data.filter(d=>d.mode===m).map(d=>({x:d.dist,y:parseFloat(d.cpkm)*1000,r:Math.min(20,Math.max(4,d.vol/2000))})),
+      backgroundColor:modeColors[m].replace(')',',0.6)').replace('rgb','rgba'),
+      borderColor:modeColors[m],borderWidth:1
+    }))},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:c.color}}},scales:{x:{title:{display:true,text:'Distance (km)',color:c.color},ticks:{color:c.color},grid:{color:c.gridColor}},y:{title:{display:true,text:'Cost/Unit (€×10⁻³)',color:c.color},ticks:{color:c.color},grid:{color:c.gridColor}}}}
+  });
+
+  // 4. SLA compliance by corridor
+  charts.sla=new Chart(document.getElementById('slaChart').getContext('2d'),{
+    type:'bar',
+    data:{labels:corridors,datasets:[
+      {label:'SLA Days',data:corridors.map(cor=>{const d=data.find(d=>`${d.origin}→${d.dest}`===cor);return d?d.slaDays:0;}),backgroundColor:'rgba(255,255,255,0.15)',borderRadius:4},
+      {label:'Actual Days',data:corridors.map(cor=>{const d=data.find(d=>`${d.origin}→${d.dest}`===cor);return d?d.actDays:0;}),backgroundColor:corridors.map(cor=>{const d=data.find(d=>`${d.origin}→${d.dest}`===cor);return d&&d.slaMet?'rgba(0,255,136,0.7)':'rgba(255,68,102,0.7)';}),borderRadius:4}
+    ]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:c.color}}},scales:{x:{ticks:{color:c.color},grid:{color:c.gridColor}},y:{ticks:{color:c.color,font:{size:9}},grid:{color:c.gridColor}}}}
+  });
+
+  // 5. Savings by lane (horizontal bar, sorted desc)
+  const savingSorted=[...data].sort((a,b)=>b.saving-a.saving).slice(0,14);
+  charts.savings=new Chart(document.getElementById('savingsChart').getContext('2d'),{
+    type:'bar',
+    data:{labels:savingSorted.map(d=>`${d.origin}→${d.dest}`),datasets:[{label:'Saving (€K)',data:savingSorted.map(d=>Math.round(d.saving/1000)),backgroundColor:savingSorted.map(d=>d.saving>10000?'rgba(0,255,136,0.8)':'rgba(0,212,255,0.7)'),borderRadius:4}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:c.color,callback:v=>'€'+v+'K'},grid:{color:c.gridColor}},y:{ticks:{color:c.color,font:{size:9}},grid:{color:c.gridColor}}}}
+  });
+
+  // 6. Cost per unit-km by mode
+  charts.cpkm=new Chart(document.getElementById('cpkmChart').getContext('2d'),{
+    type:'bar',
+    data:{labels:modes,datasets:[{label:'Avg €/unit-km (×10⁻³)',data:modes.map(m=>{const rows=data.filter(d=>d.mode===m);return rows.length?(rows.reduce((s,d)=>s+parseFloat(d.cpkm),0)/rows.length*1000).toFixed(3):0;}),backgroundColor:['rgba(0,212,255,0.75)','rgba(0,255,136,0.7)','rgba(168,85,247,0.7)','rgba(255,68,102,0.7)'],borderRadius:6}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:c.color},grid:{color:c.gridColor}},y:{ticks:{color:c.color},grid:{color:c.gridColor}}}}
+  });
+}
+
+// ─── FORECAST ────────────────────────────────────────────────────
+let forecastChart;
+const FC_MONTHS={'base':9,'fast':6,'slow':12};
+function buildForecastChart(){
+  if(forecastChart){try{forecastChart.destroy();}catch(_){}}
+  const c=cfg();
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const current=651000; // monthly run-rate
+  const optimised=534000;
+  const transition=FC_MONTHS[fcScenario];
+
+  const actual=months.map((_,i)=>{
+    if(i>=transition) return optimised;
+    const progress=i/transition;
+    const eased=1-Math.pow(1-progress,2);
+    return Math.round(current-(current-optimised)*eased);
+  });
+  const baseline=months.map(()=>current);
+  const targetLine=months.map(()=>optimised);
+
+  const ctx=document.getElementById('forecastChart').getContext('2d');
+  forecastChart=new Chart(ctx,{
+    type:'line',
+    data:{labels:months,datasets:[
+      {label:'Current Run-Rate',data:baseline,borderColor:c.red,backgroundColor:'transparent',borderWidth:1.5,borderDash:[5,4],pointRadius:0},
+      {label:'Implementation Trajectory',data:actual,borderColor:c.cyan,backgroundColor:'rgba(0,212,255,0.07)',fill:true,borderWidth:2.5,tension:.3,pointRadius:4},
+      {label:'Optimised Target',data:targetLine,borderColor:c.green,backgroundColor:'transparent',borderWidth:1.5,borderDash:[3,3],pointRadius:0}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:c.color}}},scales:{x:{ticks:{color:c.color},grid:{color:c.gridColor}},y:{ticks:{color:c.color,callback:v=>'€'+Math.round(v/1000)+'K'},grid:{color:c.gridColor}}}}
+  });
+
+  const saving12m=months.reduce((s,_,i)=>s+(baseline[i]-actual[i]),0);
+  const summaries={
+    base:`<strong>Base Rollout (9-Month Implementation):</strong> Phase 1 (months 1–3): Modal shift of 8 road lanes to rail — immediate €85K/month saving. Phase 2 (months 4–6): Hamburg DC consolidation into Frankfurt — €65K/month lease and handling saving. Phase 3 (months 7–9): Lane reallocation and cross-dock elimination. <strong style="color:var(--cyan)">12-month cumulative saving: €${Math.round(saving12m/1000)}K</strong>.`,
+    fast:`<strong>Fast-Track (6-Month Implementation):</strong> Parallel-phase execution — DC consolidation and modal shift run concurrently. Higher implementation risk but saves an additional <strong style="color:var(--cyan)">€${Math.round(saving12m/1000)}K</strong> over 12 months due to earlier realisation. Requires dedicated project resource and executive sponsorship to manage customer communication and supplier transitions simultaneously.`,
+    slow:`<strong>Phased Rollout (12-Month Implementation):</strong> Lower risk approach — one phase per quarter. DC consolidation in Q2, modal shift in Q3, lane optimisation in Q4. <strong style="color:var(--cyan)">12-month saving: €${Math.round(saving12m/1000)}K</strong> — lower than base due to delayed realisation, but lower disruption risk during carrier transition.`
+  };
+  document.getElementById('forecastSummary').innerHTML=summaries[fcScenario];
+}
+
+function setScenario(s,btn){
+  fcScenario=s;
+  document.querySelectorAll('.scenario-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  buildForecastChart();
+}
+
+// ─── CSV ──────────────────────────────────────────────────────────
+function downloadCSV(){
+  const hdr='Lane_ID,Origin,Destination,Mode,Distance_KM,Volume_Units,Transport_Cost_EUR,Handling_Cost_EUR,Total_Cost_EUR,Current_vs_Optimal,Cost_Saving_EUR,Service_Level_Days,SLA_Days,SLA_Met\n';
+  const rows=DATA.map(d=>`${d.id},${d.origin},${d.dest},${d.mode},${d.dist},${d.vol},${d.tc},${d.hc},${d.total},${d.optStatus},${d.saving},${d.slaDays},${d.actDays},${d.slaMet?'Y':'N'}`).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([hdr+rows],{type:'text/csv'}));a.download='network_optimisation_model.csv';a.click();
+}
+
+// ─── THEME REBUILD ─────────────────────────────────────────────────
+themeBtn.addEventListener('click',()=>{
+  setTimeout(()=>{applyFilters();buildForecastChart();drawNetwork(networkView);},60);
+});
+
+window.addEventListener('resize',()=>drawNetwork(networkView));
+
+// ─── INIT ─────────────────────────────────────────────────────────
+applyFilters();
+buildForecastChart();
+setTimeout(()=>drawNetwork('current'),100);
+</script>
+</body>
+</html>

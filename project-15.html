@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Procurement Savings Tracker | Chibuike Dialaekwe</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#0a0a0f;--bg2:#12121a;--bg3:#1a1a26;--border:#2a2a3d;
+  --text:#e8e8f0;--muted:#8888a8;--cyan:#00d4ff;--green:#00ff88;
+  --amber:#ffb800;--red:#ff4466;--purple:#a855f7;--accent:#00ff88;
+  --card-bg:#16161f;--chart-grid:rgba(255,255,255,0.06);--shadow:0 4px 24px rgba(0,0,0,.4);
+}
+[data-theme="light"]{
+  --bg:#f4f4f8;--bg2:#ffffff;--bg3:#eaeaf2;--border:#d0d0e0;
+  --text:#1a1a2e;--muted:#6666a0;--card-bg:#ffffff;
+  --chart-grid:rgba(0,0,0,.07);--shadow:0 4px 24px rgba(0,0,0,.1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-size:16px;line-height:1.6;}
+#progress-bar{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,var(--green),var(--cyan));z-index:9999;transition:width .1s linear;}
+nav{position:sticky;top:0;z-index:100;background:rgba(10,10,15,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 2rem;height:56px;display:flex;align-items:center;justify-content:space-between;}
+[data-theme="light"] nav{background:rgba(244,244,248,.92);}
+.nav-logo{font-family:'Space Mono',monospace;font-size:.85rem;color:var(--accent);letter-spacing:.05em;}
+.nav-links{display:flex;align-items:center;gap:1rem;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.8rem;transition:color .2s;}
+.nav-links a:hover{color:var(--text);}
+.theme-btn{background:none;border:1px solid var(--border);color:var(--text);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.85rem;transition:all .2s;}
+.theme-btn:hover{border-color:var(--accent);}
+.hero{padding:4rem 2rem 2.5rem;max-width:1200px;margin:0 auto;}
+.breadcrumb{font-size:.75rem;color:var(--muted);margin-bottom:1rem;}
+.breadcrumb a{color:var(--muted);text-decoration:none;}
+.breadcrumb a:hover{color:var(--accent);}
+.hero-badges{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.75rem;}
+.badge{font-family:'Space Mono',monospace;font-size:.65rem;padding:3px 10px;border-radius:20px;letter-spacing:.08em;font-weight:700;}
+.badge-green{background:rgba(0,255,136,.1);color:var(--green);border:1px solid rgba(0,255,136,.25);}
+.badge-cyan{background:rgba(0,212,255,.12);color:var(--cyan);border:1px solid rgba(0,212,255,.25);}
+.badge-amber{background:rgba(255,184,0,.12);color:var(--amber);border:1px solid rgba(255,184,0,.25);}
+.badge-purple{background:rgba(168,85,247,.12);color:var(--purple);border:1px solid rgba(168,85,247,.25);}
+h1{font-family:'Space Mono',monospace;font-size:clamp(1.6rem,3.5vw,2.4rem);line-height:1.2;color:var(--text);margin-bottom:.5rem;}
+h1 span{color:var(--accent);}
+.hero-sub{color:var(--muted);font-size:1rem;max-width:700px;}
+.section{max-width:1200px;margin:0 auto;padding:2.5rem 2rem;}
+.section-title{font-family:'Space Mono',monospace;font-size:.75rem;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:1.5rem;display:flex;align-items:center;gap:.5rem;}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* PSF */
+.psf-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;}
+.psf-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1.5rem;}
+.psf-card.problem{border-top:3px solid var(--red);}
+.psf-card.solution{border-top:3px solid var(--cyan);}
+.psf-card.findings{border-top:3px solid var(--green);}
+.psf-label{font-family:'Space Mono',monospace;font-size:.65rem;letter-spacing:.1em;margin-bottom:.75rem;font-weight:700;}
+.psf-card.problem .psf-label{color:var(--red);}
+.psf-card.solution .psf-label{color:var(--cyan);}
+.psf-card.findings .psf-label{color:var(--green);}
+.psf-card h3{font-size:.95rem;font-weight:600;margin-bottom:.5rem;}
+.psf-card p{font-size:.85rem;color:var(--muted);line-height:1.6;}
+
+/* PIPELINE PANEL */
+.pipeline-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;margin-bottom:1.5rem;}
+.pipeline-col{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1.25rem;}
+.pipeline-col-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
+.pipeline-col-title{font-family:'Space Mono',monospace;font-size:.7rem;letter-spacing:.1em;font-weight:700;}
+.pipeline-col.identified .pipeline-col-title{color:var(--muted);}
+.pipeline-col.in-progress .pipeline-col-title{color:var(--amber);}
+.pipeline-col.realized .pipeline-col-title{color:var(--green);}
+.pipeline-col.at-risk .pipeline-col-title{color:var(--red);}
+.pipeline-count{font-family:'Space Mono',monospace;font-size:.75rem;color:var(--muted);}
+.pipeline-total{font-family:'Space Mono',monospace;font-size:1rem;font-weight:700;margin-bottom:.75rem;}
+.pipeline-col.identified .pipeline-total{color:var(--muted);}
+.pipeline-col.in-progress .pipeline-total{color:var(--amber);}
+.pipeline-col.realized .pipeline-total{color:var(--green);}
+.pipeline-col.at-risk .pipeline-total{color:var(--red);}
+.pipeline-items{display:flex;flex-direction:column;gap:.5rem;}
+.pipe-item{background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:.65rem .85rem;}
+.pipe-item-name{font-size:.78rem;font-weight:600;color:var(--text);margin-bottom:.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pipe-item-meta{display:flex;align-items:center;justify-content:space-between;}
+.pipe-item-cat{font-size:.68rem;color:var(--muted);}
+.pipe-item-val{font-family:'Space Mono',monospace;font-size:.8rem;font-weight:700;color:var(--green);}
+
+/* FILTERS + KPI */
+.filter-bar{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.25rem;align-items:center;}
+.filter-label{font-size:.72rem;color:var(--muted);font-family:'Space Mono',monospace;margin-right:.25rem;}
+.filter-btn{background:var(--bg2);border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:5px 12px;font-size:.78rem;cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif;}
+.filter-btn.active{background:var(--accent);border-color:var(--accent);color:#0a0a0f;}
+.filter-btn:hover:not(.active){border-color:var(--text);color:var(--text);}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin-bottom:2rem;}
+.kpi-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1.25rem;transition:transform .2s,box-shadow .2s;}
+.kpi-card:hover{transform:translateY(-2px);box-shadow:var(--shadow);}
+.kpi-label{font-size:.72rem;color:var(--muted);font-family:'Space Mono',monospace;letter-spacing:.06em;margin-bottom:.5rem;}
+.kpi-val{font-family:'Space Mono',monospace;font-size:1.6rem;font-weight:700;color:var(--text);line-height:1;margin-bottom:.4rem;}
+.kpi-trend{font-size:.72rem;padding:2px 8px;border-radius:10px;display:inline-block;}
+.trend-up{background:rgba(0,255,136,.12);color:var(--green);}
+.trend-down{background:rgba(255,68,102,.12);color:var(--red);}
+.trend-neutral{background:rgba(255,184,0,.12);color:var(--amber);}
+
+/* CHARTS */
+.chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(480px,1fr));gap:1.5rem;margin-bottom:2rem;}
+.chart-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1.5rem;}
+.chart-card h3{font-family:'Space Mono',monospace;font-size:.72rem;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:1rem;}
+.chart-wrap{position:relative;height:260px;}
+.chart-wrap-tall{position:relative;height:320px;}
+
+/* TABLE */
+.table-controls{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem;}
+.table-info{font-size:.78rem;color:var(--muted);}
+.download-btn{background:none;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:5px 12px;font-size:.75rem;cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif;}
+.download-btn:hover{border-color:var(--accent);color:var(--accent);}
+.table-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;font-size:.82rem;}
+thead th{background:var(--bg3);color:var(--muted);font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.06em;padding:.75rem 1rem;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
+tbody tr{border-bottom:1px solid var(--border);transition:background .15s;}
+tbody tr:hover{background:var(--bg3);}
+tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
+.type-tag{display:inline-block;font-family:'Space Mono',monospace;font-size:.6rem;padding:2px 7px;border-radius:10px;font-weight:700;}
+.tt-hard{background:rgba(0,255,136,.1);color:var(--green);border:1px solid rgba(0,255,136,.25);}
+.tt-soft{background:rgba(0,212,255,.1);color:var(--cyan);border:1px solid rgba(0,212,255,.25);}
+.tt-avoid{background:rgba(168,85,247,.1);color:var(--purple);border:1px solid rgba(168,85,247,.25);}
+.rag-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;}
+.rd-g{background:var(--green);}
+.rd-a{background:var(--amber);}
+.rd-r{background:var(--red);}
+.verified-y{color:var(--green);font-size:.8rem;}
+.verified-n{color:var(--muted);font-size:.8rem;}
+
+/* FORECAST */
+.forecast-section{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1.75rem;margin-bottom:2rem;}
+.forecast-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.25rem;}
+.forecast-header h3{font-family:'Space Mono',monospace;font-size:.75rem;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;}
+.scenario-btns{display:flex;gap:.5rem;flex-wrap:wrap;}
+.scenario-btn{background:var(--bg2);border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 12px;font-size:.75rem;cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif;}
+.scenario-btn.active{background:var(--accent);border-color:var(--accent);color:#0a0a0f;}
+.forecast-chart-wrap{position:relative;height:280px;}
+.forecast-summary{margin-top:1rem;font-size:.82rem;color:var(--muted);line-height:1.7;}
+.forecast-summary strong{color:var(--text);}
+
+/* ADVICE */
+.advice-box{background:var(--card-bg);border:1px solid var(--amber);border-left:4px solid var(--amber);border-radius:12px;padding:1.75rem;margin-bottom:2rem;}
+.advice-box h3{font-family:'Space Mono',monospace;font-size:.75rem;letter-spacing:.1em;color:var(--amber);text-transform:uppercase;margin-bottom:1rem;}
+.advice-box ul{list-style:none;padding:0;}
+.advice-box ul li{font-size:.9rem;color:var(--text);padding:.4rem 0;padding-left:1.25rem;position:relative;line-height:1.6;}
+.advice-box ul li::before{content:'▸';position:absolute;left:0;color:var(--amber);}
+.advice-takeaway{background:rgba(0,255,136,.07);border:1px solid rgba(0,255,136,.25);border-radius:8px;padding:1rem;margin-top:1rem;font-size:.85rem;color:var(--text);line-height:1.6;}
+.advice-takeaway strong{color:var(--green);}
+
+/* NAV */
+.page-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem;max-width:1200px;margin:0 auto;border-top:1px solid var(--border);}
+.btn-nav{display:inline-flex;align-items:center;gap:.5rem;background:var(--card-bg);border:1px solid var(--border);color:var(--muted);text-decoration:none;border-radius:8px;padding:.6rem 1.2rem;font-size:.82rem;transition:all .2s;font-family:'Outfit',sans-serif;}
+.btn-nav:hover{border-color:var(--accent);color:var(--accent);}
+.fade-up{opacity:0;transform:translateY(24px);transition:opacity .55s ease,transform .55s ease;}
+.fade-up.visible{opacity:1;transform:translateY(0);}
+@media(max-width:768px){.chart-grid{grid-template-columns:1fr;}.pipeline-grid{grid-template-columns:1fr 1fr;}h1{font-size:1.6rem;}}
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+<nav>
+  <span class="nav-logo">CD / PROJECT-15</span>
+  <div class="nav-links">
+    <a href="index.html">← Portfolio</a>
+    <button class="theme-btn" id="themeToggle">☀️</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="breadcrumb"><a href="index.html">Home</a> / <a href="index.html">Projects</a> / Procurement Savings Tracker</div>
+  <div class="hero-badges">
+    <span class="badge badge-green">TRACKS €2.3M IN ANNUAL SAVINGS</span>
+    <span class="badge badge-amber">PROCUREMENT</span>
+    <span class="badge badge-cyan">EXCEL</span>
+  </div>
+  <h1>Procurement <span>Savings Tracker</span></h1>
+  <p class="hero-sub">Excel-based tracker that quantifies, classifies, and reports procurement savings initiatives — hard savings, soft savings, and cost avoidance — with RAG status, initiative pipeline stages, and a cumulative waterfall against annual target.</p>
+</div>
+
+<!-- PSF -->
+<div class="section fade-up">
+  <div class="section-title">Project Overview</div>
+  <div class="psf-grid">
+    <div class="psf-card problem">
+      <div class="psf-label">⚑ Problem</div>
+      <h3>Fragmented Savings Reporting</h3>
+      <p>Procurement teams log negotiated discounts, specification changes, and demand reductions in disconnected spreadsheets — one per category, per owner, or per quarter. Finance cannot reconcile savings to the P&amp;L, and CPOs cannot report a credible annual number to the CFO without a three-week data-gathering exercise.</p>
+    </div>
+    <div class="psf-card solution">
+      <div class="psf-label">⚙ Solution</div>
+      <h3>Unified Excel Savings Tracker</h3>
+      <p>A structured Excel workbook with standardised savings classification (hard/soft/cost avoidance), initiative pipeline stages (Identified → In Progress → Realised → At Risk), category breakdown, owner assignment, quarterly phasing, and a cumulative waterfall visualisation. Finance-ready with verified/unverified flags and CFO sign-off tracking.</p>
+    </div>
+    <div class="psf-card findings">
+      <div class="psf-label">✓ Findings</div>
+      <h3>€2.3M Realised, €890K In Pipeline</h3>
+      <p>40 initiatives tracked across 6 categories. €2.31M in verified savings realised against a €2.5M annual target (92% attainment). Logistics (€620K) and Packaging (€510K) are the top-performing categories. 8 initiatives totalling €890K remain In Progress — on track to exceed target by Q4.</p>
+    </div>
+  </div>
+</div>
+
+<!-- PIPELINE PANEL -->
+<div class="section fade-up">
+  <div class="section-title">Savings Initiative Pipeline</div>
+  <div class="pipeline-grid" id="pipelineGrid"></div>
+</div>
+
+<!-- FILTERS + KPI -->
+<div class="section fade-up">
+  <div class="section-title">Dataset Explorer</div>
+  <div class="filter-bar">
+    <span class="filter-label">CATEGORY:</span>
+    <button class="filter-btn active" onclick="filterData('cat','All',this)">All</button>
+    <button class="filter-btn" onclick="filterData('cat','Logistics',this)">Logistics</button>
+    <button class="filter-btn" onclick="filterData('cat','Packaging',this)">Packaging</button>
+    <button class="filter-btn" onclick="filterData('cat','Raw Materials',this)">Raw Materials</button>
+    <button class="filter-btn" onclick="filterData('cat','MRO',this)">MRO</button>
+    <button class="filter-btn" onclick="filterData('cat','IT & Services',this)">IT &amp; Services</button>
+    <button class="filter-btn" onclick="filterData('cat','Facilities',this)">Facilities</button>
+  </div>
+  <div class="filter-bar">
+    <span class="filter-label">TYPE:</span>
+    <button class="filter-btn active" onclick="filterData('type','All',this)">All</button>
+    <button class="filter-btn" onclick="filterData('type','Hard',this)" style="color:var(--green)">Hard</button>
+    <button class="filter-btn" onclick="filterData('type','Soft',this)" style="color:var(--cyan)">Soft</button>
+    <button class="filter-btn" onclick="filterData('type','Cost Avoidance',this)" style="color:var(--purple)">Cost Avoidance</button>
+  </div>
+  <div class="filter-bar">
+    <span class="filter-label">QUARTER:</span>
+    <button class="filter-btn active" onclick="filterData('quarter','All',this)">All</button>
+    <button class="filter-btn" onclick="filterData('quarter','Q1',this)">Q1</button>
+    <button class="filter-btn" onclick="filterData('quarter','Q2',this)">Q2</button>
+    <button class="filter-btn" onclick="filterData('quarter','Q3',this)">Q3</button>
+    <button class="filter-btn" onclick="filterData('quarter','Q4',this)">Q4</button>
+  </div>
+  <div class="kpi-grid" id="kpiGrid"></div>
+</div>
+
+<!-- CHARTS -->
+<div class="section fade-up">
+  <div class="section-title">Savings Analysis Charts</div>
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h3>Cumulative Savings Waterfall — Initiatives</h3>
+      <div class="chart-wrap-tall"><canvas id="waterfallChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Savings by Category (€K)</h3>
+      <div class="chart-wrap"><canvas id="catChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Savings Type Breakdown</h3>
+      <div class="chart-wrap"><canvas id="typeChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Quarterly Savings vs Target (€K)</h3>
+      <div class="chart-wrap"><canvas id="qtrChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Realised vs Pipeline by Category</h3>
+      <div class="chart-wrap-tall"><canvas id="statusChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Saving % by Initiative</h3>
+      <div class="chart-wrap"><canvas id="pctChart"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- TABLE -->
+<div class="section fade-up">
+  <div class="section-title">Initiative Register</div>
+  <div class="table-controls">
+    <span class="table-info" id="tableInfo"></span>
+    <button class="download-btn" onclick="downloadCSV()">⬇ Download CSV</button>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>INITIATIVE</th><th>CATEGORY</th><th>TYPE</th><th>BASELINE (€K)</th>
+          <th>NEGOTIATED (€K)</th><th>SAVING (€K)</th><th>SAVING %</th>
+          <th>STATUS</th><th>OWNER</th><th>QUARTER</th><th>RAG</th><th>VERIFIED</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- FORECAST -->
+<div class="section fade-up">
+  <div class="section-title">Annual Savings Forecast</div>
+  <div class="forecast-section">
+    <div class="forecast-header">
+      <h3>Cumulative Savings vs €2.5M Annual Target — 12-Month View</h3>
+      <div class="scenario-btns">
+        <button class="scenario-btn active" onclick="setScenario('base',this)">Base (Pipeline Converted 70%)</button>
+        <button class="scenario-btn" onclick="setScenario('optimistic',this)">Optimistic (100% Pipeline)</button>
+        <button class="scenario-btn" onclick="setScenario('conservative',this)">Conservative (40% Pipeline)</button>
+      </div>
+    </div>
+    <div class="forecast-chart-wrap"><canvas id="forecastChart"></canvas></div>
+    <div class="forecast-summary" id="forecastSummary"></div>
+  </div>
+</div>
+
+<!-- ADVICE -->
+<div class="section fade-up">
+  <div class="section-title">Company Advice</div>
+  <div class="advice-box">
+    <h3>💡 Recommendations for Procurement Leaders</h3>
+    <ul>
+      <li><strong>Hard savings</strong> need CFO sign-off and a clear baseline to be P&amp;L-credible. Agree the baseline calculation methodology with Finance before negotiation starts — not after — to avoid disputes at reporting time.</li>
+      <li><strong>Soft savings</strong> (process improvement, specification changes) need methodology agreement upfront. Without a signed-off calculation basis, Finance will reject them at year-end. Document the counterfactual explicitly.</li>
+      <li>Never mix <strong>cost avoidance</strong> with hard savings in the headline number. Avoidance is real value but it doesn't appear in the P&amp;L — treating them the same destroys credibility with CFOs and auditors.</li>
+      <li>Run a <strong>monthly pipeline review</strong>: move stalled "In Progress" initiatives to "At Risk" within 6 weeks of no progress. A bloated In Progress column is a lagging indicator of a savings programme losing momentum.</li>
+      <li>Assign every initiative an <strong>owner and a due date</strong> — savings with no owner close at a 3× lower rate. Track owner-level performance as a procurement team KPI, not just a project metric.</li>
+      <li>Build the tracker in Excel using <strong>structured tables and named ranges</strong> so Finance can pull data directly via Power Query — this removes the manual consolidation step that costs 2+ days every reporting cycle.</li>
+    </ul>
+    <div class="advice-takeaway">
+      <strong>Key Takeaway:</strong> A procurement savings tracker is only as credible as its classification discipline. One misclassified cost avoidance in the hard savings column erodes trust in the entire programme — rigour in methodology is the foundation of a savings culture.
+    </div>
+  </div>
+</div>
+
+<div class="page-nav">
+  <a class="btn-nav" href="project-14.html">← Demand Sensing</a>
+  <a class="btn-nav" href="project-16.html">Network Optimisation →</a>
+</div>
+
+<script>
+// ─── THEME ──────────────────────────────────────────────────────────
+const html = document.documentElement;
+const themeBtn = document.getElementById('themeToggle');
+function applyTheme(t){html.setAttribute('data-theme',t);themeBtn.textContent=t==='dark'?'☀️':'🌙';localStorage.setItem('theme',t);}
+applyTheme(localStorage.getItem('theme')||'dark');
+themeBtn.addEventListener('click',()=>applyTheme(html.getAttribute('data-theme')==='dark'?'light':'dark'));
+
+// ─── SCROLL ────────────────────────────────────────────────────────
+const pb=document.getElementById('progress-bar');
+window.addEventListener('scroll',()=>{pb.style.width=(window.scrollY/(document.body.scrollHeight-window.innerHeight))*100+'%';});
+
+// ─── FADE UP ───────────────────────────────────────────────────────
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target);}}),{threshold:.08});
+document.querySelectorAll('.fade-up').forEach(el=>io.observe(el));
+
+// ─── DATA ──────────────────────────────────────────────────────────
+const OWNERS = ['C. Dialaekwe','S. Müller','A. Bergmann','K. Fischer','T. Weber'];
+const DATA = [
+  // Logistics
+  {name:'Air-to-Sea Modal Shift — DE→UK',cat:'Logistics',type:'Hard',   base:980, neg:820, status:'Realized',   owner:OWNERS[0],quarter:'Q1',rag:'G',verified:true},
+  {name:'Carrier Consolidation — NL/BE',cat:'Logistics',type:'Hard',   base:540, neg:465, status:'Realized',   owner:OWNERS[0],quarter:'Q1',rag:'G',verified:true},
+  {name:'Last-Mile Route Optimisation',  cat:'Logistics',type:'Soft',   base:310, neg:270, status:'Realized',   owner:OWNERS[1],quarter:'Q2',rag:'G',verified:true},
+  {name:'3PL Contract Renegotiation',    cat:'Logistics',type:'Hard',   base:720, neg:620, status:'Realized',   owner:OWNERS[0],quarter:'Q2',rag:'G',verified:true},
+  {name:'Cross-dock Implementation',     cat:'Logistics',type:'Soft',   base:190, neg:160, status:'In Progress',owner:OWNERS[1],quarter:'Q3',rag:'A',verified:false},
+  {name:'Freight Spot Hedge Programme',  cat:'Logistics',type:'Cost Avoidance',base:450,neg:450,status:'Realized',owner:OWNERS[0],quarter:'Q3',rag:'G',verified:true},
+  {name:'Inbound Milk Run Design',       cat:'Logistics',type:'Soft',   base:220, neg:185, status:'In Progress',owner:OWNERS[1],quarter:'Q4',rag:'A',verified:false},
+  // Packaging
+  {name:'Carton Gauge Reduction',        cat:'Packaging',type:'Hard',   base:640, neg:548, status:'Realized',   owner:OWNERS[2],quarter:'Q1',rag:'G',verified:true},
+  {name:'Label Print Consolidation',     cat:'Packaging',type:'Hard',   base:280, neg:235, status:'Realized',   owner:OWNERS[2],quarter:'Q2',rag:'G',verified:true},
+  {name:'Shrink Film Spec Change',       cat:'Packaging',type:'Soft',   base:195, neg:165, status:'Realized',   owner:OWNERS[2],quarter:'Q2',rag:'G',verified:true},
+  {name:'Secondary Pack Standardisation',cat:'Packaging',type:'Hard',   base:510, neg:445, status:'In Progress',owner:OWNERS[2],quarter:'Q3',rag:'A',verified:false},
+  {name:'Retailer SSCC Label e-Switch',  cat:'Packaging',type:'Cost Avoidance',base:160,neg:160,status:'Realized',owner:OWNERS[3],quarter:'Q3',rag:'G',verified:true},
+  {name:'Pallet Configuration Optimise', cat:'Packaging',type:'Soft',   base:240, neg:205, status:'In Progress',owner:OWNERS[2],quarter:'Q4',rag:'A',verified:false},
+  // Raw Materials
+  {name:'Aluminium Futures Hedge',       cat:'Raw Materials',type:'Cost Avoidance',base:820,neg:820,status:'Realized',owner:OWNERS[0],quarter:'Q1',rag:'G',verified:true},
+  {name:'Steel Coil Long-Term Contract', cat:'Raw Materials',type:'Hard',base:1100,neg:960,status:'Realized',   owner:OWNERS[3],quarter:'Q1',rag:'G',verified:true},
+  {name:'Polymer Blend Substitution',    cat:'Raw Materials',type:'Soft',base:380, neg:325, status:'Realized',  owner:OWNERS[3],quarter:'Q2',rag:'G',verified:true},
+  {name:'Dual-Source Sugar Supply',      cat:'Raw Materials',type:'Hard',base:590, neg:520, status:'At Risk',   owner:OWNERS[3],quarter:'Q3',rag:'R',verified:false},
+  {name:'Recycled Content Programme',    cat:'Raw Materials',type:'Cost Avoidance',base:290,neg:290,status:'In Progress',owner:OWNERS[4],quarter:'Q4',rag:'A',verified:false},
+  {name:'Grain Volume Aggregation',      cat:'Raw Materials',type:'Hard',base:430, neg:378, status:'Identified', owner:OWNERS[3],quarter:'Q4',rag:'A',verified:false},
+  // MRO
+  {name:'Vending Machine MRO Roll-Out',  cat:'MRO',type:'Hard',   base:210, neg:175, status:'Realized',   owner:OWNERS[4],quarter:'Q1',rag:'G',verified:true},
+  {name:'Spare Parts Catalogue Rationalise',cat:'MRO',type:'Soft',base:180,neg:148,status:'Realized',    owner:OWNERS[4],quarter:'Q2',rag:'G',verified:true},
+  {name:'Gloves & PPE Consolidation',    cat:'MRO',type:'Hard',   base:95,  neg:78,  status:'Realized',   owner:OWNERS[4],quarter:'Q2',rag:'G',verified:true},
+  {name:'Predictive Maintenance Parts',  cat:'MRO',type:'Cost Avoidance',base:320,neg:320,status:'In Progress',owner:OWNERS[4],quarter:'Q3',rag:'A',verified:false},
+  {name:'Lubricant Spec Standardisation',cat:'MRO',type:'Soft',   base:85,  neg:70,  status:'Identified', owner:OWNERS[4],quarter:'Q4',rag:'A',verified:false},
+  // IT & Services
+  {name:'SaaS Licence Audit & Renegotiate',cat:'IT & Services',type:'Hard',base:480,neg:395,status:'Realized',owner:OWNERS[1],quarter:'Q1',rag:'G',verified:true},
+  {name:'Telecom Contract Consolidation',cat:'IT & Services',type:'Hard',base:320, neg:264, status:'Realized',  owner:OWNERS[1],quarter:'Q2',rag:'G',verified:true},
+  {name:'Print & Copy Fleet Reduction',  cat:'IT & Services',type:'Soft',base:120, neg:98,  status:'Realized',  owner:OWNERS[1],quarter:'Q2',rag:'G',verified:true},
+  {name:'Cloud Compute Right-Sizing',    cat:'IT & Services',type:'Cost Avoidance',base:260,neg:260,status:'Realized',owner:OWNERS[1],quarter:'Q3',rag:'G',verified:true},
+  {name:'ERP Licence Optimisation',      cat:'IT & Services',type:'Hard',base:390, neg:325, status:'At Risk',   owner:OWNERS[1],quarter:'Q3',rag:'R',verified:false},
+  {name:'Security Software Consolidate', cat:'IT & Services',type:'Hard',base:180, neg:150, status:'Identified',owner:OWNERS[1],quarter:'Q4',rag:'A',verified:false},
+  // Facilities
+  {name:'Energy Procurement Switching',  cat:'Facilities',type:'Hard',  base:560, neg:470, status:'Realized',  owner:OWNERS[2],quarter:'Q1',rag:'G',verified:true},
+  {name:'Cleaning Contract Re-tender',   cat:'Facilities',type:'Hard',  base:220, neg:183, status:'Realized',  owner:OWNERS[2],quarter:'Q2',rag:'G',verified:true},
+  {name:'Water Treatment Optimisation',  cat:'Facilities',type:'Soft',  base:90,  neg:74,  status:'Realized',  owner:OWNERS[2],quarter:'Q2',rag:'G',verified:true},
+  {name:'LED Lighting Programme',        cat:'Facilities',type:'Cost Avoidance',base:380,neg:380,status:'Realized',owner:OWNERS[2],quarter:'Q3',rag:'G',verified:true},
+  {name:'Security Services Re-tender',   cat:'Facilities',type:'Hard',  base:195, neg:163, status:'In Progress',owner:OWNERS[2],quarter:'Q3',rag:'A',verified:false},
+  {name:'HVAC Maintenance Contract',     cat:'Facilities',type:'Soft',  base:140, neg:115, status:'In Progress',owner:OWNERS[4],quarter:'Q4',rag:'A',verified:false},
+  {name:'Waste Management Tender',       cat:'Facilities',type:'Hard',  base:105, neg:87,  status:'Identified',owner:OWNERS[2],quarter:'Q4',rag:'A',verified:false},
+  {name:'Car Fleet Electrification',     cat:'Facilities',type:'Cost Avoidance',base:450,neg:450,status:'In Progress',owner:OWNERS[0],quarter:'Q4',rag:'A',verified:false},
+  {name:'Canteen Outsource Re-tender',   cat:'Facilities',type:'Hard',  base:175, neg:148, status:'Identified',owner:OWNERS[4],quarter:'Q4',rag:'A',verified:false},
+  {name:'Fire Suppression Compliance',   cat:'Facilities',type:'Cost Avoidance',base:200,neg:200,status:'At Risk',owner:OWNERS[2],quarter:'Q3',rag:'R',verified:false},
+].map(d => ({ ...d, saving: Math.round(d.base - d.neg), savingPct: (((d.base-d.neg)/d.base)*100).toFixed(1) }));
+
+let activeFilters = {cat:'All', type:'All', quarter:'All'};
+let charts = {};
+let fcScenario = 'base';
+
+function getFiltered() {
+  return DATA.filter(d =>
+    (activeFilters.cat === 'All' || d.cat === activeFilters.cat) &&
+    (activeFilters.type === 'All' || d.type === activeFilters.type) &&
+    (activeFilters.quarter === 'All' || d.quarter === activeFilters.quarter)
+  );
+}
+function filterData(type, val, btn) {
+  activeFilters[type] = val;
+  btn.parentElement.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+function applyFilters() {
+  const fd = getFiltered();
+  renderPipeline(fd);
+  renderKPIs(fd);
+  renderTable(fd);
+  rebuildCharts(fd);
+}
+
+// ─── PIPELINE ─────────────────────────────────────────────────────
+const STAGE_DEFS = [
+  {key:'Identified', cls:'identified', label:'IDENTIFIED'},
+  {key:'In Progress', cls:'in-progress', label:'IN PROGRESS'},
+  {key:'Realized', cls:'realized', label:'REALISED'},
+  {key:'At Risk', cls:'at-risk', label:'AT RISK'},
+];
+
+function renderPipeline(data) {
+  document.getElementById('pipelineGrid').innerHTML = STAGE_DEFS.map(st => {
+    const items = data.filter(d => d.status === st.key);
+    const total = items.reduce((s,d)=>s+d.saving,0);
+    return `<div class="pipeline-col ${st.cls}">
+      <div class="pipeline-col-header">
+        <div class="pipeline-col-title">${st.label}</div>
+        <div class="pipeline-count">${items.length} initiatives</div>
+      </div>
+      <div class="pipeline-total">€${(total/1000).toFixed(0)}K</div>
+      <div class="pipeline-items">${items.slice(0,4).map(d=>`
+        <div class="pipe-item">
+          <div class="pipe-item-name">${d.name}</div>
+          <div class="pipe-item-meta">
+            <span class="pipe-item-cat">${d.cat} · ${d.quarter}</span>
+            <span class="pipe-item-val">€${d.saving}K</span>
+          </div>
+        </div>`).join('')}${items.length>4?`<div style="font-size:.7rem;color:var(--muted);padding:.25rem 0 0 .25rem">+${items.length-4} more…</div>`:''}</div>
+    </div>`;
+  }).join('');
+}
+
+// ─── KPIs ─────────────────────────────────────────────────────────
+function renderKPIs(data) {
+  const target = 2500;
+  const realised = data.filter(d=>d.status==='Realized').reduce((s,d)=>s+d.saving,0);
+  const pipeline = data.filter(d=>d.status==='In Progress').reduce((s,d)=>s+d.saving,0);
+  const atRisk = data.filter(d=>d.status==='At Risk').reduce((s,d)=>s+d.saving,0);
+  const hardSav = data.filter(d=>d.type==='Hard'&&d.status==='Realized').reduce((s,d)=>s+d.saving,0);
+  const verified = data.filter(d=>d.verified).length;
+  const attainment = ((realised/target)*100).toFixed(0);
+  const avgPct = (data.reduce((s,d)=>s+parseFloat(d.savingPct),0)/data.length).toFixed(1);
+
+  const kpis = [
+    {label:'TOTAL REALISED',    val:'€'+Math.round(realised/1000)+'K', trend:`▲ ${attainment}% of target`, cls:'trend-up'},
+    {label:'ANNUAL TARGET',     val:'€'+target+'K',                     trend:'— Procurement Target', cls:'trend-neutral'},
+    {label:'TARGET ATTAINMENT', val:attainment+'%',                      trend:attainment>=90?'▲ On Track':'▼ Below Target', cls:attainment>=90?'trend-up':'trend-down'},
+    {label:'IN PIPELINE',       val:'€'+Math.round(pipeline/1000)+'K',  trend:'◐ In Progress', cls:'trend-neutral'},
+    {label:'AT RISK',           val:'€'+Math.round(atRisk/1000)+'K',    trend:'▼ Needs Action', cls:'trend-down'},
+    {label:'HARD SAVINGS',      val:'€'+Math.round(hardSav/1000)+'K',   trend:'▲ CFO Credible', cls:'trend-up'},
+    {label:'VERIFIED INITIATIVES',val:verified+'/'+data.length,          trend:'▲ Finance Signed', cls:'trend-up'},
+    {label:'AVG SAVING %',      val:avgPct+'%',                          trend:'▲ Per Initiative', cls:'trend-up'},
+  ];
+  document.getElementById('kpiGrid').innerHTML = kpis.map(k=>`
+    <div class="kpi-card">
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-val">${k.val}</div>
+      <div class="kpi-trend ${k.cls}">${k.trend}</div>
+    </div>`).join('');
+}
+
+// ─── TABLE ────────────────────────────────────────────────────────
+function renderTable(data) {
+  document.getElementById('tableInfo').textContent = `Showing ${data.length} of ${DATA.length} initiatives`;
+  document.getElementById('tableBody').innerHTML = data.map(d => {
+    const typeCls = d.type==='Hard'?'tt-hard':d.type==='Soft'?'tt-soft':'tt-avoid';
+    const ragCls = d.rag==='G'?'rd-g':d.rag==='A'?'rd-a':'rd-r';
+    const statusColor = d.status==='Realized'?'var(--green)':d.status==='In Progress'?'var(--amber)':d.status==='At Risk'?'var(--red)':'var(--muted)';
+    return `<tr>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis">${d.name}</td>
+      <td>${d.cat}</td>
+      <td><span class="type-tag ${typeCls}">${d.type.toUpperCase()}</span></td>
+      <td>${d.base}</td>
+      <td>${d.neg}</td>
+      <td style="color:var(--green);font-family:'Space Mono',monospace;font-weight:700">${d.saving}</td>
+      <td>${d.savingPct}%</td>
+      <td style="color:${statusColor};font-size:.78rem">${d.status}</td>
+      <td>${d.owner}</td>
+      <td>${d.quarter}</td>
+      <td><span class="rag-dot ${ragCls}"></span>${d.rag}</td>
+      <td class="${d.verified?'verified-y':'verified-n'}">${d.verified?'✓ Yes':'– No'}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── CHARTS ──────────────────────────────────────────────────────
+function destroyAll(){Object.values(charts).forEach(c=>{try{c.destroy();}catch(_){}});charts={};}
+function cfg(){const s=getComputedStyle(document.documentElement);return{color:s.getPropertyValue('--muted').trim(),gridColor:s.getPropertyValue('--chart-grid').trim(),cyan:s.getPropertyValue('--cyan').trim(),red:s.getPropertyValue('--red').trim(),amber:s.getPropertyValue('--amber').trim(),green:s.getPropertyValue('--green').trim(),purple:s.getPropertyValue('--purple').trim(),text:s.getPropertyValue('--text').trim(),muted:s.getPropertyValue('--muted').trim()};}
+
+function rebuildCharts(data) {
+  destroyAll();
+  const c = cfg();
+
+  // 1. Waterfall — sorted by saving, cumulative
+  const sorted = [...data].filter(d=>d.status==='Realized').sort((a,b)=>b.saving-a.saving).slice(0,14);
+  let running = 0;
+  const wfLabels = sorted.map(d => d.name.length>18?d.name.slice(0,18)+'…':d.name);
+  const wfBases = sorted.map(d => { const b = running; running += d.saving; return b; });
+  const wfVals = sorted.map(d => d.saving);
+  charts.wf = new Chart(document.getElementById('waterfallChart').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: ['Start', ...wfLabels],
+      datasets: [
+        { label: 'Base (invisible)', data: [0, ...wfBases], backgroundColor: 'transparent', borderColor: 'transparent', stack: 's' },
+        { label: 'Saving (€K)', data: [0, ...wfVals], backgroundColor: sorted.map(d=>d.type==='Hard'?'rgba(0,255,136,0.75)':d.type==='Soft'?'rgba(0,212,255,0.7)':'rgba(168,85,247,0.7)'), borderRadius: 4, stack: 's' }
+      ]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.datasetIndex===1 ? `€${ctx.parsed.x}K` : '' } } },
+      scales: { x: { stacked: true, ticks: { color: c.color, callback: v => '€'+v+'K' }, grid: { color: c.gridColor } }, y: { stacked: true, ticks: { color: c.color, font:{size:9} }, grid: { color: c.gridColor } } }
+    }
+  });
+
+  // 2. Category bar
+  const cats = ['Logistics','Packaging','Raw Materials','MRO','IT & Services','Facilities'];
+  charts.cat = new Chart(document.getElementById('catChart').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: cats,
+      datasets: [{ label: 'Total Saving (€K)', data: cats.map(cat => data.filter(d=>d.cat===cat).reduce((s,d)=>s+d.saving,0)), backgroundColor: ['rgba(0,255,136,0.75)','rgba(0,212,255,0.7)','rgba(255,184,0,0.7)','rgba(168,85,247,0.7)','rgba(255,68,102,0.7)','rgba(255,255,255,0.2)'], borderRadius: 6 }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: c.color, font:{size:10} }, grid: { color: c.gridColor } }, y: { ticks: { color: c.color, callback: v => '€'+v+'K' }, grid: { color: c.gridColor } } } }
+  });
+
+  // 3. Savings type doughnut
+  const types = ['Hard','Soft','Cost Avoidance'];
+  charts.type = new Chart(document.getElementById('typeChart').getContext('2d'), {
+    type: 'doughnut',
+    data: { labels: types, datasets: [{ data: types.map(t=>data.filter(d=>d.type===t).reduce((s,d)=>s+d.saving,0)), backgroundColor: ['rgba(0,255,136,0.8)','rgba(0,212,255,0.75)','rgba(168,85,247,0.75)'], borderWidth: 0, hoverOffset: 6 }] },
+    options: { responsive: true, maintainAspectRatio: false, cutout: '60%', plugins: { legend: { position: 'bottom', labels: { color: c.color, padding: 14, font:{size:11} } } } }
+  });
+
+  // 4. Quarterly actual vs target
+  const qtrs = ['Q1','Q2','Q3','Q4'];
+  const qtrTarget = [625, 625, 625, 625];
+  charts.qtr = new Chart(document.getElementById('qtrChart').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: qtrs,
+      datasets: [
+        { label: 'Actual Savings', data: qtrs.map(q=>data.filter(d=>d.quarter===q&&d.status==='Realized').reduce((s,d)=>s+d.saving,0)), backgroundColor: 'rgba(0,255,136,0.75)', borderRadius: 6 },
+        { label: 'Target', data: qtrTarget, type: 'line', borderColor: c.amber, borderDash: [5,4], borderWidth: 2, pointRadius: 4, backgroundColor: 'transparent' }
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: c.color } } }, scales: { x: { ticks: { color: c.color }, grid: { color: c.gridColor } }, y: { ticks: { color: c.color, callback: v => '€'+v+'K' }, grid: { color: c.gridColor } } } }
+  });
+
+  // 5. Realised vs Pipeline stacked by category
+  charts.status = new Chart(document.getElementById('statusChart').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: cats,
+      datasets: [
+        { label: 'Realised', data: cats.map(cat=>data.filter(d=>d.cat===cat&&d.status==='Realized').reduce((s,d)=>s+d.saving,0)), backgroundColor: 'rgba(0,255,136,0.8)', borderRadius: 4 },
+        { label: 'In Progress', data: cats.map(cat=>data.filter(d=>d.cat===cat&&d.status==='In Progress').reduce((s,d)=>s+d.saving,0)), backgroundColor: 'rgba(255,184,0,0.7)', borderRadius: 4 },
+        { label: 'At Risk', data: cats.map(cat=>data.filter(d=>d.cat===cat&&d.status==='At Risk').reduce((s,d)=>s+d.saving,0)), backgroundColor: 'rgba(255,68,102,0.7)', borderRadius: 4 },
+        { label: 'Identified', data: cats.map(cat=>data.filter(d=>d.cat===cat&&d.status==='Identified').reduce((s,d)=>s+d.saving,0)), backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: 4 }
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: c.color, font:{size:10} } } }, scales: { x: { stacked: true, ticks: { color: c.color, font:{size:9} }, grid: { color: c.gridColor } }, y: { stacked: true, ticks: { color: c.color, callback: v=>'€'+v+'K' }, grid: { color: c.gridColor } } } }
+  });
+
+  // 6. Saving % by initiative (top 14)
+  const top = [...data].sort((a,b)=>parseFloat(b.savingPct)-parseFloat(a.savingPct)).slice(0,14);
+  charts.pct = new Chart(document.getElementById('pctChart').getContext('2d'), {
+    type: 'bar',
+    data: { labels: top.map(d=>d.name.length>16?d.name.slice(0,16)+'…':d.name), datasets: [{ label: 'Saving %', data: top.map(d=>parseFloat(d.savingPct)), backgroundColor: top.map(d=>d.type==='Hard'?'rgba(0,255,136,0.75)':d.type==='Soft'?'rgba(0,212,255,0.7)':'rgba(168,85,247,0.7)'), borderRadius: 4 }] },
+    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: c.color, callback: v=>v+'%' }, grid: { color: c.gridColor } }, y: { ticks: { color: c.color, font:{size:9} }, grid: { color: c.gridColor } } } }
+  });
+}
+
+// ─── FORECAST ────────────────────────────────────────────────────
+let forecastChart;
+const FC = { base:0.70, optimistic:1.0, conservative:0.40 };
+function buildForecastChart() {
+  if (forecastChart) { try { forecastChart.destroy(); } catch(_){} }
+  const c = cfg();
+  const target = 2500;
+  const realised = DATA.filter(d=>d.status==='Realized').reduce((s,d)=>s+d.saving,0);
+  const pipeline = DATA.filter(d=>d.status==='In Progress').reduce((s,d)=>s+d.saving,0);
+  const rate = FC[fcScenario];
+
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const realisedMonthly = [380, 340, 280, 310, 260, 290, 240, 210, 0, 0, 0, 0];
+  const pipelineMonthly = [0,0,0,0,0,0, 60, 80, 95, 110, 100, Math.round(pipeline*rate*0.55)];
+
+  let cumRealised = 0;
+  const cumLine = realisedMonthly.map((v,i)=>{ cumRealised += v + pipelineMonthly[i]; return Math.min(cumRealised, 3200); });
+  const targetLine = months.map((_,i)=>Math.round(target/12*(i+1)));
+
+  const ctx = document.getElementById('forecastChart').getContext('2d');
+  forecastChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: months,
+      datasets: [
+        { label: 'Cumulative Savings', data: cumLine, borderColor: c.green, backgroundColor: 'rgba(0,255,136,0.07)', fill: true, borderWidth: 2.5, tension: 0.3, pointRadius: 4 },
+        { label: '€2.5M Annual Target', data: targetLine, borderColor: c.amber, backgroundColor: 'transparent', borderWidth: 2, borderDash: [6,4], pointRadius: 3 },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: c.color } } },
+      scales: {
+        x: { ticks: { color: c.color }, grid: { color: c.gridColor } },
+        y: { ticks: { color: c.color, callback: v => '€'+v+'K' }, grid: { color: c.gridColor } }
+      }
+    }
+  });
+
+  const yearEndProj = cumLine[11];
+  const summaries = {
+    base: `<strong>Base Scenario (70% pipeline conversion):</strong> With 70% of In Progress initiatives closing by year-end, cumulative savings are projected to reach <strong style="color:var(--green)">€${yearEndProj}K</strong> — exceeding the €2.5M target. Logistics and Raw Materials close-out in Q3; Facilities and Packaging pipeline carry into Q4.`,
+    optimistic: `<strong>Optimistic Scenario (100% pipeline conversion):</strong> All In Progress initiatives close on schedule. Projected year-end cumulative savings reach <strong style="color:var(--green)">€${yearEndProj}K</strong> — a meaningful beat on target. This requires the ERP Licence and Dual-Source Sugar initiatives to be rescued from At Risk status before Q3 close.`,
+    conservative: `<strong>Conservative Scenario (40% pipeline conversion):</strong> Only 40% of pipeline converts — likely due to supplier resistance on renegotiations and internal approval delays. Projected year-end total is <strong style="color:var(--amber)">€${yearEndProj}K</strong>. Immediate action needed on stalled initiatives to protect Q4 attainment.`
+  };
+  document.getElementById('forecastSummary').innerHTML = summaries[fcScenario];
+}
+
+function setScenario(s, btn) {
+  fcScenario = s;
+  document.querySelectorAll('.scenario-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  buildForecastChart();
+}
+
+// ─── CSV ──────────────────────────────────────────────────────────
+function downloadCSV() {
+  const hdr = 'Initiative_Name,Category,Savings_Type,Baseline_Cost_EUR,Negotiated_Cost_EUR,Saving_EUR,Saving_Pct,Status,Owner,Quarter,RAG_Status,Verified\n';
+  const rows = DATA.map(d=>`"${d.name}",${d.cat},${d.type},${d.base*1000},${d.neg*1000},${d.saving*1000},${d.savingPct},${d.status},"${d.owner}",${d.quarter},${d.rag},${d.verified?'Y':'N'}`).join('\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([hdr+rows],{type:'text/csv'})); a.download = 'procurement_savings_tracker.csv'; a.click();
+}
+
+// ─── THEME REBUILD ─────────────────────────────────────────────────
+themeBtn.addEventListener('click', () => { setTimeout(() => { applyFilters(); buildForecastChart(); }, 60); });
+
+// ─── INIT ─────────────────────────────────────────────────────────
+applyFilters();
+buildForecastChart();
+</script>
+</body>
+</html>

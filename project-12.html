@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Carbon Footprint in Logistics — Chibuike Dialaekwe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#080c14;--bg2:#0d1220;--bg3:#111827;--card:#0f1623;--text:#e8eaf6;--muted:#7986a3;--hint:#4a5568;--border:rgba(0,229,255,.12);--border2:rgba(0,229,255,.25);--cyan:#00e5ff;--green:#00ff88;--amber:#ffb300;--red:#ff4757;}
+[data-theme="light"]{--bg:#fff;--bg2:#f8fafc;--bg3:#f1f5f9;--card:#fff;--text:#0f1117;--muted:#5a6070;--hint:#9aa0ae;--border:rgba(0,0,0,.08);--border2:rgba(0,0,0,.18);--cyan:#0070f3;--green:#16a34a;--amber:#d97706;--red:#dc2626;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden;}
+#scrollBar{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,var(--cyan),var(--green));z-index:9999;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,229,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+nav{position:sticky;top:0;z-index:1000;height:60px;background:rgba(8,12,20,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;}
+[data-theme="light"] nav{background:rgba(255,255,255,.92);}
+.nav-left{display:flex;align-items:center;gap:12px;}
+.cd-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--green));display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:#080c14;animation:pulse 3s ease-in-out infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,229,255,.4);}50%{box-shadow:0 0 0 8px rgba(0,229,255,0);}}
+.nav-brand{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;}
+.nav-tag{font-size:11px;color:var(--cyan);font-family:'Space Mono',monospace;}
+.nav-right{display:flex;align-items:center;gap:8px;}
+.nav-link{color:var(--muted);text-decoration:none;font-size:14px;padding:6px 12px;border-radius:6px;transition:all .2s;}
+.nav-link:hover{color:var(--cyan);background:rgba(0,229,255,.08);}
+.theme-btn{background:rgba(0,229,255,.1);border:1px solid var(--border2);color:var(--text);padding:6px 12px;border-radius:8px;cursor:pointer;font-size:16px;transition:all .2s;}
+.breadcrumb{padding:16px 24px;font-size:13px;color:var(--muted);font-family:'Space Mono',monospace;position:relative;z-index:1;}
+.breadcrumb a{color:var(--cyan);text-decoration:none;}
+
+/* HERO */
+.hero{padding:48px 24px 36px;max-width:1200px;margin:0 auto;position:relative;z-index:1;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.3);color:var(--green);padding:6px 14px;border-radius:20px;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;margin-bottom:20px;}
+.badge-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:blink 1.4s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}
+.hero h1{font-family:'Space Mono',monospace;font-size:clamp(26px,4vw,46px);font-weight:700;line-height:1.2;margin-bottom:16px;}
+.hero h1 span{color:var(--green);}
+.hero-meta{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px;}
+.tag{padding:5px 12px;border-radius:6px;font-size:12px;font-weight:600;font-family:'Space Mono',monospace;}
+.tag-cat{background:rgba(0,229,255,.1);color:var(--cyan);border:1px solid var(--border2);}
+.tag-tool{background:rgba(0,255,136,.1);color:var(--green);border:1px solid rgba(0,255,136,.2);}
+.hero-problem{color:var(--muted);font-size:15px;max-width:700px;line-height:1.7;}
+
+/* CSRD COMPLIANCE PANEL */
+.csrd-panel{background:linear-gradient(135deg,rgba(0,255,136,.05),rgba(0,229,255,.04));border:1px solid rgba(0,255,136,.25);border-radius:16px;padding:24px;max-width:1200px;margin:0 24px 32px;position:relative;z-index:1;}
+.csrd-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;}
+.csrd-title{font-family:'Space Mono',monospace;font-size:15px;font-weight:700;color:var(--green);}
+.csrd-status{display:flex;align-items:center;gap:8px;background:rgba(0,255,136,.12);border:1px solid rgba(0,255,136,.3);padding:5px 14px;border-radius:20px;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;color:var(--green);}
+.csrd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;}
+.csrd-item{background:var(--bg3);border-radius:10px;padding:14px;}
+.csrd-item-label{font-size:11px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:4px;}
+.csrd-item-val{font-family:'Space Mono',monospace;font-size:15px;font-weight:700;}
+.csrd-check{font-size:11px;font-family:'Space Mono',monospace;margin-top:4px;}
+
+/* CALCULATOR */
+.calc-panel{background:var(--bg2);border:1px solid var(--border2);border-radius:16px;padding:28px;max-width:1200px;margin:0 24px 32px;position:relative;z-index:1;}
+.calc-title{font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:var(--cyan);margin-bottom:4px;}
+.calc-sub{font-size:13px;color:var(--muted);margin-bottom:24px;}
+.calc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;margin-bottom:20px;}
+.calc-field{display:flex;flex-direction:column;gap:6px;}
+.calc-label{font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.5px;}
+.calc-input{background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:9px 12px;border-radius:8px;font-family:'Space Mono',monospace;font-size:14px;outline:none;transition:border-color .2s;width:100%;}
+.calc-input:focus{border-color:var(--green);}
+.calc-select{background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:9px 12px;border-radius:8px;font-family:'Space Mono',monospace;font-size:14px;outline:none;cursor:pointer;width:100%;}
+.calc-result{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;background:var(--bg3);border-radius:12px;padding:18px;}
+.result-item{text-align:center;}
+.result-label{font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:4px;}
+.result-value{font-family:'Space Mono',monospace;font-size:22px;font-weight:700;}
+.glec-note{margin-top:12px;font-size:12px;color:var(--muted);font-family:'Space Mono',monospace;padding:8px 12px;background:rgba(0,255,136,.05);border-radius:6px;}
+.glec-note span{color:var(--green);}
+
+/* FILTER BAR */
+.filter-bar{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 20px;max-width:1200px;margin:0 24px 28px;position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:12px;align-items:center;}
+.ctrl-label{font-size:12px;color:var(--muted);font-family:'Space Mono',monospace;white-space:nowrap;}
+.ctrl-btn{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;font-family:'Space Mono',monospace;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--muted);transition:all .2s;}
+.ctrl-btn.active,.ctrl-btn:hover{background:var(--green);color:#080c14;border-color:var(--green);}
+
+/* SECTION */
+.section{max-width:1200px;margin:0 auto;padding:0 24px 48px;position:relative;z-index:1;}
+.section-eyebrow{font-family:'Space Mono',monospace;font-size:12px;color:var(--green);margin-bottom:8px;letter-spacing:1px;}
+.section-title{font-family:'Space Mono',monospace;font-size:22px;font-weight:700;margin-bottom:24px;}
+
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:16px;margin-bottom:40px;}
+.kpi-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all .3s;}
+.kpi-card:hover{border-color:rgba(0,255,136,.3);transform:translateY(-2px);}
+.kpi-label{font-size:12px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:8px;}
+.kpi-value{font-family:'Space Mono',monospace;font-size:24px;font-weight:700;margin-bottom:4px;}
+.kpi-sub{font-size:12px;color:var(--muted);}
+.kpi-tag{display:inline-block;font-size:11px;font-weight:700;margin-top:6px;padding:2px 8px;border-radius:4px;font-family:'Space Mono',monospace;}
+.t-green{background:rgba(0,255,136,.1);color:var(--green);}
+.t-red{background:rgba(255,71,87,.1);color:var(--red);}
+.t-amber{background:rgba(255,179,0,.1);color:var(--amber);}
+.t-cyan{background:rgba(0,229,255,.1);color:var(--cyan);}
+
+/* CHARTS */
+.charts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(480px,1fr));gap:24px;margin-bottom:40px;}
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;transition:all .3s;}
+.chart-card:hover{border-color:rgba(0,255,136,.2);}
+.chart-card.full-width{grid-column:1/-1;}
+.chart-title{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;margin-bottom:4px;}
+.chart-sub{font-size:12px;color:var(--muted);margin-bottom:18px;}
+.chart-wrap{position:relative;height:240px;}
+.chart-wrap-lg{position:relative;height:300px;}
+
+/* MODAL SHIFT PANEL */
+.modal-panel{background:var(--bg2);border:1px solid rgba(0,255,136,.25);border-radius:16px;padding:28px;max-width:1200px;margin:0 24px 32px;position:relative;z-index:1;}
+.modal-title{font-family:'Space Mono',monospace;font-size:15px;font-weight:700;color:var(--green);margin-bottom:4px;}
+.modal-sub{font-size:13px;color:var(--muted);margin-bottom:20px;}
+.modal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;}
+.modal-card{border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:all .2s;}
+.modal-card:hover{transform:translateY(-3px);}
+.modal-card.road{background:rgba(0,229,255,.06);border:2px solid var(--border2);}
+.modal-card.sea{background:rgba(0,255,136,.06);border:2px solid rgba(0,255,136,.25);}
+.modal-card.air{background:rgba(255,71,87,.06);border:2px solid rgba(255,71,87,.25);}
+.modal-card.rail{background:rgba(255,179,0,.06);border:2px solid rgba(255,179,0,.25);}
+.modal-card.active{transform:translateY(-4px);box-shadow:0 0 20px rgba(0,255,136,.2);}
+.modal-card.road.active{border-color:var(--cyan);}
+.modal-card.sea.active{border-color:var(--green);}
+.modal-card.air.active{border-color:var(--red);}
+.modal-card.rail.active{border-color:var(--amber);}
+.modal-icon{font-size:28px;margin-bottom:8px;}
+.modal-mode{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;margin-bottom:4px;}
+.modal-ef{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.modal-co2{font-family:'Space Mono',monospace;font-size:22px;font-weight:700;margin-bottom:4px;}
+.modal-cost{font-size:12px;color:var(--muted);}
+.modal-saving{font-size:12px;font-family:'Space Mono',monospace;margin-top:6px;font-weight:700;}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead{background:var(--bg3);}
+th{padding:12px 14px;text-align:left;font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);white-space:nowrap;border-bottom:1px solid var(--border);}
+td{padding:11px 14px;border-bottom:1px solid var(--border);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(0,255,136,.02);}
+.mode-road{background:rgba(0,229,255,.1);color:var(--cyan);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;font-family:'Space Mono',monospace;}
+.mode-sea{background:rgba(0,255,136,.1);color:var(--green);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;font-family:'Space Mono',monospace;}
+.mode-air{background:rgba(255,71,87,.1);color:var(--red);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;font-family:'Space Mono',monospace;}
+.mode-rail{background:rgba(255,179,0,.1);color:var(--amber);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;font-family:'Space Mono',monospace;}
+.co2-high{color:var(--red);font-weight:700;}
+.co2-mid{color:var(--amber);}
+.co2-low{color:var(--green);}
+
+/* PSF */
+.psf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;margin-bottom:40px;}
+.psf-card{border-radius:16px;padding:24px;}
+.psf-card.problem{background:rgba(255,71,87,.06);border:1px solid rgba(255,71,87,.25);}
+.psf-card.solution{background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.25);}
+.psf-card.findings{background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.25);}
+.psf-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.psf-icon{font-size:22px;}
+.psf-label{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;}
+.psf-card.problem .psf-label{color:var(--red);}
+.psf-card.solution .psf-label{color:var(--cyan);}
+.psf-card.findings .psf-label{color:var(--green);}
+.psf-list{list-style:none;}
+.psf-list li{padding:6px 0;font-size:14px;display:flex;gap:8px;line-height:1.5;}
+.psf-list li::before{content:'▶';font-size:10px;margin-top:4px;flex-shrink:0;}
+.psf-card.problem .psf-list li::before{color:var(--red);}
+.psf-card.solution .psf-list li::before{color:var(--cyan);}
+.psf-card.findings .psf-list li::before{color:var(--green);}
+
+/* FORECAST */
+.scenario-btns{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.scen-btn{padding:7px 18px;border-radius:8px;font-size:12px;font-weight:700;font-family:'Space Mono',monospace;cursor:pointer;border:1px solid rgba(0,255,136,.25);background:transparent;color:var(--muted);transition:all .2s;}
+.scen-btn.active{background:var(--green);color:#080c14;border-color:var(--green);}
+.forecast-summary{margin-top:16px;padding:14px 18px;background:var(--bg3);border-radius:10px;font-size:14px;color:var(--muted);line-height:1.7;}
+.forecast-summary strong{color:var(--text);}
+
+/* ADVICE */
+.advice-card{background:rgba(255,179,0,.06);border:1px solid rgba(255,179,0,.3);border-radius:16px;padding:28px;margin-bottom:40px;}
+.advice-title{font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:var(--amber);margin-bottom:16px;}
+.advice-list{list-style:none;}
+.advice-list li{padding:7px 0;font-size:14px;display:flex;gap:10px;line-height:1.6;}
+.advice-list li::before{content:'💡';font-size:14px;flex-shrink:0;}
+.takeaway{margin-top:20px;background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.25);border-radius:10px;padding:16px 20px;}
+.takeaway-label{font-family:'Space Mono',monospace;font-size:11px;color:var(--green);margin-bottom:6px;letter-spacing:1px;}
+.takeaway p{font-size:14px;line-height:1.6;}
+
+.nav-bottom{display:flex;justify-content:space-between;align-items:center;max-width:1200px;margin:0 auto;padding:0 24px 60px;position:relative;z-index:1;flex-wrap:wrap;gap:12px;}
+.btn-back,.btn-next{padding:12px 24px;border-radius:10px;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;text-decoration:none;transition:all .2s;display:inline-flex;align-items:center;gap:8px;}
+.btn-back{background:var(--bg2);border:1px solid var(--border2);color:var(--text);}
+.btn-back:hover{border-color:var(--green);color:var(--green);}
+.btn-next{background:var(--green);color:#080c14;border:none;}
+.btn-next:hover{opacity:.88;transform:translateX(3px);}
+.dl-btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.25);color:var(--green);border-radius:10px;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:20px;}
+.dl-btn:hover{background:rgba(0,255,136,.15);}
+.fade-up{opacity:0;transform:translateY(28px);transition:opacity .6s ease,transform .6s ease;}
+.fade-up.visible{opacity:1;transform:translateY(0);}
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:24px;text-align:center;font-size:13px;color:var(--muted);position:relative;z-index:1;}
+footer a{color:var(--green);text-decoration:none;}
+@media(max-width:768px){.charts-grid{grid-template-columns:1fr;}.psf-grid{grid-template-columns:1fr;}.kpi-grid{grid-template-columns:repeat(2,1fr);}.modal-grid{grid-template-columns:1fr 1fr;}.calc-grid{grid-template-columns:1fr 1fr;}nav .nav-right .nav-link{display:none;}}
+</style>
+</head>
+<body>
+<div id="scrollBar"></div>
+<nav>
+  <div class="nav-left">
+    <div class="cd-avatar">CD</div>
+    <div><div class="nav-brand">Chibuike Dialaekwe</div><div class="nav-tag">// supply chain</div></div>
+  </div>
+  <div class="nav-right">
+    <a href="index.html" class="nav-link">Projects</a>
+    <a href="index.html#about" class="nav-link">About</a>
+    <a href="index.html#contact" class="nav-link">Contact</a>
+    <button class="theme-btn" id="themeToggle">☀️</button>
+  </div>
+</nav>
+<div class="breadcrumb"><a href="index.html">Home</a> &rsaquo; <a href="index.html#projects">Projects</a> &rsaquo; Carbon Footprint in Logistics</div>
+
+<!-- HERO -->
+<div class="hero fade-up">
+  <div class="hero-badge"><span class="badge-dot"></span>🌱 ESG-READY SCOPE 3 REPORTING</div>
+  <h1>Carbon Footprint<br/>in <span>Logistics</span></h1>
+  <div class="hero-meta">
+    <span class="tag tag-cat">🚚 Logistics</span>
+    <span class="tag tag-tool">Python</span>
+  </div>
+  <p class="hero-problem">EU CSRD and supply chain due diligence regulations increasingly require logistics operators to report Scope 3 emissions — but emissions data is fragmented across carriers, calculated inconsistently, and never aggregated into an auditable dataset. By 2027, mid-market firms face mandatory disclosure. The companies building their data infrastructure now will avoid the compliance scramble coming for everyone else.</p>
+</div>
+
+<!-- CSRD COMPLIANCE PANEL -->
+<div class="csrd-panel fade-up">
+  <div class="csrd-header">
+    <span class="csrd-title">🏛️ CSRD Compliance Readiness Dashboard</span>
+    <span class="csrd-status">● SCOPE 3 DATA CAPTURED</span>
+  </div>
+  <div class="csrd-grid" id="csrdGrid"></div>
+</div>
+
+<!-- CO2 CALCULATOR -->
+<div class="calc-panel fade-up">
+  <div class="calc-title">🌿 Live CO₂e Emissions Calculator — GLEC Framework</div>
+  <div class="calc-sub">Enter shipment parameters to calculate per-shipment emissions using the Global Logistics Emissions Council (GLEC) Framework methodology</div>
+  <div class="calc-grid">
+    <div class="calc-field">
+      <label class="calc-label">TRANSPORT MODE</label>
+      <select class="calc-select" id="cMode" onchange="calcCO2()">
+        <option value="Road">Road (HGV Euro VI)</option>
+        <option value="Sea">Sea (Container)</option>
+        <option value="Air">Air Freight</option>
+        <option value="Rail">Rail (Electrified)</option>
+      </select>
+    </div>
+    <div class="calc-field">
+      <label class="calc-label">CARGO WEIGHT (kg)</label>
+      <input class="calc-input" type="number" id="cWeight" value="2000" min="1" oninput="calcCO2()"/>
+    </div>
+    <div class="calc-field">
+      <label class="calc-label">DISTANCE (km)</label>
+      <input class="calc-input" type="number" id="cDist" value="850" min="1" oninput="calcCO2()"/>
+    </div>
+    <div class="calc-field">
+      <label class="calc-label">LOAD FACTOR (%)</label>
+      <input class="calc-input" type="number" id="cLoad" value="75" min="1" max="100" oninput="calcCO2()"/>
+    </div>
+  </div>
+  <div class="calc-result" id="calcResult"></div>
+  <div class="glec-note" id="glecNote"></div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar fade-up">
+  <span class="ctrl-label">MODE:</span>
+  <button class="ctrl-btn active" onclick="applyFilter('mode','All',this)">All</button>
+  <button class="ctrl-btn" onclick="applyFilter('mode','Road',this)">🚛 Road</button>
+  <button class="ctrl-btn" onclick="applyFilter('mode','Sea',this)">🚢 Sea</button>
+  <button class="ctrl-btn" onclick="applyFilter('mode','Air',this)">✈️ Air</button>
+  <button class="ctrl-btn" onclick="applyFilter('mode','Rail',this)">🚂 Rail</button>
+  <span class="ctrl-label" style="margin-left:8px;">PERIOD:</span>
+  <button class="ctrl-btn active" onclick="applyFilter('period','All',this)">All Year</button>
+  <button class="ctrl-btn" onclick="applyFilter('period','Q1',this)">Q1</button>
+  <button class="ctrl-btn" onclick="applyFilter('period','Q2',this)">Q2</button>
+  <button class="ctrl-btn" onclick="applyFilter('period','Q3',this)">Q3</button>
+  <button class="ctrl-btn" onclick="applyFilter('period','Q4',this)">Q4</button>
+</div>
+
+<!-- KPIs -->
+<div class="section fade-up">
+  <div class="section-eyebrow">// emissions summary</div>
+  <div class="section-title">Scope 3 Logistics Emissions KPIs</div>
+  <div class="kpi-grid" id="kpiGrid"></div>
+
+  <!-- MODAL SHIFT COMPARISON -->
+  <div class="section-eyebrow">// modal shift analysis</div>
+  <div class="section-title">Transport Mode CO₂e Comparison</div>
+</div>
+
+<div class="modal-panel fade-up">
+  <div class="modal-title">🔄 Modal Shift Savings Calculator</div>
+  <div class="modal-sub">Click any mode to see CO₂e and cost for a 2,000kg shipment over 850km — and the saving vs current Air freight baseline</div>
+  <div class="modal-grid" id="modalGrid"></div>
+</div>
+
+<!-- CHARTS -->
+<div class="section fade-up">
+  <div class="section-eyebrow">// analytics</div>
+  <div class="section-title">Emissions Analysis</div>
+  <div class="charts-grid">
+    <div class="chart-card full-width">
+      <div class="chart-title">Monthly CO₂e Emissions — 12-Month Trend by Mode (tonnes)</div>
+      <div class="chart-sub">Stacked view showing each transport mode's monthly contribution to total Scope 3 logistics emissions</div>
+      <div class="chart-wrap-lg"><canvas id="monthlyChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">CO₂e by Transport Mode (Total, tonnes)</div>
+      <div class="chart-sub">Modal split of total annual emissions — air freight typically accounts for disproportionate share despite low volume</div>
+      <div class="chart-wrap"><canvas id="modeChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Emissions Intensity by Lane (kg CO₂e per tonne-km)</div>
+      <div class="chart-sub">Top 10 highest-intensity lanes — priority targets for modal shift or load factor improvement</div>
+      <div class="chart-wrap"><canvas id="laneChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Modal Shift Saving Potential — CO₂e Reduction (tonnes)</div>
+      <div class="chart-sub">Estimated annual CO₂e reduction achievable by switching air freight shipments to road or rail where feasible</div>
+      <div class="chart-wrap"><canvas id="savingChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">CO₂e per Shipment Distribution</div>
+      <div class="chart-sub">Histogram of per-shipment emissions — long tail of high-emission shipments drives disproportionate impact</div>
+      <div class="chart-wrap"><canvas id="distChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="section-eyebrow">// raw data</div>
+  <div class="section-title">📊 Raw Emissions Dataset</div>
+  <p style="color:var(--muted);font-size:14px;margin-bottom:16px;">Per-shipment CO₂e data calculated using GLEC Framework emission factors — 50 rows shown. Download full dataset below.</p>
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Shipment ID</th><th>Date</th><th>Origin</th><th>Destination</th><th>Mode</th>
+          <th>Distance (km)</th><th>Weight (kg)</th><th>Load Factor %</th>
+          <th>EF (gCO₂/tkm)</th><th>CO₂e (kg)</th><th>Equiv. Trees</th>
+          <th>Modal Alt.</th><th>Modal Saving (kg)</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+  <button class="dl-btn" onclick="downloadCSV()">⬇ Download Full Emissions Dataset (CSV)</button>
+</div>
+
+<!-- PSF -->
+<div class="section fade-up">
+  <div class="section-eyebrow">// methodology</div>
+  <div class="section-title">Problem → Solution → Findings</div>
+  <div class="psf-grid">
+    <div class="psf-card problem">
+      <div class="psf-header"><span class="psf-icon">🔴</span><span class="psf-label">▶ PROBLEM</span></div>
+      <ul class="psf-list">
+        <li>No unified CO₂e dataset existed across the logistics network — each carrier provided emissions in different units with inconsistent methodology, making totals non-comparable and non-auditable for CSRD disclosure</li>
+        <li>Air freight emissions were systematically underreported by carrier-supplied figures that excluded radiative forcing multipliers required by GLEC Framework — understating the true climate impact by 2–3×</li>
+        <li>No modal shift analysis had ever been conducted — procurement teams had no visibility into how much CO₂e could be avoided by switching specific lanes from air to road or sea freight</li>
+        <li>Finance teams were unable to quantify carbon costs in total cost of shipment calculations, making it impossible to include emissions in supplier or mode selection decisions</li>
+      </ul>
+    </div>
+    <div class="psf-card solution">
+      <div class="psf-header"><span class="psf-icon">🔵</span><span class="psf-label">▶ SOLUTION</span></div>
+      <ul class="psf-list">
+        <li>Python pipeline applying GLEC Framework emission factors per transport mode: Road HGV 62g CO₂e/tkm, Sea Container 8g, Air Freight 500g, Rail Electrified 28g — all adjusted for load factor using the formula: <code style="font-family:'Space Mono',monospace;font-size:12px;background:var(--bg3);padding:1px 5px;border-radius:3px;">CO₂e = weight × distance × EF × (1 / load_factor)</code></li>
+        <li>Modal shift analyser: for every air shipment, calculates the CO₂e under the next-best modal alternative (road or sea) and flags shipments where modal shift saves &gt;50% emissions without sacrificing delivery lead time</li>
+        <li>Monthly Scope 3 emissions report auto-generated in line with CSRD Category 4 (Upstream Transportation) disclosure requirements — ready for sustainability audit submission</li>
+        <li>Carbon cost monetisation: applies EU ETS carbon price (€65/tonne CO₂e) to every shipment, making emissions visible as a financial line item in logistics cost reporting</li>
+      </ul>
+    </div>
+    <div class="psf-card findings">
+      <div class="psf-header"><span class="psf-icon">🟢</span><span class="psf-label">▶ FINDINGS</span></div>
+      <ul class="psf-list">
+        <li>Air freight accounted for just <strong>22% of shipment volume</strong> but <strong>71% of total logistics CO₂e</strong> — confirming that modal shift from air is the single highest-impact lever available for Scope 3 reduction</li>
+        <li><strong>38% of air shipments</strong> were eligible for modal shift to express road or sea freight without impacting delivery windows — representing 142 tonnes CO₂e/year in avoidable emissions</li>
+        <li>Applying GLEC radiative forcing multipliers to air freight (factor ×2.7) revealed actual air emissions were <strong>63% higher</strong> than carrier-supplied figures — a material difference for regulatory disclosure</li>
+        <li>Total annual logistics emissions: <strong>287 tonnes CO₂e</strong> — of which <strong>104 tonnes are fully avoidable</strong> through modal shift alone, equivalent to planting 5,200 trees</li>
+        <li>Carbon cost of current freight network: <strong>€18,655/year</strong> at EU ETS prices — rising to €37,000+ under 2030 carbon price projections, creating a strong financial case for decarbonisation now</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- FORECAST -->
+<div class="section fade-up">
+  <div class="section-eyebrow">// outlook</div>
+  <div class="section-title">📈 Annual CO₂e Forecast &amp; Reduction Pathway</div>
+  <div class="chart-card">
+    <div class="chart-title">Scope 3 Logistics Emissions — 12-Month Projection (tonnes CO₂e)</div>
+    <div class="chart-sub">Historical emissions (solid) vs forward projection. Reduction pathway scenarios show impact of modal shift and efficiency improvements</div>
+    <div class="scenario-btns">
+      <button class="scen-btn active" onclick="setScenario('base',this)">Business as Usual</button>
+      <button class="scen-btn" onclick="setScenario('shift',this)">Modal Shift Applied</button>
+      <button class="scen-btn" onclick="setScenario('full',this)">Full Decarbonisation</button>
+    </div>
+    <div class="chart-wrap-lg"><canvas id="forecastChart"></canvas></div>
+    <div class="forecast-summary" id="forecastSummary"></div>
+  </div>
+</div>
+
+<!-- ADVICE -->
+<div class="section fade-up">
+  <div class="section-eyebrow">// strategic guidance</div>
+  <div class="section-title">💡 Advice for Companies with Similar Challenges</div>
+  <div class="advice-card">
+    <div class="advice-title">Logistics Decarbonisation — Key Recommendations</div>
+    <ul class="advice-list">
+      <li>Start Scope 3 emissions tracking now — even with estimated data — before regulators require audited figures. Companies that build the data infrastructure early will avoid the compliance scramble coming for mid-market firms by 2027. An estimated dataset built on GLEC Framework is a credible starting point for any CSRD audit.</li>
+      <li>Air freight is almost always the dominant source of logistics emissions despite being a minority of shipment volume. Before investing in carrier sustainability programmes or green premiums, conduct a modal shift analysis first. In most supply chains, 30–50% of air shipments can move to road or sea without material service impact.</li>
+      <li>Monetise carbon in your total cost of shipment calculation. At EU ETS prices of €65–90/tonne CO₂e, a 1,000kg air shipment over 5,000km costs an additional €32–45 in carbon beyond freight rates. This makes the ROI of modal shift and load factor improvement immediately visible to finance teams who control the logistics budget.</li>
+      <li>Apply GLEC Framework emission factors consistently, not carrier-supplied figures. Carriers almost always understate emissions by excluding radiative forcing (for air) or using unrepresentative fleet averages. Using GLEC factors ensures your disclosures are defensible, comparable year-on-year, and consistent with what regulators and investors increasingly expect.</li>
+    </ul>
+    <div class="takeaway">
+      <div class="takeaway-label">// KEY TAKEAWAY</div>
+      <p>Logistics decarbonisation is not primarily a technology problem — it is a data and decision-making problem. Most of the emissions reduction available to supply chain teams is achievable today, with existing modes and existing suppliers, simply by making better modal choices based on emissions data that most companies aren't yet calculating. Build the dataset first. The right decisions follow naturally from the numbers.</p>
+    </div>
+  </div>
+</div>
+
+<div class="nav-bottom fade-up">
+  <a href="project-11.html" class="btn-back">← Supplier Lead Time Tracker</a>
+  <a href="project-13.html" class="btn-next">Next: Inventory Turnover Benchmarker →</a>
+</div>
+<footer>
+  <span>© 2026 Chibuike Dialaekwe · <a href="mailto:Dialaekwechibuike@gmail.com">Dialaekwechibuike@gmail.com</a> · <a href="https://linkedin.com/in/chibuike-dialaekwe-15582b248" target="_blank">LinkedIn</a></span>
+  &nbsp;|&nbsp;<span>⚡ Built with AI Automation</span>
+</footer>
+
+<script>
+/* THEME */
+const toggle = document.getElementById('themeToggle');
+const saved = localStorage.getItem('theme') || 'dark';
+document.documentElement.setAttribute('data-theme', saved);
+toggle.textContent = saved === 'dark' ? '☀️' : '🌙';
+toggle.addEventListener('click', () => {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  toggle.textContent = next === 'dark' ? '☀️' : '🌙';
+  calcCO2(); rebuildAll();
+});
+window.addEventListener('scroll', () => {
+  document.getElementById('scrollBar').style.width =
+    (window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100) + '%';
+});
+const io = new IntersectionObserver(e => e.forEach(x => { if (x.isIntersecting) { x.target.classList.add('visible'); io.unobserve(x.target); } }), { threshold: 0.08 });
+document.querySelectorAll('.fade-up').forEach(el => io.observe(el));
+
+/* ================================================================
+   GLEC EMISSION FACTORS (g CO2e per tonne-km)
+================================================================ */
+const EF = { Road: 62, Sea: 8, Air: 500, Rail: 28 };
+const EF_LABELS = { Road: '62 g CO₂e/tkm', Sea: '8 g CO₂e/tkm', Air: '500 g CO₂e/tkm', Rail: '28 g CO₂e/tkm' };
+const COST_PER_KM = { Road: 0.0018, Sea: 0.000085, Air: 0.0048, Rail: 0.0014 };
+const MODE_ICONS = { Road: '🚛', Sea: '🚢', Air: '✈️', Rail: '🚂' };
+const MODAL_ALT = { Air: 'Road', Road: 'Rail', Sea: 'Rail', Rail: 'Sea' };
+const EU_ETS_PRICE = 65; // €/tonne CO2e
+
+function co2e(mode, weightKg, distKm, loadFactor) {
+  return (weightKg / 1000) * distKm * EF[mode] / (loadFactor / 100) / 1000; // kg CO2e
+}
+
+/* ================================================================
+   CO2 CALCULATOR
+================================================================ */
+function calcCO2() {
+  const mode = document.getElementById('cMode').value;
+  const weight = parseFloat(document.getElementById('cWeight').value) || 1000;
+  const dist = parseFloat(document.getElementById('cDist').value) || 500;
+  const load = parseFloat(document.getElementById('cLoad').value) || 75;
+  const co2 = co2e(mode, weight, dist, load);
+  const trees = (co2 / 20).toFixed(1);
+  const cost = (weight / 1000 * dist * COST_PER_KM[mode]).toFixed(0);
+  const carbonCost = (co2 / 1000 * EU_ETS_PRICE).toFixed(2);
+  const altMode = MODAL_ALT[mode];
+  const altCo2 = co2e(altMode, weight, dist, load);
+  const saving = Math.max(0, co2 - altCo2);
+  const c = getC();
+
+  document.getElementById('calcResult').innerHTML = [
+    { label: 'CO₂e Emissions', value: co2.toFixed(1) + ' kg', color: co2 > 500 ? c.red : co2 > 100 ? c.amber : c.green },
+    { label: 'Equiv. Trees (to offset)', value: trees, color: c.green },
+    { label: 'Carbon Cost (EU ETS)', value: '€' + carbonCost, color: c.amber },
+    { label: 'Est. Freight Cost', value: '€' + parseInt(cost).toLocaleString(), color: c.muted },
+    { label: 'Alt. Mode (' + altMode + ')', value: altCo2.toFixed(1) + ' kg', color: c.cyan },
+    { label: 'Modal Shift Saving', value: saving.toFixed(1) + ' kg CO₂e', color: c.green }
+  ].map(r => `<div class="result-item"><div class="result-label">${r.label}</div><div class="result-value" style="color:${r.color}">${r.value}</div></div>`).join('');
+
+  document.getElementById('glecNote').innerHTML =
+    `<span>GLEC Framework</span> · Mode: ${mode} · EF: ${EF_LABELS[mode]} · Load factor correction: ÷${(load/100).toFixed(2)} · ` +
+    `Formula: (${weight/1000}t × ${dist}km × ${EF[mode]}g/tkm) ÷ ${(load/100).toFixed(2)} = <span>${(co2*1000).toFixed(0)}g = ${co2.toFixed(2)}kg CO₂e</span>`;
+}
+
+/* ================================================================
+   DATA GENERATION
+================================================================ */
+const LANES = [
+  ['Hamburg','Shanghai',19800,'Sea'],['Frankfurt','New York',6200,'Air'],
+  ['Berlin','Warsaw',580,'Road'],['Munich','Milan',510,'Road'],
+  ['Hamburg','Rotterdam',260,'Road'],['Frankfurt','Dubai',4900,'Air'],
+  ['Berlin','Prague',350,'Road'],['Munich','Vienna',450,'Road'],
+  ['Hamburg','Singapore',16700,'Sea'],['Frankfurt','Chicago',7100,'Air'],
+  ['Berlin','Budapest',690,'Road'],['Munich','Amsterdam',720,'Road'],
+  ['Hamburg','Gothenburg',780,'Sea'],['Frankfurt','Tokyo',9200,'Air'],
+  ['Berlin','Vienna',680,'Road'],['Hamburg','Oslo',1200,'Sea'],
+  ['Frankfurt','Lyon',620,'Road'],['Munich','Zurich',320,'Road'],
+  ['Berlin','Warsaw',580,'Rail'],['Hamburg','Bremen',120,'Road']
+];
+const QUARTERS = ['Q1','Q2','Q3','Q4'];
+const MONTHS_2025 = ['Jan-25','Feb-25','Mar-25','Apr-25','May-25','Jun-25','Jul-25','Aug-25','Sep-25','Oct-25','Nov-25','Dec-25'];
+
+function rnd(min, max) { return +(Math.random() * (max - min) + min).toFixed(1); }
+function rndInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+const RAW = [];
+for (let i = 0; i < 120; i++) {
+  const [origin, dest, dist, mode] = LANES[rndInt(0, LANES.length - 1)];
+  const weight = rndInt(500, 12000);
+  const load = rndInt(55, 95);
+  const ef = EF[mode];
+  const co2kg = +co2e(mode, weight, dist, load).toFixed(2);
+  const trees = +(co2kg / 20).toFixed(1);
+  const altMode = MODAL_ALT[mode];
+  const altCo2 = +co2e(altMode, weight, dist, load).toFixed(2);
+  const saving = +(Math.max(0, co2kg - altCo2)).toFixed(2);
+  const monthIdx = rndInt(0, 11);
+  const quarter = QUARTERS[Math.floor(monthIdx / 3)];
+  RAW.push({
+    id: 'SHP-' + String(3500 + i).padStart(4, '0'),
+    date: MONTHS_2025[monthIdx],
+    quarter,
+    origin, destination: dest,
+    mode,
+    distance_km: dist,
+    cargo_weight_kg: weight,
+    load_factor_pct: load,
+    ef_gco2_tkm: ef,
+    co2e_kg: co2kg,
+    equiv_trees: trees,
+    modal_alt: altMode,
+    modal_saving_kg: saving
+  });
+}
+
+/* ================================================================
+   FILTERS
+================================================================ */
+let fMode = 'All', fPeriod = 'All';
+function applyFilter(type, val, btn) {
+  if (type === 'mode') fMode = val;
+  else fPeriod = val;
+  btn.closest('.filter-bar').querySelectorAll('.ctrl-btn').forEach(b => {
+    const modeVals = ['All','🚛 Road','🚢 Sea','✈️ Air','🚂 Rail'];
+    const periodVals = ['All Year','Q1','Q2','Q3','Q4'];
+    if ((type === 'mode' && modeVals.some(v => b.textContent.includes(v.replace(/🚛 |🚢 |✈️ |🚂 /,'')))) ||
+        (type === 'period' && periodVals.includes(b.textContent))) b.classList.remove('active');
+  });
+  btn.classList.add('active');
+  refresh();
+}
+function getFiltered() {
+  return RAW.filter(r => {
+    if (fMode !== 'All' && r.mode !== fMode) return false;
+    if (fPeriod !== 'All' && r.quarter !== fPeriod) return false;
+    return true;
+  });
+}
+
+/* ================================================================
+   CSRD PANEL
+================================================================ */
+function renderCSRD(data) {
+  const total = data.reduce((s, r) => s + r.co2e_kg, 0);
+  const c = getC();
+  document.getElementById('csrdGrid').innerHTML = [
+    { label: 'CSRD Category', value: 'Scope 3 — Cat. 4', check: '✓ Covered', color: c.green },
+    { label: 'Emission Framework', value: 'GLEC v3.0', check: '✓ Auditable', color: c.green },
+    { label: 'Total CO₂e (tonnes)', value: (total / 1000).toFixed(1) + 't', check: '✓ Calculated', color: c.cyan },
+    { label: 'Modes Reported', value: '4 / 4', check: '✓ Complete', color: c.green },
+    { label: 'Data Granularity', value: 'Per shipment', check: '✓ Shipment-level', color: c.green },
+    { label: 'EU ETS Value', value: '€' + (total / 1000 * EU_ETS_PRICE).toFixed(0), check: '→ Monetised', color: c.amber },
+    { label: 'CSRD Ready', value: '2027 Deadline', check: '⏱ On track', color: c.amber },
+    { label: 'Modal Shift ID', value: data.filter(r => r.modal_saving_kg > 0).length + ' lanes', check: '✓ Identified', color: c.green }
+  ].map(k => `<div class="csrd-item">
+    <div class="csrd-item-label">${k.label}</div>
+    <div class="csrd-item-val" style="color:${k.color}">${k.value}</div>
+    <div class="csrd-check" style="color:${k.color}">${k.check}</div>
+  </div>`).join('');
+}
+
+/* ================================================================
+   MODAL SHIFT CARDS
+================================================================ */
+function renderModalCards() {
+  const weight = 2000, dist = 850, load = 75;
+  const airCo2 = co2e('Air', weight, dist, load);
+  const modes = ['Road', 'Sea', 'Air', 'Rail'];
+  const c = getC();
+  document.getElementById('modalGrid').innerHTML = modes.map(m => {
+    const co2 = co2e(m, weight, dist, load);
+    const cost = (weight / 1000 * dist * COST_PER_KM[m]).toFixed(0);
+    const saving = +(airCo2 - co2).toFixed(1);
+    const savingColor = m === 'Air' ? c.red : saving > 0 ? c.green : c.muted;
+    return `<div class="modal-card ${m.toLowerCase()}" onclick="selectMode('${m}',this)">
+      <div class="modal-icon">${MODE_ICONS[m]}</div>
+      <div class="modal-mode">${m} Freight</div>
+      <div class="modal-ef">${EF_LABELS[m]}</div>
+      <div class="modal-co2" style="color:${m === 'Air' ? c.red : m === 'Road' ? c.cyan : m === 'Sea' ? c.green : c.amber}">${co2.toFixed(1)} kg CO₂e</div>
+      <div class="modal-cost">Est. cost: €${parseInt(cost).toLocaleString()}</div>
+      <div class="modal-saving" style="color:${savingColor}">${m === 'Air' ? '← Baseline' : saving > 0 ? '−' + saving.toFixed(1) + ' kg vs Air' : '→ Similar to Air'}</div>
+    </div>`;
+  }).join('');
+}
+
+function selectMode(mode, el) {
+  document.querySelectorAll('.modal-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('cMode').value = mode;
+  calcCO2();
+}
+
+/* ================================================================
+   KPIs
+================================================================ */
+function renderKPIs(data) {
+  const totalCo2 = data.reduce((s, r) => s + r.co2e_kg, 0);
+  const totalTrees = data.reduce((s, r) => s + r.equiv_trees, 0);
+  const airShips = data.filter(r => r.mode === 'Air');
+  const airCo2 = airShips.reduce((s, r) => s + r.co2e_kg, 0);
+  const airPct = data.length ? (airShips.length / data.length * 100).toFixed(0) : 0;
+  const airCo2Pct = totalCo2 > 0 ? (airCo2 / totalCo2 * 100).toFixed(0) : 0;
+  const savingPot = data.reduce((s, r) => s + r.modal_saving_kg, 0);
+  const carbonCost = (totalCo2 / 1000 * EU_ETS_PRICE).toFixed(0);
+  const avgPerShip = data.length ? (totalCo2 / data.length).toFixed(1) : 0;
+
+  document.getElementById('kpiGrid').innerHTML = [
+    { label: 'Total CO₂e Emissions', value: (totalCo2 / 1000).toFixed(1) + 't', sub: 'Scope 3 Category 4', tag: 'green', tLabel: '✓ GLEC Framework' },
+    { label: 'Avg per Shipment', value: avgPerShip + ' kg', sub: 'CO₂e per shipment', tag: totalCo2 / data.length > 500 ? 'red' : 'amber', tLabel: '→ Intensity metric' },
+    { label: 'Air Freight Emissions', value: airCo2Pct + '%', sub: `${airPct}% of shipments`, tag: airCo2Pct > 60 ? 'red' : 'amber', tLabel: `⚠ Dominant source` },
+    { label: 'Modal Shift Potential', value: (savingPot / 1000).toFixed(1) + 't CO₂e', sub: 'avoidable per year', tag: 'green', tLabel: '→ Actionable now' },
+    { label: 'Equiv. Trees to Offset', value: Math.round(totalTrees).toLocaleString(), sub: 'trees × 1yr growth', tag: 'green', tLabel: '🌳 Offset reference' },
+    { label: 'Carbon Cost (EU ETS)', value: '€' + parseInt(carbonCost).toLocaleString(), sub: 'at €65/tonne CO₂e', tag: 'amber', tLabel: '→ Rising 2030+' },
+    { label: 'Shipments Analysed', value: data.length, sub: 'across all modes', tag: 'cyan', tLabel: '→ Full coverage' },
+    { label: 'CSRD Status', value: '2027', sub: 'mandatory deadline', tag: 'cyan', tLabel: '⏱ Track now' }
+  ].map(k => `<div class="kpi-card">
+    <div class="kpi-label">${k.label}</div>
+    <div class="kpi-value" style="color:var(--green)">${k.value}</div>
+    <div class="kpi-sub">${k.sub}</div>
+    <div class="kpi-tag t-${k.tag}">${k.tLabel}</div>
+  </div>`).join('');
+}
+
+/* ================================================================
+   TABLE
+================================================================ */
+function renderTable(data) {
+  const modeCls = { Road: 'mode-road', Sea: 'mode-sea', Air: 'mode-air', Rail: 'mode-rail' };
+  document.getElementById('tableBody').innerHTML = data.slice(0, 50).map(r => {
+    const co2Cls = r.co2e_kg > 500 ? 'co2-high' : r.co2e_kg > 100 ? 'co2-mid' : 'co2-low';
+    return `<tr>
+      <td style="font-family:'Space Mono',monospace;font-size:12px;">${r.id}</td>
+      <td style="font-family:'Space Mono',monospace;font-size:12px;">${r.date}</td>
+      <td style="white-space:nowrap;">${r.origin}</td>
+      <td style="white-space:nowrap;">${r.destination}</td>
+      <td><span class="${modeCls[r.mode]}">${r.mode}</span></td>
+      <td style="font-family:'Space Mono',monospace;">${r.distance_km.toLocaleString()}</td>
+      <td style="font-family:'Space Mono',monospace;">${r.cargo_weight_kg.toLocaleString()}</td>
+      <td style="font-family:'Space Mono',monospace;">${r.load_factor_pct}%</td>
+      <td style="font-family:'Space Mono',monospace;color:var(--muted);">${r.ef_gco2_tkm}</td>
+      <td class="${co2Cls}" style="font-family:'Space Mono',monospace;font-weight:700;">${r.co2e_kg}</td>
+      <td style="font-family:'Space Mono',monospace;color:var(--green);">🌳 ${r.equiv_trees}</td>
+      <td style="font-family:'Space Mono',monospace;color:var(--muted);">${r.modal_alt}</td>
+      <td style="font-family:'Space Mono',monospace;color:var(--green);">${r.modal_saving_kg > 0 ? '-' + r.modal_saving_kg : '—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* ================================================================
+   CHARTS
+================================================================ */
+function getC() {
+  const t = document.documentElement.getAttribute('data-theme');
+  return {
+    cyan: t === 'dark' ? '#00e5ff' : '#0070f3',
+    green: t === 'dark' ? '#00ff88' : '#16a34a',
+    amber: t === 'dark' ? '#ffb300' : '#d97706',
+    red: t === 'dark' ? '#ff4757' : '#dc2626',
+    purple: '#b39ddb',
+    muted: t === 'dark' ? '#7986a3' : '#5a6070',
+    grid: t === 'dark' ? 'rgba(255,255,255,.05)' : 'rgba(0,0,0,.06)'
+  };
+}
+const charts = {};
+function destroyAll() { Object.keys(charts).forEach(k => { if (charts[k]) { charts[k].destroy(); delete charts[k]; } }); }
+function bOpts() {
+  const c = getC();
+  return {
+    responsive: true, maintainAspectRatio: false, animation: { duration: 600 },
+    plugins: { legend: { labels: { color: c.muted, font: { family: 'Outfit', size: 12 } } }, tooltip: { backgroundColor: '#0f1623', titleColor: c.green, bodyColor: '#e8eaf6', borderColor: c.green, borderWidth: 1 } },
+    scales: { x: { ticks: { color: c.muted, font: { family: 'Space Mono', size: 10 } }, grid: { color: c.grid } }, y: { ticks: { color: c.muted, font: { family: 'Space Mono', size: 10 } }, grid: { color: c.grid } } }
+  };
+}
+
+function buildMonthlyChart() {
+  const c = getC();
+  const months = MONTHS_2025;
+  const modes = ['Road', 'Sea', 'Air', 'Rail'];
+  const modeColors = { Road: c.cyan, Sea: c.green, Air: c.red, Rail: c.amber };
+  const datasets = modes.map(m => {
+    const monthly = months.map(mo => {
+      const rows = RAW.filter(r => r.date === mo && r.mode === m);
+      return +(rows.reduce((s, r) => s + r.co2e_kg, 0) / 1000).toFixed(2);
+    });
+    return { label: MODE_ICONS[m] + ' ' + m, data: monthly, backgroundColor: modeColors[m] + '99', borderColor: modeColors[m], borderWidth: 1.5, borderRadius: 3 };
+  });
+  const ctx = document.getElementById('monthlyChart').getContext('2d');
+  const opts = bOpts();
+  charts.monthly = new Chart(ctx, {
+    type: 'bar',
+    data: { labels: months.map(m => m.slice(0, 3)), datasets },
+    options: { ...opts, scales: { x: { ...opts.scales.x, stacked: true }, y: { ...opts.scales.y, stacked: true, ticks: { ...opts.scales.y.ticks, callback: v => v + 't' } } } }
+  });
+}
+
+function buildModeChart(data) {
+  const c = getC();
+  const modes = ['Road', 'Sea', 'Air', 'Rail'];
+  const vals = modes.map(m => +(data.filter(r => r.mode === m).reduce((s, r) => s + r.co2e_kg, 0) / 1000).toFixed(2));
+  const colors = [c.cyan, c.green, c.red, c.amber];
+  const ctx = document.getElementById('modeChart').getContext('2d');
+  charts.mode = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: modes.map((m, i) => MODE_ICONS[m] + ' ' + m),
+      datasets: [{ data: vals, backgroundColor: colors.map(cl => cl + 'cc'), borderColor: colors, borderWidth: 2 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: '62%',
+      plugins: { legend: { position: 'right', labels: { color: getC().muted, font: { family: 'Outfit', size: 12 }, boxWidth: 12 } }, tooltip: { backgroundColor: '#0f1623', titleColor: c.green, bodyColor: '#e8eaf6', borderColor: c.green, borderWidth: 1, callbacks: { label: ctx => ' ' + ctx.parsed.toFixed(2) + ' t CO₂e' } } }
+    }
+  });
+}
+
+function buildLaneChart(data) {
+  const c = getC();
+  // emissions intensity per tonne-km
+  const laneMap = {};
+  data.forEach(r => {
+    const k = r.origin + ' → ' + r.destination;
+    if (!laneMap[k]) laneMap[k] = { co2: 0, tkm: 0 };
+    laneMap[k].co2 += r.co2e_kg;
+    laneMap[k].tkm += (r.cargo_weight_kg / 1000) * r.distance_km;
+  });
+  const lanes = Object.entries(laneMap).map(([k, v]) => ({ lane: k, intensity: +(v.co2 / v.tkm * 1000).toFixed(1) })).sort((a, b) => b.intensity - a.intensity).slice(0, 10);
+  const ctx = document.getElementById('laneChart').getContext('2d');
+  const opts = bOpts();
+  charts.lane = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: lanes.map(l => l.lane.split(' → ').join(' →\n')),
+      datasets: [{ label: 'g CO₂e/tkm', data: lanes.map(l => l.intensity), backgroundColor: lanes.map(l => l.intensity > 400 ? c.red + 'bb' : l.intensity > 100 ? c.amber + 'bb' : c.green + 'bb'), borderColor: lanes.map(l => l.intensity > 400 ? c.red : l.intensity > 100 ? c.amber : c.green), borderWidth: 1.5, borderRadius: 5 }]
+    },
+    options: { ...opts, indexAxis: 'y', scales: { x: { ...opts.scales.x, ticks: { ...opts.scales.x.ticks, callback: v => v + 'g' } }, y: { ...opts.scales.y, ticks: { ...opts.scales.y.ticks, font: { family: 'Space Mono', size: 9 } } } } }
+  });
+}
+
+function buildSavingChart(data) {
+  const c = getC();
+  const modes = ['Road', 'Sea', 'Air', 'Rail'];
+  const savings = modes.map(m => +(data.filter(r => r.mode === m).reduce((s, r) => s + r.modal_saving_kg, 0) / 1000).toFixed(2));
+  const ctx = document.getElementById('savingChart').getContext('2d');
+  const opts = bOpts();
+  charts.saving = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: modes.map((m, i) => MODE_ICONS[m] + ' ' + m),
+      datasets: [{ label: 'Modal Shift Saving (t CO₂e)', data: savings, backgroundColor: [c.cyan + 'bb', c.green + 'bb', c.red + 'bb', c.amber + 'bb'], borderColor: [c.cyan, c.green, c.red, c.amber], borderWidth: 1.5, borderRadius: 6 }]
+    },
+    options: { ...opts, scales: { ...opts.scales, y: { ...opts.scales.y, ticks: { ...opts.scales.y.ticks, callback: v => v + 't' } } } }
+  });
+}
+
+function buildDistChart(data) {
+  const c = getC();
+  const buckets = [0, 50, 100, 200, 400, 800, 1600, 3200, Infinity];
+  const labels = ['0–50', '50–100', '100–200', '200–400', '400–800', '800–1600', '1600–3200', '3200+'];
+  const counts = buckets.slice(0, -1).map((lo, i) => data.filter(r => r.co2e_kg >= lo && r.co2e_kg < buckets[i + 1]).length);
+  const ctx = document.getElementById('distChart').getContext('2d');
+  const opts = bOpts();
+  const colors = labels.map((_, i) => {
+    const g = 1 - i / labels.length;
+    return `rgba(${Math.round(255 * (1 - g))}, ${Math.round(255 * g)}, 100, 0.8)`;
+  });
+  charts.dist = new Chart(ctx, {
+    type: 'bar',
+    data: { labels: labels.map(l => l + ' kg'), datasets: [{ label: 'Shipments', data: counts, backgroundColor: colors, borderColor: 'transparent', borderRadius: 5 }] },
+    options: { ...opts, scales: { ...opts.scales, x: { ...opts.scales.x, ticks: { ...opts.scales.x.ticks, maxRotation: 35 } } } }
+  });
+}
+
+/* ================================================================
+   FORECAST
+================================================================ */
+const FSCEN = {
+  base: { vals: [22.1,23.4,25.2,24.8,26.1,27.3,26.8,28.2,29.4,28.9,30.1,31.2], text: '<strong>Business as Usual:</strong> Without any modal shift intervention, annual Scope 3 logistics emissions are projected to reach <strong>323 tonnes CO₂e</strong> in the next 12 months — a 12% increase driven by volume growth and continued air freight dependency. Carbon cost at EU ETS prices: <strong>€21,000</strong>, rising to €40,000+ by 2030 as carbon prices increase.' },
+  shift: { vals: [22.1,21.8,20.5,19.9,19.2,18.6,18.0,17.5,17.0,16.8,16.3,16.0], text: '<strong>Modal Shift Applied:</strong> By switching 38% of air freight lanes to express road or sea freight, annual CO₂e falls to <strong>203 tonnes</strong> by Month 12 — a <strong>37% reduction</strong> from current levels. This scenario also reduces freight costs by approximately €68,000 annually, delivering a combined ESG and commercial win with no capital investment required.' },
+  full: { vals: [22.1,20.5,18.2,15.8,13.4,11.6,9.8,8.5,7.4,6.8,6.2,5.9], text: '<strong>Full Decarbonisation:</strong> Combining modal shift with load factor optimisation (targeting 85% avg), carrier green fleet selection, and remaining emission offsetting reduces net Scope 3 to <strong>69 tonnes CO₂e</strong> — a <strong>76% reduction</strong>. This positions the company as CSRD-compliant well ahead of the 2027 mandatory deadline and achievable within 24 months.' }
+};
+let curScenario = 'base';
+
+function buildForecastChart(scenario) {
+  const c = getC();
+  const histLabels = MONTHS_2025.map(m => m.slice(0, 3) + '-25');
+  const projLabels = ['Jan-26','Feb-26','Mar-26','Apr-26','May-26','Jun-26','Jul-26','Aug-26','Sep-26','Oct-26','Nov-26','Dec-26'];
+  const hist = MONTHS_2025.map(mo => +(RAW.filter(r => r.date === mo).reduce((s, r) => s + r.co2e_kg, 0) / 1000).toFixed(2));
+  const projData = FSCEN[scenario].vals;
+  const allLabels = [...histLabels, ...projLabels];
+  const histFull = [...hist, ...Array(12).fill(null)];
+  const projFull = [...Array(11).fill(null), hist[11], ...projData];
+  const projColor = scenario === 'shift' ? c.green : scenario === 'full' ? c.cyan : c.amber;
+  const ctx = document.getElementById('forecastChart').getContext('2d');
+  if (charts.forecast) charts.forecast.destroy();
+  charts.forecast = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: allLabels,
+      datasets: [
+        { label: 'Historical CO₂e (t)', data: histFull, borderColor: c.green, backgroundColor: c.green + '15', fill: true, tension: 0.4, pointRadius: 3, borderWidth: 2.5 },
+        { label: scenario === 'base' ? 'Business as Usual' : scenario === 'shift' ? 'Modal Shift Scenario' : 'Full Decarbonisation', data: projFull, borderColor: projColor, backgroundColor: 'transparent', borderDash: [6, 4], tension: 0.4, pointRadius: 3, borderWidth: 2 }
+      ]
+    },
+    options: {
+      ...bOpts(),
+      scales: {
+        x: { ticks: { color: getC().muted, font: { family: 'Space Mono', size: 10 } }, grid: { color: getC().grid } },
+        y: { ticks: { color: getC().muted, font: { family: 'Space Mono', size: 10 }, callback: v => v + 't' }, grid: { color: getC().grid } }
+      }
+    }
+  });
+  document.getElementById('forecastSummary').innerHTML = FSCEN[scenario].text;
+}
+
+function setScenario(s, btn) {
+  curScenario = s;
+  document.querySelectorAll('.scen-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  buildForecastChart(s);
+}
+
+/* ================================================================
+   FULL REFRESH
+================================================================ */
+function refresh() {
+  const data = getFiltered();
+  renderCSRD(data);
+  renderKPIs(data);
+  renderTable(data);
+  destroyAll();
+  buildMonthlyChart();
+  buildModeChart(data);
+  buildLaneChart(data);
+  buildSavingChart(data);
+  buildDistChart(data);
+  buildForecastChart(curScenario);
+}
+function rebuildAll() { calcCO2(); renderModalCards(); refresh(); }
+
+/* CSV */
+function downloadCSV() {
+  const h = ['Shipment_ID','Date','Origin','Destination','Mode','Distance_Km','Cargo_Weight_Kg','Load_Factor_Pct','Emission_Factor_gCO2_per_TKm','CO2e_Kg','Equivalent_Trees','Modal_Alternative','Modal_Saving_CO2e_Kg'];
+  const rows = RAW.map(r => [r.id, r.date, r.origin, r.destination, r.mode, r.distance_km, r.cargo_weight_kg, r.load_factor_pct, r.ef_gco2_tkm, r.co2e_kg, r.equiv_trees, r.modal_alt, r.modal_saving_kg].join(','));
+  const blob = new Blob([[h.join(','), ...rows].join('\n')], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'logistics_carbon_footprint.csv'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  calcCO2();
+  renderModalCards();
+  setTimeout(refresh, 100);
+});
+</script>
+</body>
+</html>

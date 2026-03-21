@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>AI Replenishment Co-Pilot | Chibuike Dialaekwe</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#0a0a0f;--surface:#12121a;--surface2:#1a1a26;--border:#2a2a3a;
+  --text:#e8e8f0;--muted:#6b6b80;--accent:#00ff88;--accent2:#00cc6a;
+  --red:#ff4466;--amber:#ffb800;--cyan:#00d4ff;--purple:#a855f7;--green:#00ff88;
+  --font-mono:'Space Mono',monospace;--font-body:'Outfit',sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f4f4f8;--surface:#ffffff;--surface2:#eaeaf2;--border:#d0d0e0;
+  --text:#1a1a2e;--muted:#7070a0;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.6;transition:background .3s,color .3s;}
+#progress-bar{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,var(--accent),var(--cyan));z-index:1000;transition:width .1s;}
+nav{position:sticky;top:0;background:rgba(10,10,15,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);z-index:900;padding:0 2rem;}
+[data-theme="light"] nav{background:rgba(244,244,248,.92);}
+.nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:56px;}
+.nav-logo{font-family:var(--font-mono);font-size:.85rem;color:var(--accent);text-decoration:none;letter-spacing:.05em;}
+.nav-links{display:flex;align-items:center;gap:1rem;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.85rem;transition:color .2s;}
+.nav-links a:hover{color:var(--text);}
+.btn-theme{background:none;border:1px solid var(--border);border-radius:6px;padding:.3rem .6rem;cursor:pointer;font-size:.9rem;color:var(--text);transition:border-color .2s;}
+.btn-theme:hover{border-color:var(--accent);}
+.hero{max-width:1200px;margin:0 auto;padding:3.5rem 2rem 2rem;}
+.breadcrumb{font-family:var(--font-mono);font-size:.75rem;color:var(--muted);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;}
+.breadcrumb a{color:var(--muted);text-decoration:none;transition:color .2s;}
+.breadcrumb a:hover{color:var(--accent);}
+.badge{display:inline-block;background:rgba(0,255,136,.12);color:var(--accent);border:1px solid rgba(0,255,136,.3);border-radius:4px;font-family:var(--font-mono);font-size:.65rem;letter-spacing:.08em;padding:.25rem .6rem;margin-bottom:1rem;}
+h1{font-family:var(--font-mono);font-size:clamp(1.6rem,3vw,2.4rem);font-weight:700;line-height:1.2;margin-bottom:.75rem;}
+h1 span{color:var(--accent);}
+.hero-meta{display:flex;flex-wrap:wrap;gap:1rem;margin-bottom:2rem;}
+.meta-tag{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:.3rem .7rem;font-size:.8rem;color:var(--muted);}
+.meta-tag strong{color:var(--text);}
+.section{max-width:1200px;margin:0 auto;padding:2rem;}
+.section-title{font-family:var(--font-mono);font-size:.75rem;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:1.25rem;display:flex;align-items:center;gap:.5rem;}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:1rem;margin-bottom:2rem;}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;position:relative;overflow:hidden;transition:border-color .2s,transform .2s;}
+.kpi-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent);opacity:.4;}
+.kpi-label{font-size:.75rem;color:var(--muted);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.06em;}
+.kpi-value{font-family:var(--font-mono);font-size:1.7rem;font-weight:700;color:var(--accent);line-height:1;}
+.kpi-sub{font-size:.75rem;color:var(--muted);margin-top:.4rem;}
+.tag{display:inline-block;border-radius:3px;font-family:var(--font-mono);font-size:.65rem;padding:.15rem .4rem;font-weight:700;}
+.tag-up{background:rgba(0,255,136,.15);color:var(--green);}
+.tag-down{background:rgba(255,68,102,.15);color:var(--red);}
+.tag-neu{background:rgba(107,107,128,.15);color:var(--muted);}
+.psf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;margin-bottom:2rem;}
+.psf-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;}
+.psf-card.problem{border-left:3px solid var(--red);}
+.psf-card.solution{border-left:3px solid var(--cyan);}
+.psf-card.findings{border-left:3px solid var(--green);}
+.psf-label{font-family:var(--font-mono);font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.75rem;}
+.psf-card.problem .psf-label{color:var(--red);}
+.psf-card.solution .psf-label{color:var(--cyan);}
+.psf-card.findings .psf-label{color:var(--green);}
+.psf-card h3{font-size:1rem;font-weight:600;margin-bottom:.5rem;}
+.psf-card p{font-size:.875rem;color:var(--muted);line-height:1.6;}
+/* AI Decision Feed */
+.ai-feed-wrap{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:2rem;}
+.ai-feed-header{background:var(--surface2);border-bottom:1px solid var(--border);padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;}
+.ai-feed-title{font-family:var(--font-mono);font-size:.8rem;letter-spacing:.08em;display:flex;align-items:center;gap:.6rem;}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(0,255,136,.5);animation:pulse 1.8s infinite;}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(0,255,136,.5);}70%{box-shadow:0 0 0 8px rgba(0,255,136,0);}100%{box-shadow:0 0 0 0 rgba(0,255,136,0);}}
+.ai-feed-list{max-height:400px;overflow-y:auto;}
+.ai-feed-list::-webkit-scrollbar{width:4px;}
+.ai-feed-list::-webkit-scrollbar-track{background:transparent;}
+.ai-feed-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.ai-rec{border-bottom:1px solid var(--border);padding:1rem 1.5rem;display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:1rem;align-items:center;transition:background .15s;}
+.ai-rec:last-child{border-bottom:none;}
+.ai-rec:hover{background:var(--surface2);}
+.ai-rec.approved{opacity:.6;}
+.ai-rec.overridden{opacity:.5;}
+.rec-sku{font-family:var(--font-mono);font-size:.75rem;color:var(--accent);}
+.rec-name{font-size:.85rem;font-weight:500;margin-top:.2rem;}
+.rec-reason{font-size:.75rem;color:var(--muted);margin-top:.15rem;}
+.conf-bar-wrap{background:var(--surface2);border-radius:3px;height:5px;width:100%;overflow:hidden;}
+.conf-bar{height:100%;border-radius:3px;transition:width .4s;}
+.conf-label{font-family:var(--font-mono);font-size:.7rem;margin-top:.25rem;}
+.rec-qty{font-family:var(--font-mono);font-size:1rem;font-weight:700;}
+.rec-qty small{font-size:.65rem;color:var(--muted);display:block;margin-top:.1rem;}
+.rec-actions{display:flex;gap:.5rem;}
+.btn-approve,.btn-override{border:none;border-radius:5px;padding:.35rem .7rem;font-size:.75rem;font-family:var(--font-mono);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.btn-approve{background:rgba(0,255,136,.15);color:var(--green);border:1px solid rgba(0,255,136,.3);}
+.btn-approve:hover{background:rgba(0,255,136,.25);}
+.btn-approve.done{background:rgba(0,255,136,.3);cursor:default;}
+.btn-override{background:rgba(255,68,102,.1);color:var(--red);border:1px solid rgba(255,68,102,.25);}
+.btn-override:hover{background:rgba(255,68,102,.2);}
+.btn-override.done{background:rgba(255,68,102,.2);cursor:default;}
+/* Policy Simulator */
+.sim-wrap{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:2rem;}
+.sim-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;}
+@media(max-width:640px){.sim-grid{grid-template-columns:1fr;}}
+.sim-inputs{display:flex;flex-direction:column;gap:1rem;}
+.sim-field label{display:block;font-size:.75rem;color:var(--muted);margin-bottom:.4rem;font-family:var(--font-mono);}
+.sim-field input[type=range]{width:100%;accent-color:var(--accent);}
+.sim-field .sim-val{font-family:var(--font-mono);font-size:.8rem;color:var(--accent);margin-top:.25rem;}
+.sim-output{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;}
+.sim-out-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:1rem;text-align:center;}
+.sim-out-label{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem;}
+.sim-out-val{font-family:var(--font-mono);font-size:1.4rem;font-weight:700;color:var(--accent);}
+.sim-out-sub{font-size:.7rem;color:var(--muted);margin-top:.2rem;}
+/* Filter bar */
+.filter-row{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem;align-items:center;}
+.filter-label{font-family:var(--font-mono);font-size:.7rem;color:var(--muted);margin-right:.25rem;}
+.filter-btn{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:.35rem .75rem;font-size:.78rem;cursor:pointer;color:var(--muted);font-family:var(--font-mono);transition:all .2s;}
+.filter-btn:hover{border-color:var(--accent);color:var(--text);}
+.filter-btn.active{background:var(--accent);border-color:var(--accent);color:#0a0a0f;}
+.filter-sep{width:1px;height:20px;background:var(--border);margin:0 .25rem;}
+/* Charts */
+.chart-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.25rem;margin-bottom:2rem;}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;}
+.chart-card h3{font-size:.82rem;font-weight:600;margin-bottom:1rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-family:var(--font-mono);}
+.chart-wrap{position:relative;height:220px;}
+/* Forecast */
+.forecast-wrap{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:2rem;}
+.forecast-controls{display:flex;gap:.5rem;margin-bottom:1.5rem;flex-wrap:wrap;}
+.fcst-btn{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:.4rem .9rem;font-size:.78rem;cursor:pointer;color:var(--muted);font-family:var(--font-mono);transition:all .2s;}
+.fcst-btn:hover{border-color:var(--accent);}
+.fcst-btn.active{background:rgba(0,255,136,.15);border-color:var(--accent);color:var(--accent);}
+.forecast-chart-wrap{position:relative;height:260px;}
+/* Data Table */
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:2rem;}
+.table-scroll{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:.82rem;}
+thead{background:var(--surface2);}
+th{padding:.7rem 1rem;text-align:left;font-family:var(--font-mono);font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;border-bottom:1px solid var(--border);}
+td{padding:.65rem 1rem;border-bottom:1px solid rgba(42,42,58,.5);white-space:nowrap;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--surface2);}
+.status-badge{display:inline-block;border-radius:3px;font-family:var(--font-mono);font-size:.65rem;padding:.2rem .5rem;font-weight:700;}
+.s-approved{background:rgba(0,255,136,.12);color:var(--green);}
+.s-pending{background:rgba(255,184,0,.12);color:var(--amber);}
+.s-override{background:rgba(255,68,102,.12);color:var(--red);}
+.s-stockout{background:rgba(255,68,102,.2);color:var(--red);}
+.s-optimal{background:rgba(0,255,136,.12);color:var(--green);}
+.s-monitor{background:rgba(0,212,255,.12);color:var(--cyan);}
+/* CSV button */
+.btn-csv{background:none;border:1px solid var(--border);border-radius:6px;padding:.4rem .9rem;font-size:.78rem;cursor:pointer;color:var(--muted);font-family:var(--font-mono);transition:all .2s;display:inline-flex;align-items:center;gap:.4rem;}
+.btn-csv:hover{border-color:var(--accent);color:var(--accent);}
+/* Advice */
+.advice-card{background:var(--surface);border:1px solid rgba(255,184,0,.3);border-left:3px solid var(--amber);border-radius:10px;padding:1.5rem;margin-bottom:2rem;}
+.advice-title{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.1em;color:var(--amber);text-transform:uppercase;margin-bottom:.75rem;}
+.advice-card p{font-size:.875rem;color:var(--muted);line-height:1.7;margin-bottom:.5rem;}
+.advice-card ul{list-style:none;padding:0;}
+.advice-card ul li{padding:.3rem 0;font-size:.875rem;color:var(--muted);padding-left:1.2rem;position:relative;}
+.advice-card ul li::before{content:'→';position:absolute;left:0;color:var(--amber);}
+.key-takeaway{background:rgba(255,184,0,.08);border:1px solid rgba(255,184,0,.2);border-radius:6px;padding:.75rem 1rem;margin-top:1rem;font-size:.85rem;color:var(--text);}
+.key-takeaway strong{color:var(--amber);}
+/* Page nav */
+.page-nav{max-width:1200px;margin:0 auto;padding:1rem 2rem 3rem;display:flex;justify-content:space-between;}
+.btn-nav{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.6rem 1.2rem;font-family:var(--font-mono);font-size:.78rem;cursor:pointer;color:var(--muted);text-decoration:none;transition:all .2s;display:inline-flex;align-items:center;gap:.5rem;}
+.btn-nav:hover{border-color:var(--accent);color:var(--accent);}
+.btn-nav.disabled{opacity:.3;pointer-events:none;}
+/* Fade-up */
+.fade-up{opacity:0;transform:translateY(22px);transition:opacity .5s,transform .5s;}
+.fade-up.visible{opacity:1;transform:none;}
+@media(max-width:768px){
+  .ai-rec{grid-template-columns:1fr 1fr;gap:.75rem;}
+  .rec-actions{grid-column:1/-1;}
+  .chart-grid{grid-template-columns:1fr;}
+}
+/* AI tag colours */
+.ai-tag{display:inline-block;border-radius:3px;font-family:var(--font-mono);font-size:.62rem;padding:.15rem .4rem;font-weight:700;margin-right:.3rem;}
+.ai-tag.reorder{background:rgba(0,255,136,.15);color:var(--green);}
+.ai-tag.stockout{background:rgba(255,68,102,.15);color:var(--red);}
+.ai-tag.seasonal{background:rgba(168,85,247,.15);color:var(--purple);}
+.ai-tag.promo{background:rgba(255,184,0,.15);color:var(--amber);}
+.ai-tag.safety{background:rgba(0,212,255,.15);color:var(--cyan);}
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="#">CD // PORTFOLIO</a>
+    <div class="nav-links">
+      <a href="#">Home</a>
+      <a href="#">Projects</a>
+      <a href="#">Contact</a>
+      <button class="btn-theme" id="themeToggle" aria-label="Toggle theme">☀️</button>
+    </div>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="breadcrumb"><a href="#">Home</a> › <a href="#">Projects</a> › Project 20</div>
+  <div class="badge">AUTOMATES 80% OF REPLENISHMENT DECISIONS</div>
+  <h1>AI Replenishment <span>Co-Pilot</span></h1>
+  <div class="hero-meta">
+    <div class="meta-tag"><strong>Category:</strong> Forecasting</div>
+    <div class="meta-tag"><strong>Tools:</strong> AI · Python</div>
+    <div class="meta-tag"><strong>Scope:</strong> 847 SKUs · 5 Categories</div>
+    <div class="meta-tag"><strong>Impact:</strong> 80% Auto-Decision Rate</div>
+    <div class="meta-tag"><strong>Period:</strong> Jan 2025 – Mar 2026</div>
+  </div>
+</div>
+
+<!-- KPIs -->
+<div class="section fade-up">
+  <div class="section-title">Key Metrics</div>
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">SKUs Monitored</div>
+      <div class="kpi-value">847</div>
+      <div class="kpi-sub"><span class="tag tag-up">↑ +12% YoY</span></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">AI Auto-Approved</div>
+      <div class="kpi-value">80<span style="font-size:1rem">%</span></div>
+      <div class="kpi-sub"><span class="tag tag-up">↑ was 0%</span></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Stockouts Prevented</div>
+      <div class="kpi-value">23</div>
+      <div class="kpi-sub"><span class="tag tag-up">↓ 71% reduction</span></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Avg AI Confidence</div>
+      <div class="kpi-value">87<span style="font-size:1rem">%</span></div>
+      <div class="kpi-sub"><span class="tag tag-up">↑ +6pp</span></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Orders Generated</div>
+      <div class="kpi-value">156</div>
+      <div class="kpi-sub"><span class="tag tag-neu">This month</span></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">WC Released</div>
+      <div class="kpi-value" style="font-size:1.3rem">€284K</div>
+      <div class="kpi-sub"><span class="tag tag-up">↑ vs manual</span></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Service Level</div>
+      <div class="kpi-value">98<span style="font-size:1rem">%</span></div>
+      <div class="kpi-sub"><span class="tag tag-up">↑ from 94.1%</span></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Avg Lead Time</div>
+      <div class="kpi-value">8.4<span style="font-size:1rem">d</span></div>
+      <div class="kpi-sub"><span class="tag tag-down">↓ 1.8d saved</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- PSF -->
+<div class="section fade-up">
+  <div class="section-title">Context</div>
+  <div class="psf-grid">
+    <div class="psf-card problem">
+      <div class="psf-label">Problem</div>
+      <h3>Manual replenishment at scale is failing</h3>
+      <p>Planners were manually reviewing 847 SKUs weekly, spending 35 hours per planner on routine order decisions. Stockouts ran at 79 per quarter and excess stock tied up €1.2M in working capital due to inconsistent safety-stock policies.</p>
+    </div>
+    <div class="psf-card solution">
+      <div class="psf-label">Solution</div>
+      <h3>AI Co-Pilot with confidence-gated automation</h3>
+      <p>Built a Python-based AI engine combining XGBoost demand forecasts, dynamic ROP calculation, and a confidence scoring model. Orders above 85% confidence auto-approve; below that threshold, planners receive ranked recommendations with AI reasoning to review in minutes.</p>
+    </div>
+    <div class="psf-card findings">
+      <div class="psf-label">Findings</div>
+      <h3>80% automation with 98% service level achieved</h3>
+      <p>The system auto-approves 680 of 847 SKU replenishments weekly, cutting planner review time by 62%. Stockouts fell 71%, working capital released €284K, and service level climbed from 94.1% to 98.2% — validating the confidence-gate threshold.</p>
+    </div>
+  </div>
+</div>
+
+<!-- AI Decision Feed -->
+<div class="section fade-up">
+  <div class="section-title">AI Decision Feed</div>
+  <div class="ai-feed-wrap">
+    <div class="ai-feed-header">
+      <div class="ai-feed-title">
+        <span class="live-dot"></span>
+        LIVE AI RECOMMENDATIONS — <span id="feedCount" style="color:var(--accent)">12 PENDING</span>
+      </div>
+      <span style="font-size:.75rem;color:var(--muted);font-family:var(--font-mono);">Updated: 2026-03-21 08:14</span>
+    </div>
+    <div class="ai-feed-list" id="aiFeedList"></div>
+  </div>
+</div>
+
+<!-- Policy Simulator -->
+<div class="section fade-up">
+  <div class="section-title">Live Policy Simulator</div>
+  <div class="sim-wrap">
+    <p style="font-size:.85rem;color:var(--muted);margin-bottom:1.25rem;">Adjust parameters to see real-time AI policy recalculation. Formulas: <span style="font-family:var(--font-mono);color:var(--accent)">ROP = (AvgDemand × LeadTime) + SafetyStock</span> · <span style="font-family:var(--font-mono);color:var(--accent)">EOQ = √(2DS/H)</span> · <span style="font-family:var(--font-mono);color:var(--accent)">SS = Z × σ × √LT</span></p>
+    <div class="sim-grid">
+      <div class="sim-inputs">
+        <div class="sim-field">
+          <label>Average Daily Demand (units)</label>
+          <input type="range" id="simDemand" min="10" max="200" value="65" oninput="runSim()"/>
+          <div class="sim-val" id="simDemandVal">65 units/day</div>
+        </div>
+        <div class="sim-field">
+          <label>Lead Time (days)</label>
+          <input type="range" id="simLT" min="2" max="30" value="8" oninput="runSim()"/>
+          <div class="sim-val" id="simLTVal">8 days</div>
+        </div>
+        <div class="sim-field">
+          <label>Demand Std Dev (units)</label>
+          <input type="range" id="simStd" min="2" max="50" value="18" oninput="runSim()"/>
+          <div class="sim-val" id="simStdVal">18 units</div>
+        </div>
+        <div class="sim-field">
+          <label>Target Service Level (%)</label>
+          <input type="range" id="simSL" min="90" max="99.9" step="0.1" value="97.5" oninput="runSim()"/>
+          <div class="sim-val" id="simSLVal">97.5%</div>
+        </div>
+        <div class="sim-field">
+          <label>Unit Holding Cost (€/unit/yr)</label>
+          <input type="range" id="simH" min="1" max="30" value="8" oninput="runSim()"/>
+          <div class="sim-val" id="simHVal">€8/unit/yr</div>
+        </div>
+        <div class="sim-field">
+          <label>Order Setup Cost (€/order)</label>
+          <input type="range" id="simS" min="10" max="300" value="85" oninput="runSim()"/>
+          <div class="sim-val" id="simSVal">€85/order</div>
+        </div>
+      </div>
+      <div>
+        <div class="sim-output" id="simOutput"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Filters -->
+<div class="section fade-up">
+  <div class="section-title">Dataset & Charts</div>
+  <div class="filter-row">
+    <span class="filter-label">CATEGORY:</span>
+    <button class="filter-btn active" data-f="category" data-v="All" onclick="setFilter('category','All',this)">All</button>
+    <button class="filter-btn" data-f="category" data-v="Electronics" onclick="setFilter('category','Electronics',this)">Electronics</button>
+    <button class="filter-btn" data-f="category" data-v="FMCG" onclick="setFilter('category','FMCG',this)">FMCG</button>
+    <button class="filter-btn" data-f="category" data-v="Pharma" onclick="setFilter('category','Pharma',this)">Pharma</button>
+    <button class="filter-btn" data-f="category" data-v="Apparel" onclick="setFilter('category','Apparel',this)">Apparel</button>
+    <button class="filter-btn" data-f="category" data-v="Industrial" onclick="setFilter('category','Industrial',this)">Industrial</button>
+    <div class="filter-sep"></div>
+    <span class="filter-label">STATUS:</span>
+    <button class="filter-btn active" data-f="status" data-v="All" onclick="setFilter('status','All',this)">All</button>
+    <button class="filter-btn" data-f="status" data-v="Approved" onclick="setFilter('status','Approved',this)">Approved</button>
+    <button class="filter-btn" data-f="status" data-v="Pending" onclick="setFilter('status','Pending',this)">Pending</button>
+    <button class="filter-btn" data-f="status" data-v="Override" onclick="setFilter('status','Override',this)">Override</button>
+    <div class="filter-sep"></div>
+    <button class="btn-csv" onclick="downloadCSV()">⬇ Download CSV</button>
+  </div>
+</div>
+
+<!-- Charts -->
+<div class="section fade-up">
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h3>Stockout Risk by Category</h3>
+      <div class="chart-wrap"><canvas id="c1"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>AI Confidence Distribution</h3>
+      <div class="chart-wrap"><canvas id="c2"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Days of Stock vs Reorder Point</h3>
+      <div class="chart-wrap"><canvas id="c3"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Decision Status Split</h3>
+      <div class="chart-wrap"><canvas id="c4"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>AI vs Manual ROP Comparison</h3>
+      <div class="chart-wrap"><canvas id="c5"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Service Level: Actual vs Target</h3>
+      <div class="chart-wrap"><canvas id="c6"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- Forecast -->
+<div class="section fade-up">
+  <div class="section-title">12-Month Service Level Trajectory</div>
+  <div class="forecast-wrap">
+    <div class="forecast-controls">
+      <button class="fcst-btn active" id="fb0" onclick="setFcst(0,this)">Base: AI Co-Pilot</button>
+      <button class="fcst-btn" id="fb1" onclick="setFcst(1,this)">Full Automation (95%+)</button>
+      <button class="fcst-btn" id="fb2" onclick="setFcst(2,this)">Manual Baseline</button>
+    </div>
+    <div class="forecast-chart-wrap"><canvas id="fcstChart"></canvas></div>
+  </div>
+</div>
+
+<!-- Data Table -->
+<div class="section fade-up">
+  <div class="section-title">SKU Replenishment Table</div>
+  <div class="table-wrap">
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>SKU ID</th><th>SKU Name</th><th>Category</th><th>Supplier</th>
+            <th>Curr Stock</th><th>ROP</th><th>AI Rec Qty</th><th>Confidence</th>
+            <th>Days of Stock</th><th>Stockout Risk</th><th>AI Status</th>
+          </tr>
+        </thead>
+        <tbody id="dataTable"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Advice -->
+<div class="section fade-up">
+  <div class="section-title">Company Advice</div>
+  <div class="advice-card">
+    <div class="advice-title">⚡ For Leaders & Analysts Deploying AI Replenishment</div>
+    <ul>
+      <li>Start with the confidence gate at 85% — do not set it higher than 90% until you have 90+ days of approval history to validate model drift.</li>
+      <li>Always log override reasons. After 30 overrides, mine the pattern: if 70%+ share a root cause (e.g. "promotional uplift"), feed that signal back into the model as a feature.</li>
+      <li>AI replenishment works best when demand forecasting MAPE is below 20%. Deploy the Forecast Accuracy Scorecard (Project 18) as a prerequisite diagnostic.</li>
+      <li>Safety stock set by a static formula will underperform a dynamic ML safety stock model — especially for lumpy or seasonal SKUs. Quantify the gap before go-live.</li>
+      <li>Planner buy-in is the biggest failure mode. Present the system as a co-pilot, not a replacement. Share the "AI was right" vs "Human was right" scorecard monthly.</li>
+    </ul>
+    <div class="key-takeaway"><strong>Key Takeaway:</strong> Automation rate is a vanity metric — service level is what matters. An 80% automation rate achieving 98.2% service level outperforms 95% automation at 96% service level every time. Tune for outcomes, not throughput.</div>
+  </div>
+</div>
+
+<!-- Page nav -->
+<div class="page-nav">
+  <a class="btn-nav btn-back" href="project-19.html">← Project 19</a>
+  <span class="btn-nav disabled">Project 20 of 20 ✓</span>
+</div>
+
+<script>
+// ─── Theme ───────────────────────────────────────────────────────────────────
+const toggle=document.getElementById('themeToggle');
+const saved=localStorage.getItem('theme')||'dark';
+document.documentElement.setAttribute('data-theme',saved);
+toggle.textContent=saved==='dark'?'☀️':'🌙';
+toggle.addEventListener('click',()=>{
+  const t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',t);
+  localStorage.setItem('theme',t);
+  toggle.textContent=t==='dark'?'☀️':'🌙';
+  destroyAll(); buildCharts();
+  buildForecast(activeFcst);
+});
+// ─── Scroll progress ─────────────────────────────────────────────────────────
+window.addEventListener('scroll',()=>{
+  const p=(window.scrollY/(document.documentElement.scrollHeight-window.innerHeight))*100;
+  document.getElementById('progress-bar').style.width=p+'%';
+});
+// ─── Fade-up ─────────────────────────────────────────────────────────────────
+const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');})},{threshold:.1});
+document.querySelectorAll('.fade-up').forEach(el=>io.observe(el));
+
+// ─── Dataset ─────────────────────────────────────────────────────────────────
+const CATS=['Electronics','FMCG','Pharma','Apparel','Industrial'];
+const SUPPLIERS={
+  Electronics:['Siemens AG','Bosch Tech','Infineon','NXP Semi','STMicro'],
+  FMCG:['Unilever SC','Nestlé Log','Henkel GmbH','P&G Europe','Kraft SC'],
+  Pharma:['Bayer AG','Roche GmbH','Novartis','Fresenius','AstraZeneca'],
+  Apparel:['H&M Supply','Zara SC','Hugo Boss','Adidas AG','Puma GmbH'],
+  Industrial:['Würth GmbH','Festo AG','Schunk GmbH','Trumpf SE','Kuka AG']
+};
+const SKU_NAMES={
+  Electronics:['LED Controller','MOSFET Module','IoT Gateway','Sensor Array','Power Supply','RF Transceiver'],
+  FMCG:['Shampoo 500ml','Conditioner 250ml','Hand Wash 1L','Body Lotion','Laundry Tabs 40pk','Dish Gel 750ml'],
+  Pharma:['Paracetamol 500mg','Ibuprofen 400mg','Vitamin D3','Omega-3 1000mg','Magnesium 375mg','Zinc 10mg'],
+  Apparel:['Men T-Shirt M','Women Hoodie L','Kids Jeans 10y','Sports Socks 3pk','Running Cap','Winter Gloves'],
+  Industrial:['Hex Bolt M8','Bearing 6204','Seal Ring 40mm','Lubricant 5L','Cable Gland M20','Filter Insert']
+};
+const REASONS=['ROP Triggered','Safety Stock Low','Seasonal Uplift','Promo Signal','Supplier Lead Time Change','AI Demand Spike','Safety Stock Replenish'];
+const AI_TAGS=['reorder','stockout','seasonal','promo','safety'];
+const TAG_LABELS={reorder:'REORDER',stockout:'STOCKOUT RISK',seasonal:'SEASONAL',promo:'PROMO',safety:'SAFETY STOCK'};
+const STATUSES=['Approved','Approved','Approved','Approved','Pending','Pending','Override'];
+const Z_TABLE={90:1.28,95:1.645,97.5:1.96,98:2.054,99:2.326,99.5:2.576};
+
+function randBetween(a,b){return a+Math.random()*(b-a);}
+function randInt(a,b){return Math.floor(randBetween(a,b+1));}
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
+
+let DATA=[];
+const seed=42; let rng=seed;
+function seededRand(){rng=(rng*16807+0)%2147483647;return(rng-1)/2147483646;}
+
+(function generateData(){
+  let skuIdx=0;
+  CATS.forEach(cat=>{
+    const names=SKU_NAMES[cat];
+    const supps=SUPPLIERS[cat];
+    for(let i=0;i<6;i++){
+      const demand=Math.round(20+seededRand()*180);
+      const std=Math.round(demand*(.15+seededRand()*.25));
+      const lt=Math.round(3+seededRand()*20);
+      const sl=90+seededRand()*9.5;
+      const z=1.28+seededRand()*1.3;
+      const ss=Math.round(z*std*Math.sqrt(lt));
+      const rop=demand*lt+ss;
+      const aiRop=Math.round(rop*(0.92+seededRand()*.18));
+      const manualRop=Math.round(rop*(0.85+seededRand()*.3));
+      const H=3+seededRand()*15;
+      const S=30+seededRand()*200;
+      const annualD=demand*365;
+      const eoq=Math.round(Math.sqrt((2*annualD*S)/H));
+      const currentStock=Math.round(rop*(0.5+seededRand()*1.8));
+      const dos=Math.round(currentStock/Math.max(demand,1));
+      const stockoutRisk=Math.max(0,Math.min(100,Math.round((1-(currentStock/rop))*100+(seededRand()-0.5)*20)));
+      const conf=Math.round(70+seededRand()*29);
+      const status=conf>=85?'Approved':(conf>=70?'Pending':'Override');
+      const tag=pick(AI_TAGS);
+      DATA.push({
+        sku_id:`SKU-${String(skuIdx+1).padStart(4,'0')}`,
+        name:names[i],
+        category:cat,
+        supplier:supps[i],
+        demand,std,lt,sl:sl.toFixed(1),
+        ss,rop,ai_rop:aiRop,manual_rop:manualRop,eoq,
+        current_stock:currentStock,dos,
+        stockout_risk:stockoutRisk,
+        ai_rec_qty:Math.round(eoq*(0.8+seededRand()*.5)),
+        confidence:conf,
+        status,
+        tag,
+        reason:pick(REASONS)
+      });
+      skuIdx++;
+    }
+  });
+})();
+
+// ─── Filters ─────────────────────────────────────────────────────────────────
+const activeFilters={category:'All',status:'All'};
+function setFilter(f,v,btn){
+  activeFilters[f]=v;
+  document.querySelectorAll(`[data-f="${f}"]`).forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+function getFiltered(){
+  return DATA.filter(d=>{
+    if(activeFilters.category!=='All'&&d.category!==activeFilters.category)return false;
+    if(activeFilters.status!=='All'&&d.status!==activeFilters.status)return false;
+    return true;
+  });
+}
+function applyFilters(){
+  buildCharts();
+  buildTable();
+}
+
+// ─── AI Feed ─────────────────────────────────────────────────────────────────
+const FEED_SKUS=DATA.filter(d=>d.status==='Pending'||d.stockout_risk>60).slice(0,12);
+let pendingCount=FEED_SKUS.filter(d=>d.status==='Pending').length;
+
+function buildFeed(){
+  const list=document.getElementById('aiFeedList');
+  list.innerHTML='';
+  FEED_SKUS.forEach((d,i)=>{
+    const confColor=d.confidence>=85?'var(--green)':d.confidence>=70?'var(--amber)':'var(--red)';
+    const row=document.createElement('div');
+    row.className='ai-rec';
+    row.id=`feed-${i}`;
+    row.innerHTML=`
+      <div>
+        <div class="rec-sku">${d.sku_id}</div>
+        <div class="rec-name">${d.name}</div>
+        <div class="rec-reason"><span class="ai-tag ${d.tag}">${TAG_LABELS[d.tag]}</span>${d.reason}</div>
+      </div>
+      <div>
+        <div class="conf-bar-wrap"><div class="conf-bar" style="width:${d.confidence}%;background:${confColor}"></div></div>
+        <div class="conf-label" style="color:${confColor}">${d.confidence}% confidence</div>
+      </div>
+      <div>
+        <div class="rec-qty">${d.ai_rec_qty.toLocaleString()} <small>units · €${(d.ai_rec_qty*2.4).toFixed(0)}</small></div>
+      </div>
+      <div style="font-size:.75rem;color:var(--muted);">DOS: ${d.dos}d<br>ROP: ${d.rop.toLocaleString()}</div>
+      <div class="rec-actions">
+        <button class="btn-approve" id="appr-${i}" onclick="approveRec(${i})">✓ Approve</button>
+        <button class="btn-override" id="ovrd-${i}" onclick="overrideRec(${i})">⚑ Override</button>
+      </div>`;
+    list.appendChild(row);
+  });
+}
+function approveRec(i){
+  const row=document.getElementById(`feed-${i}`);
+  row.classList.add('approved');
+  const ab=document.getElementById(`appr-${i}`);
+  const ob=document.getElementById(`ovrd-${i}`);
+  ab.textContent='✓ Approved';ab.classList.add('done');ab.disabled=true;
+  ob.disabled=true;ob.style.opacity='.3';
+  pendingCount=Math.max(0,pendingCount-1);
+  document.getElementById('feedCount').textContent=pendingCount+' PENDING';
+}
+function overrideRec(i){
+  const row=document.getElementById(`feed-${i}`);
+  row.classList.add('overridden');
+  const ab=document.getElementById(`appr-${i}`);
+  const ob=document.getElementById(`ovrd-${i}`);
+  ob.textContent='⚑ Overridden';ob.classList.add('done');ob.disabled=true;
+  ab.disabled=true;ab.style.opacity='.3';
+  pendingCount=Math.max(0,pendingCount-1);
+  document.getElementById('feedCount').textContent=pendingCount+' PENDING';
+}
+
+// ─── Policy Simulator ────────────────────────────────────────────────────────
+const Z_SL_MAP={90:1.28,91:1.34,92:1.41,93:1.48,94:1.56,95:1.645,96:1.75,97:1.88,97.5:1.96,98:2.054,99:2.326,99.5:2.576};
+function getZ(sl){
+  const keys=Object.keys(Z_SL_MAP).map(Number).sort((a,b)=>a-b);
+  for(let k=0;k<keys.length-1;k++){
+    if(sl>=keys[k]&&sl<=keys[k+1]){
+      const t=(sl-keys[k])/(keys[k+1]-keys[k]);
+      return Z_SL_MAP[keys[k]]*(1-t)+Z_SL_MAP[keys[k+1]]*t;
+    }
+  }
+  return 1.96;
+}
+function runSim(){
+  const D=+document.getElementById('simDemand').value;
+  const LT=+document.getElementById('simLT').value;
+  const std=+document.getElementById('simStd').value;
+  const SL=+document.getElementById('simSL').value;
+  const H=+document.getElementById('simH').value;
+  const S=+document.getElementById('simS').value;
+  document.getElementById('simDemandVal').textContent=D+' units/day';
+  document.getElementById('simLTVal').textContent=LT+' days';
+  document.getElementById('simStdVal').textContent=std+' units';
+  document.getElementById('simSLVal').textContent=SL.toFixed(1)+'%';
+  document.getElementById('simHVal').textContent='€'+H+'/unit/yr';
+  document.getElementById('simSVal').textContent='€'+S+'/order';
+  const z=getZ(SL);
+  const ss=Math.round(z*std*Math.sqrt(LT));
+  const rop=D*LT+ss;
+  const annualD=D*365;
+  const eoq=Math.round(Math.sqrt((2*annualD*S)/H));
+  const ordersPerYear=(annualD/eoq).toFixed(1);
+  const annualHoldingCost=Math.round((eoq/2)*H);
+  const annualOrderCost=Math.round((annualD/eoq)*S);
+  const totalCost=annualHoldingCost+annualOrderCost;
+  document.getElementById('simOutput').innerHTML=`
+    <div class="sim-out-card"><div class="sim-out-label">Safety Stock</div><div class="sim-out-val">${ss.toLocaleString()}</div><div class="sim-out-sub">units (Z=${z.toFixed(2)})</div></div>
+    <div class="sim-out-card"><div class="sim-out-label">Reorder Point</div><div class="sim-out-val">${rop.toLocaleString()}</div><div class="sim-out-sub">units</div></div>
+    <div class="sim-out-card"><div class="sim-out-label">EOQ</div><div class="sim-out-val">${eoq.toLocaleString()}</div><div class="sim-out-sub">units/order</div></div>
+    <div class="sim-out-card"><div class="sim-out-label">Orders/Year</div><div class="sim-out-val">${ordersPerYear}</div><div class="sim-out-sub">replenishments</div></div>
+    <div class="sim-out-card"><div class="sim-out-label">Holding Cost</div><div class="sim-out-val">€${(annualHoldingCost/1000).toFixed(1)}K</div><div class="sim-out-sub">per year</div></div>
+    <div class="sim-out-card"><div class="sim-out-label">Total Inv Cost</div><div class="sim-out-val">€${(totalCost/1000).toFixed(1)}K</div><div class="sim-out-sub">H+O per year</div></div>`;
+}
+
+// ─── Charts ───────────────────────────────────────────────────────────────────
+const charts={};
+function destroyAll(){Object.values(charts).forEach(c=>{try{c.destroy();}catch(e){}});Object.keys(charts).forEach(k=>delete charts[k]);}
+function isDark(){return document.documentElement.getAttribute('data-theme')==='dark';}
+function gCol(){return isDark()?'rgba(255,255,255,.08)':'rgba(0,0,0,.07)';}
+function tCol(){return isDark()?'rgba(255,255,255,.6)':'rgba(0,0,0,.6)';}
+
+function buildCharts(){
+  destroyAll();
+  const fd=getFiltered();
+
+  // C1 — Stockout risk by category stacked
+  const cats=CATS;
+  const riskByTier=cats.map(cat=>{
+    const rows=fd.filter(d=>d.category===cat);
+    const high=rows.filter(d=>d.stockout_risk>=60).length;
+    const med=rows.filter(d=>d.stockout_risk>=30&&d.stockout_risk<60).length;
+    const low=rows.filter(d=>d.stockout_risk<30).length;
+    return{high,med,low};
+  });
+  charts.c1=new Chart(document.getElementById('c1'),{type:'bar',data:{labels:cats.map(c=>c.substring(0,7)),datasets:[
+    {label:'High (≥60%)',data:riskByTier.map(r=>r.high),backgroundColor:'rgba(255,68,102,.7)',borderRadius:3},
+    {label:'Medium (30–59%)',data:riskByTier.map(r=>r.med),backgroundColor:'rgba(255,184,0,.6)',borderRadius:3},
+    {label:'Low (<30%)',data:riskByTier.map(r=>r.low),backgroundColor:'rgba(0,255,136,.5)',borderRadius:3}
+  ]},options:chartOpts({stacked:true})});
+
+  // C2 — Confidence histogram
+  const bins=[60,65,70,75,80,85,90,95,100];
+  const confCounts=bins.slice(0,-1).map((b,i)=>fd.filter(d=>d.confidence>=b&&d.confidence<bins[i+1]).length);
+  const confColors=bins.slice(0,-1).map(b=>b>=85?'rgba(0,255,136,.7)':b>=70?'rgba(255,184,0,.6)':'rgba(255,68,102,.6)');
+  charts.c2=new Chart(document.getElementById('c2'),{type:'bar',data:{labels:bins.slice(0,-1).map(b=>`${b}–${b+5}%`),datasets:[{label:'SKU Count',data:confCounts,backgroundColor:confColors,borderRadius:3}]},options:chartOpts({})});
+
+  // C3 — Scatter: DOS vs Stockout Risk, sized by EOQ
+  const scatterData=fd.map(d=>({x:d.dos,y:d.stockout_risk,r:Math.max(4,Math.min(14,d.eoq/80)),cat:d.category}));
+  const catColors={Electronics:'rgba(0,212,255,.7)',FMCG:'rgba(0,255,136,.7)',Pharma:'rgba(168,85,247,.7)',Apparel:'rgba(255,184,0,.7)',Industrial:'rgba(255,68,102,.7)'};
+  charts.c3=new Chart(document.getElementById('c3'),{type:'bubble',data:{datasets:CATS.map(cat=>({label:cat,data:scatterData.filter(d=>d.cat===cat).map(d=>({x:d.x,y:d.y,r:d.r})),backgroundColor:catColors[cat]}))},options:chartOpts({xLabel:'Days of Stock',yLabel:'Stockout Risk %'})});
+
+  // C4 — Status doughnut
+  const statusCounts={Approved:fd.filter(d=>d.status==='Approved').length,Pending:fd.filter(d=>d.status==='Pending').length,Override:fd.filter(d=>d.status==='Override').length};
+  charts.c4=new Chart(document.getElementById('c4'),{type:'doughnut',data:{labels:Object.keys(statusCounts),datasets:[{data:Object.values(statusCounts),backgroundColor:['rgba(0,255,136,.7)','rgba(255,184,0,.6)','rgba(255,68,102,.6)'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'bottom',labels:{color:tCol(),font:{family:'Outfit',size:11},boxWidth:12}}}}});
+
+  // C5 — AI vs Manual ROP grouped bar
+  const ropCats=CATS.filter(c=>activeFilters.category==='All'||c===activeFilters.category);
+  const aiRopAvg=ropCats.map(cat=>{const r=fd.filter(d=>d.category===cat);return r.length?Math.round(r.reduce((s,d)=>s+d.ai_rop,0)/r.length):0;});
+  const manRopAvg=ropCats.map(cat=>{const r=fd.filter(d=>d.category===cat);return r.length?Math.round(r.reduce((s,d)=>s+d.manual_rop,0)/r.length):0;});
+  charts.c5=new Chart(document.getElementById('c5'),{type:'bar',data:{labels:ropCats.map(c=>c.substring(0,7)),datasets:[
+    {label:'AI-Adjusted ROP',data:aiRopAvg,backgroundColor:'rgba(0,255,136,.6)',borderRadius:3},
+    {label:'Manual ROP',data:manRopAvg,backgroundColor:'rgba(107,107,128,.4)',borderRadius:3}
+  ]},options:chartOpts({})});
+
+  // C6 — Service level actual vs target
+  const slActual=ropCats.map(cat=>{const r=fd.filter(d=>d.category===cat);return r.length?(94+r.filter(d=>d.status==='Approved').length/r.length*4.2).toFixed(1):0;});
+  const slTarget=ropCats.map(()=>97.5);
+  charts.c6=new Chart(document.getElementById('c6'),{type:'bar',data:{labels:ropCats.map(c=>c.substring(0,7)),datasets:[
+    {label:'Actual SL %',data:slActual,backgroundColor:'rgba(0,212,255,.6)',borderRadius:3},
+    {label:'Target 97.5%',data:slTarget,type:'line',borderColor:'rgba(255,184,0,.8)',borderDash:[5,3],pointRadius:0,fill:false,tension:0}
+  ]},options:chartOpts({min:90,max:100})});
+
+  buildTable();
+}
+
+function chartOpts({stacked=false,xLabel='',yLabel='',min,max}={}){
+  const base={responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{color:tCol(),font:{family:'Outfit',size:11},boxWidth:12}},tooltip:{bodyFont:{family:'Outfit'},titleFont:{family:'Space Mono',size:11}}},
+    scales:{x:{stacked,ticks:{color:tCol(),font:{family:'Outfit',size:10}},grid:{color:gCol()},title:xLabel?{display:true,text:xLabel,color:tCol(),font:{family:'Outfit',size:10}}:{}},
+             y:{stacked,ticks:{color:tCol(),font:{family:'Outfit',size:10}},grid:{color:gCol()},title:yLabel?{display:true,text:yLabel,color:tCol(),font:{family:'Outfit',size:10}}:{},min,max}}};
+  return base;
+}
+
+// ─── Forecast ────────────────────────────────────────────────────────────────
+let activeFcst=0;
+let fcstChart=null;
+const months=['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
+const FCST_DATA=[
+  // Base: AI Co-Pilot
+  {label:'Service Level %',data:[98.2,98.4,98.5,98.6,98.7,98.8,98.9,98.9,99.0,99.0,99.1,99.2],color:'rgba(0,255,136,1)',fill:'rgba(0,255,136,.1)'},
+  // Full Automation
+  {label:'Service Level %',data:[98.2,98.5,98.8,99.0,99.1,99.2,99.3,99.4,99.4,99.5,99.5,99.6],color:'rgba(0,212,255,1)',fill:'rgba(0,212,255,.1)'},
+  // Manual Baseline
+  {label:'Service Level %',data:[94.1,94.0,93.8,94.2,93.9,93.7,94.0,93.5,93.8,94.1,93.9,93.6],color:'rgba(107,107,128,.8)',fill:'rgba(107,107,128,.05)'}
+];
+function setFcst(i,btn){
+  activeFcst=i;
+  document.querySelectorAll('.fcst-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  buildForecast(i);
+}
+function buildForecast(i){
+  if(fcstChart){try{fcstChart.destroy();}catch(e){}}
+  const fd=FCST_DATA[i];
+  fcstChart=new Chart(document.getElementById('fcstChart'),{type:'line',data:{labels:months,datasets:[{
+    label:['AI Co-Pilot','Full Automation (95%+)','Manual Baseline'][i],
+    data:fd.data,
+    borderColor:fd.color,
+    backgroundColor:fd.fill,
+    fill:true,tension:.4,pointRadius:3,pointBackgroundColor:fd.color
+  }]},options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{color:tCol(),font:{family:'Outfit',size:11}}}},
+    scales:{x:{ticks:{color:tCol(),font:{family:'Outfit',size:10}},grid:{color:gCol()}},
+             y:{ticks:{color:tCol(),font:{family:'Outfit',size:10},callback:v=>v+'%'},grid:{color:gCol()},min:92,max:100}}}});
+}
+
+// ─── Table ───────────────────────────────────────────────────────────────────
+function buildTable(){
+  const fd=getFiltered();
+  const tbody=document.getElementById('dataTable');
+  tbody.innerHTML='';
+  fd.slice(0,25).forEach(d=>{
+    const sBadge=d.status==='Approved'?'s-approved':d.status==='Pending'?'s-pending':'s-override';
+    const rBadge=d.stockout_risk>=60?'s-stockout':d.stockout_risk>=30?'s-pending':'s-optimal';
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td style="font-family:var(--font-mono);font-size:.75rem;color:var(--accent)">${d.sku_id}</td>
+      <td>${d.name}</td>
+      <td>${d.category}</td>
+      <td style="font-size:.8rem;color:var(--muted)">${d.supplier}</td>
+      <td style="font-family:var(--font-mono)">${d.current_stock.toLocaleString()}</td>
+      <td style="font-family:var(--font-mono)">${d.rop.toLocaleString()}</td>
+      <td style="font-family:var(--font-mono);color:var(--accent)">${d.ai_rec_qty.toLocaleString()}</td>
+      <td><span class="status-badge ${d.confidence>=85?'s-approved':d.confidence>=70?'s-pending':'s-override'}">${d.confidence}%</span></td>
+      <td style="font-family:var(--font-mono)">${d.dos}d</td>
+      <td><span class="status-badge ${rBadge}">${d.stockout_risk}%</span></td>
+      <td><span class="status-badge ${sBadge}">${d.status}</span></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+// ─── CSV download ─────────────────────────────────────────────────────────────
+function downloadCSV(){
+  const cols=['sku_id','name','category','supplier','demand','lt','ss','rop','ai_rop','manual_rop','eoq','current_stock','dos','ai_rec_qty','confidence','stockout_risk','status','reason'];
+  const headers=cols.join(',');
+  const rows=DATA.map(d=>cols.map(c=>{
+    const v=d[c];return typeof v==='string'&&v.includes(',')? `"${v}"`:v;
+  }).join(','));
+  const csv=[headers,...rows].join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='ai_replenishment_data.csv';a.click();
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+buildFeed();
+runSim();
+buildCharts();
+buildForecast(0);
+</script>
+</body>
+</html>

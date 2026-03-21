@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Inventory Turnover Benchmarker | Chibuike Dialaekwe</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg: #0a0a0f;
+  --bg2: #12121a;
+  --bg3: #1a1a26;
+  --border: #2a2a3d;
+  --text: #e8e8f0;
+  --muted: #8888a8;
+  --cyan: #00d4ff;
+  --green: #00ff88;
+  --amber: #ffb800;
+  --red: #ff4466;
+  --purple: #a855f7;
+  --accent: #ff4466;
+  --card-bg: #16161f;
+  --chart-grid: rgba(255,255,255,0.06);
+  --shadow: 0 4px 24px rgba(0,0,0,0.4);
+}
+[data-theme="light"] {
+  --bg: #f4f4f8;
+  --bg2: #ffffff;
+  --bg3: #eaeaf2;
+  --border: #d0d0e0;
+  --text: #1a1a2e;
+  --muted: #6666a0;
+  --card-bg: #ffffff;
+  --chart-grid: rgba(0,0,0,0.07);
+  --shadow: 0 4px 24px rgba(0,0,0,0.1);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: 'Outfit', sans-serif; font-size: 16px; line-height: 1.6; }
+
+/* SCROLL PROGRESS */
+#progress-bar { position: fixed; top: 0; left: 0; height: 3px; width: 0%; background: linear-gradient(90deg, var(--red), var(--amber)); z-index: 9999; transition: width 0.1s linear; }
+
+/* NAV */
+nav { position: sticky; top: 0; z-index: 100; background: rgba(10,10,15,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 2rem; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+[data-theme="light"] nav { background: rgba(244,244,248,0.92); }
+.nav-logo { font-family: 'Space Mono', monospace; font-size: 0.85rem; color: var(--accent); letter-spacing: 0.05em; }
+.nav-links { display: flex; align-items: center; gap: 1rem; }
+.nav-links a { color: var(--muted); text-decoration: none; font-size: 0.8rem; transition: color 0.2s; }
+.nav-links a:hover { color: var(--text); }
+.theme-btn { background: none; border: 1px solid var(--border); color: var(--text); border-radius: 6px; padding: 4px 10px; cursor: pointer; font-size: 0.85rem; transition: all 0.2s; }
+.theme-btn:hover { border-color: var(--accent); }
+
+/* HERO */
+.hero { padding: 4rem 2rem 2.5rem; max-width: 1200px; margin: 0 auto; }
+.breadcrumb { font-size: 0.75rem; color: var(--muted); margin-bottom: 1rem; }
+.breadcrumb a { color: var(--muted); text-decoration: none; }
+.breadcrumb a:hover { color: var(--accent); }
+.hero-top { display: flex; align-items: flex-start; gap: 1.5rem; flex-wrap: wrap; }
+.hero-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
+.badge { font-family: 'Space Mono', monospace; font-size: 0.65rem; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.08em; font-weight: 700; }
+.badge-red { background: rgba(255,68,102,0.15); color: var(--red); border: 1px solid rgba(255,68,102,0.3); }
+.badge-cyan { background: rgba(0,212,255,0.12); color: var(--cyan); border: 1px solid rgba(0,212,255,0.25); }
+.badge-amber { background: rgba(255,184,0,0.12); color: var(--amber); border: 1px solid rgba(255,184,0,0.25); }
+.badge-purple { background: rgba(168,85,247,0.12); color: var(--purple); border: 1px solid rgba(168,85,247,0.25); }
+h1 { font-family: 'Space Mono', monospace; font-size: clamp(1.6rem, 3.5vw, 2.4rem); line-height: 1.2; color: var(--text); margin-bottom: 0.5rem; }
+h1 span { color: var(--accent); }
+.hero-sub { color: var(--muted); font-size: 1rem; max-width: 700px; }
+
+/* SECTION */
+.section { max-width: 1200px; margin: 0 auto; padding: 2.5rem 2rem; }
+.section-title { font-family: 'Space Mono', monospace; font-size: 0.75rem; letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; }
+.section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* PSF */
+.psf-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+.psf-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+.psf-card.problem { border-top: 3px solid var(--red); }
+.psf-card.solution { border-top: 3px solid var(--cyan); }
+.psf-card.findings { border-top: 3px solid var(--green); }
+.psf-label { font-family: 'Space Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; margin-bottom: 0.75rem; font-weight: 700; }
+.psf-card.problem .psf-label { color: var(--red); }
+.psf-card.solution .psf-label { color: var(--cyan); }
+.psf-card.findings .psf-label { color: var(--green); }
+.psf-card h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.5rem; }
+.psf-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+/* RAG PANEL */
+.rag-panel { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
+.rag-panel h3 { font-family: 'Space Mono', monospace; font-size: 0.75rem; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; margin-bottom: 1rem; }
+.rag-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; }
+.rag-item { border-radius: 8px; padding: 1rem; display: flex; align-items: center; gap: 0.75rem; }
+.rag-item.red-item { background: rgba(255,68,102,0.08); border: 1px solid rgba(255,68,102,0.25); }
+.rag-item.amber-item { background: rgba(255,184,0,0.08); border: 1px solid rgba(255,184,0,0.25); }
+.rag-item.green-item { background: rgba(0,255,136,0.08); border: 1px solid rgba(0,255,136,0.25); }
+.rag-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+.rag-dot.r { background: var(--red); box-shadow: 0 0 8px var(--red); }
+.rag-dot.a { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+.rag-dot.g { background: var(--green); box-shadow: 0 0 8px var(--green); }
+.rag-info { flex: 1; }
+.rag-info .rag-label { font-size: 0.75rem; color: var(--muted); }
+.rag-info .rag-val { font-family: 'Space Mono', monospace; font-size: 1.1rem; font-weight: 700; }
+.rag-item.red-item .rag-val { color: var(--red); }
+.rag-item.amber-item .rag-val { color: var(--amber); }
+.rag-item.green-item .rag-val { color: var(--green); }
+
+/* BENCHMARK CALCULATOR */
+.calc-box { background: var(--card-bg); border: 1px solid var(--accent); border-radius: 12px; padding: 1.75rem; margin-bottom: 1.5rem; }
+.calc-box h3 { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1.25rem; }
+.calc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.25rem; }
+.calc-field label { display: block; font-size: 0.72rem; color: var(--muted); margin-bottom: 0.35rem; font-family: 'Space Mono', monospace; letter-spacing: 0.06em; }
+.calc-field select, .calc-field input { width: 100%; background: var(--bg2); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 0.55rem 0.75rem; font-size: 0.9rem; font-family: 'Outfit', sans-serif; }
+.calc-field select:focus, .calc-field input:focus { outline: none; border-color: var(--accent); }
+.calc-btn { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 0.6rem 1.5rem; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: opacity 0.2s; font-family: 'Outfit', sans-serif; }
+.calc-btn:hover { opacity: 0.85; }
+.calc-result { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; margin-top: 1rem; display: none; }
+.calc-result.show { display: block; }
+.calc-result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 0.75rem; }
+.cr-item .cr-label { font-size: 0.7rem; color: var(--muted); font-family: 'Space Mono', monospace; }
+.cr-item .cr-val { font-family: 'Space Mono', monospace; font-size: 1.3rem; font-weight: 700; color: var(--text); }
+.cr-item .cr-sub { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+.cr-formula { font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--muted); background: var(--bg3); border-radius: 6px; padding: 0.5rem 0.75rem; }
+.status-tag { display: inline-block; font-family: 'Space Mono', monospace; font-size: 0.65rem; padding: 2px 8px; border-radius: 10px; font-weight: 700; letter-spacing: 0.06em; }
+.st-red { background: rgba(255,68,102,0.15); color: var(--red); border: 1px solid rgba(255,68,102,0.3); }
+.st-amber { background: rgba(255,184,0,0.15); color: var(--amber); border: 1px solid rgba(255,184,0,0.25); }
+.st-green { background: rgba(0,255,136,0.12); color: var(--green); border: 1px solid rgba(0,255,136,0.25); }
+
+/* FILTERS */
+.filter-bar { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; align-items: center; }
+.filter-label { font-size: 0.72rem; color: var(--muted); font-family: 'Space Mono', monospace; margin-right: 0.25rem; }
+.filter-btn { background: var(--bg2); border: 1px solid var(--border); color: var(--muted); border-radius: 6px; padding: 5px 12px; font-size: 0.78rem; cursor: pointer; transition: all 0.2s; font-family: 'Outfit', sans-serif; }
+.filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.filter-btn:hover:not(.active) { border-color: var(--text); color: var(--text); }
+
+/* KPI CARDS */
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+.kpi-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; transition: transform 0.2s, box-shadow 0.2s; }
+.kpi-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.kpi-label { font-size: 0.72rem; color: var(--muted); font-family: 'Space Mono', monospace; letter-spacing: 0.06em; margin-bottom: 0.5rem; }
+.kpi-val { font-family: 'Space Mono', monospace; font-size: 1.6rem; font-weight: 700; color: var(--text); line-height: 1; margin-bottom: 0.4rem; }
+.kpi-trend { font-size: 0.72rem; padding: 2px 8px; border-radius: 10px; display: inline-block; }
+.trend-up { background: rgba(0,255,136,0.12); color: var(--green); }
+.trend-down { background: rgba(255,68,102,0.12); color: var(--red); }
+.trend-neutral { background: rgba(255,184,0,0.12); color: var(--amber); }
+
+/* CHARTS */
+.chart-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(480px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+.chart-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+.chart-card h3 { font-family: 'Space Mono', monospace; font-size: 0.72rem; letter-spacing: 0.08em; color: var(--muted); text-transform: uppercase; margin-bottom: 1rem; }
+.chart-wrap { position: relative; height: 260px; }
+.chart-wrap-tall { position: relative; height: 320px; }
+
+/* TABLE */
+.table-controls { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem; }
+.table-info { font-size: 0.78rem; color: var(--muted); }
+.download-btn { background: none; border: 1px solid var(--border); color: var(--muted); border-radius: 6px; padding: 5px 12px; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; font-family: 'Outfit', sans-serif; }
+.download-btn:hover { border-color: var(--accent); color: var(--accent); }
+.table-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+thead th { background: var(--bg3); color: var(--muted); font-family: 'Space Mono', monospace; font-size: 0.65rem; letter-spacing: 0.06em; padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+tbody tr:hover { background: var(--bg3); }
+tbody td { padding: 0.65rem 1rem; color: var(--text); white-space: nowrap; }
+.rag-badge { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+.rag-badge.R { background: var(--red); }
+.rag-badge.A { background: var(--amber); }
+.rag-badge.G { background: var(--green); }
+
+/* FORECAST */
+.forecast-section { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 1.75rem; margin-bottom: 2rem; }
+.forecast-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem; }
+.forecast-header h3 { font-family: 'Space Mono', monospace; font-size: 0.75rem; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; }
+.scenario-btns { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.scenario-btn { background: var(--bg2); border: 1px solid var(--border); color: var(--muted); border-radius: 6px; padding: 4px 12px; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; font-family: 'Outfit', sans-serif; }
+.scenario-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.forecast-chart-wrap { position: relative; height: 280px; }
+.forecast-summary { margin-top: 1rem; font-size: 0.82rem; color: var(--muted); line-height: 1.7; }
+.forecast-summary strong { color: var(--text); }
+
+/* ADVICE */
+.advice-box { background: var(--card-bg); border: 1px solid var(--amber); border-left: 4px solid var(--amber); border-radius: 12px; padding: 1.75rem; margin-bottom: 2rem; }
+.advice-box h3 { font-family: 'Space Mono', monospace; font-size: 0.75rem; letter-spacing: 0.1em; color: var(--amber); text-transform: uppercase; margin-bottom: 1rem; }
+.advice-box ul { list-style: none; padding: 0; }
+.advice-box ul li { font-size: 0.9rem; color: var(--text); padding: 0.4rem 0; padding-left: 1.25rem; position: relative; line-height: 1.6; }
+.advice-box ul li::before { content: '▸'; position: absolute; left: 0; color: var(--amber); }
+.advice-takeaway { background: rgba(255,68,102,0.08); border: 1px solid rgba(255,68,102,0.25); border-radius: 8px; padding: 1rem; margin-top: 1rem; font-size: 0.85rem; color: var(--text); line-height: 1.6; }
+.advice-takeaway strong { color: var(--accent); }
+
+/* NAVIGATION */
+.page-nav { display: flex; justify-content: space-between; align-items: center; padding: 2rem; max-width: 1200px; margin: 0 auto; border-top: 1px solid var(--border); }
+.btn-nav { display: inline-flex; align-items: center; gap: 0.5rem; background: var(--card-bg); border: 1px solid var(--border); color: var(--muted); text-decoration: none; border-radius: 8px; padding: 0.6rem 1.2rem; font-size: 0.82rem; transition: all 0.2s; font-family: 'Outfit', sans-serif; }
+.btn-nav:hover { border-color: var(--accent); color: var(--accent); }
+
+/* FADE UP */
+.fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.55s ease, transform 0.55s ease; }
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 768px) {
+  .chart-grid { grid-template-columns: 1fr; }
+  .calc-grid { grid-template-columns: 1fr 1fr; }
+  h1 { font-size: 1.6rem; }
+}
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+
+<nav>
+  <span class="nav-logo">CD / PROJECT-13</span>
+  <div class="nav-links">
+    <a href="index.html">← Portfolio</a>
+    <button class="theme-btn" id="themeToggle">☀️</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="breadcrumb"><a href="index.html">Home</a> / <a href="index.html">Projects</a> / Inventory Turnover Benchmarker</div>
+  <div class="hero-badges">
+    <span class="badge badge-red">BENCHMARKS VS INDUSTRY PEERS</span>
+    <span class="badge badge-purple">INVENTORY</span>
+    <span class="badge badge-cyan">POWER BI</span>
+  </div>
+  <h1>Inventory Turnover <span>Benchmarker</span></h1>
+  <p class="hero-sub">Compares internal inventory performance — ITR, DIO, GMROI, and dead stock % — against published industry benchmarks across Retail, FMCG, Industrial, and Automotive sectors with traffic-light RAG status.</p>
+</div>
+
+<!-- PSF -->
+<div class="section fade-up">
+  <div class="section-title">Project Overview</div>
+  <div class="psf-grid">
+    <div class="psf-card problem">
+      <div class="psf-label">⚑ Problem</div>
+      <h3>Blind Benchmarking</h3>
+      <p>Most companies track inventory metrics in isolation — monitoring turnover ratios and days-on-hand without context. No visibility into whether performance is competitive versus sector peers leads to misallocated working capital and missed optimisation opportunities.</p>
+    </div>
+    <div class="psf-card solution">
+      <div class="psf-label">⚙ Solution</div>
+      <h3>Power BI Benchmark Model</h3>
+      <p>A Power BI model combining internal inventory data with published sector benchmarks (Retail, FMCG, Industrial, Automotive). Traffic-light RAG status on ITR, DIO, GMROI, and dead stock % shows at a glance where performance lags or leads industry standards.</p>
+    </div>
+    <div class="psf-card findings">
+      <div class="psf-label">✓ Findings</div>
+      <h3>Working Capital Unlocked</h3>
+      <p>31% of SKUs rated RED — below benchmark ITR — representing €4.2M in trapped working capital. Automotive and Industrial categories show the largest gaps. Closing the benchmark gap by 1 ITR point across RED SKUs projects a €1.1M cash release over 12 months.</p>
+    </div>
+  </div>
+</div>
+
+<!-- RAG STATUS PANEL -->
+<div class="section fade-up">
+  <div class="section-title">RAG Status Summary</div>
+  <div class="rag-panel">
+    <h3>Portfolio RAG Breakdown — Current vs Benchmark ITR</h3>
+    <div class="rag-grid" id="ragPanel"></div>
+  </div>
+
+  <!-- BENCHMARK CALCULATOR -->
+  <div class="calc-box">
+    <h3>⚡ Live ITR Benchmark Calculator</h3>
+    <div class="calc-grid">
+      <div class="calc-field">
+        <label>SECTOR</label>
+        <select id="calcSector">
+          <option value="Retail">Retail</option>
+          <option value="FMCG">FMCG</option>
+          <option value="Industrial">Industrial</option>
+          <option value="Automotive">Automotive</option>
+        </select>
+      </div>
+      <div class="calc-field">
+        <label>COGS (€)</label>
+        <input type="number" id="calcCOGS" value="1200000" min="0" step="10000"/>
+      </div>
+      <div class="calc-field">
+        <label>AVG INVENTORY (€)</label>
+        <input type="number" id="calcInv" value="300000" min="1" step="5000"/>
+      </div>
+      <div class="calc-field">
+        <label>DEAD STOCK (%)</label>
+        <input type="number" id="calcDead" value="8" min="0" max="100" step="0.5"/>
+      </div>
+    </div>
+    <button class="calc-btn" onclick="runCalc()">Calculate Benchmark Position</button>
+    <div class="calc-result" id="calcResult">
+      <div class="calc-result-grid" id="calcResultGrid"></div>
+      <div class="cr-formula" id="calcFormula"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FILTERS + KPIs -->
+<div class="section fade-up">
+  <div class="section-title">Dataset Explorer</div>
+  <div class="filter-bar">
+    <span class="filter-label">SECTOR:</span>
+    <button class="filter-btn active" onclick="filterData('sector','All',this)">All</button>
+    <button class="filter-btn" onclick="filterData('sector','Retail',this)">Retail</button>
+    <button class="filter-btn" onclick="filterData('sector','FMCG',this)">FMCG</button>
+    <button class="filter-btn" onclick="filterData('sector','Industrial',this)">Industrial</button>
+    <button class="filter-btn" onclick="filterData('sector','Automotive',this)">Automotive</button>
+  </div>
+  <div class="filter-bar">
+    <span class="filter-label">RAG:</span>
+    <button class="filter-btn active" onclick="filterData('rag','All',this)">All</button>
+    <button class="filter-btn" onclick="filterData('rag','R',this)" style="color:var(--red)">● Red</button>
+    <button class="filter-btn" onclick="filterData('rag','A',this)" style="color:var(--amber)">● Amber</button>
+    <button class="filter-btn" onclick="filterData('rag','G',this)" style="color:var(--green)">● Green</button>
+  </div>
+  <div class="kpi-grid" id="kpiGrid"></div>
+</div>
+
+<!-- CHARTS -->
+<div class="section fade-up">
+  <div class="section-title">Benchmark Analysis Charts</div>
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h3>ITR: Actual vs Benchmark (by Category)</h3>
+      <div class="chart-wrap"><canvas id="itrChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Days Inventory Outstanding (DIO)</h3>
+      <div class="chart-wrap"><canvas id="dioChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>GMROI by Sector</h3>
+      <div class="chart-wrap"><canvas id="gmroiChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Dead Stock % by Category</h3>
+      <div class="chart-wrap"><canvas id="deadChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Working Capital Trapped (RED SKUs)</h3>
+      <div class="chart-wrap-tall"><canvas id="wcChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>RAG Distribution by Sector</h3>
+      <div class="chart-wrap"><canvas id="ragDistChart"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- TABLE -->
+<div class="section fade-up">
+  <div class="section-title">Product Category Data</div>
+  <div class="table-controls">
+    <span class="table-info" id="tableInfo"></span>
+    <button class="download-btn" onclick="downloadCSV()">⬇ Download CSV</button>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>CATEGORY</th>
+          <th>SECTOR</th>
+          <th>COGS (€K)</th>
+          <th>AVG INV (€K)</th>
+          <th>ACTUAL ITR</th>
+          <th>BENCHMARK ITR</th>
+          <th>DIO (DAYS)</th>
+          <th>BENCHMARK DIO</th>
+          <th>DEAD STOCK %</th>
+          <th>GMROI</th>
+          <th>RAG</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- FORECAST -->
+<div class="section fade-up">
+  <div class="section-title">Working Capital Forecast</div>
+  <div class="forecast-section">
+    <div class="forecast-header">
+      <h3>Projected WC Release if ITR Reaches Benchmark (12-Month View)</h3>
+      <div class="scenario-btns">
+        <button class="scenario-btn active" onclick="setScenario('base',this)">Base (+0.5 ITR/Qtr)</button>
+        <button class="scenario-btn" onclick="setScenario('optimistic',this)">Optimistic (+1.0 ITR/Qtr)</button>
+        <button class="scenario-btn" onclick="setScenario('hold',this)">Status Quo</button>
+      </div>
+    </div>
+    <div class="forecast-chart-wrap"><canvas id="forecastChart"></canvas></div>
+    <div class="forecast-summary" id="forecastSummary"></div>
+  </div>
+</div>
+
+<!-- ADVICE -->
+<div class="section fade-up">
+  <div class="section-title">Company Advice</div>
+  <div class="advice-box">
+    <h3>💡 Recommendations for Inventory Leaders</h3>
+    <ul>
+      <li>A 1-point improvement in Inventory Turnover Ratio typically frees <strong>8–12% of working capital</strong> — for this portfolio, that equals €320K–€480K per ITR point gained.</li>
+      <li>Prioritise RED-status categories in Automotive and Industrial first — they show the widest benchmark gaps and the highest trapped capital per SKU.</li>
+      <li>Attack dead stock above 10% immediately: markdowns, liquidation auctions, or supplier buy-back clauses are faster than slow sell-through and free cash faster.</li>
+      <li>GMROI below 2.0x signals margin compression on top of turnover lag — review pricing and supplier terms simultaneously with inventory reduction programmes.</li>
+      <li>FMCG categories are closest to benchmark; focus continuous improvement there on DIO tightening (target sub-25 days) rather than broad inventory cuts.</li>
+      <li>Implement rolling 13-week demand-based reorder reviews to prevent seasonal stock buildup that inflates DIO in Q3/Q4 peaks.</li>
+    </ul>
+    <div class="advice-takeaway">
+      <strong>Key Takeaway:</strong> Benchmarking reveals the <em>opportunity cost of inaction</em>. Every quarter a RED-status SKU stays below benchmark ITR is a quarter of compounding working capital cost — funding competitor growth instead of your own.
+    </div>
+  </div>
+</div>
+
+<!-- PAGE NAV -->
+<div class="page-nav">
+  <a class="btn-nav" href="project-12.html">← Carbon Footprint</a>
+  <a class="btn-nav" href="project-14.html">Demand Sensing →</a>
+</div>
+
+<script>
+// ─── THEME ───────────────────────────────────────────────────────────
+const html = document.documentElement;
+const themeBtn = document.getElementById('themeToggle');
+function applyTheme(t) {
+  html.setAttribute('data-theme', t);
+  themeBtn.textContent = t === 'dark' ? '☀️' : '🌙';
+  localStorage.setItem('theme', t);
+}
+applyTheme(localStorage.getItem('theme') || 'dark');
+themeBtn.addEventListener('click', () => applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
+
+// ─── SCROLL PROGRESS ─────────────────────────────────────────────────
+const pb = document.getElementById('progress-bar');
+window.addEventListener('scroll', () => {
+  const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+  pb.style.width = pct + '%';
+});
+
+// ─── FADE UP ─────────────────────────────────────────────────────────
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }});
+}, { threshold: 0.08 });
+document.querySelectorAll('.fade-up').forEach(el => io.observe(el));
+
+// ─── DATASET ─────────────────────────────────────────────────────────
+const BENCHMARKS = {
+  Retail:      { itr: 8.5,  dio: 43,  gmroi: 3.2 },
+  FMCG:        { itr: 12.0, dio: 30,  gmroi: 4.1 },
+  Industrial:  { itr: 4.5,  dio: 81,  gmroi: 2.2 },
+  Automotive:  { itr: 5.0,  dio: 73,  gmroi: 2.5 }
+};
+
+const CATEGORIES = [
+  // Retail
+  { cat:'Apparel',          sector:'Retail',      cogs:2400, inv:310, itr:7.7,  dio:47,  dead:6.2,  gmroi:2.9 },
+  { cat:'Footwear',         sector:'Retail',      cogs:1850, inv:210, itr:8.8,  dio:41,  dead:4.8,  gmroi:3.4 },
+  { cat:'Home Furnishing',  sector:'Retail',      cogs:3100, inv:490, itr:6.3,  dio:58,  dead:9.1,  gmroi:2.5 },
+  { cat:'Electronics',      sector:'Retail',      cogs:5200, inv:580, itr:9.0,  dio:40,  dead:3.2,  gmroi:3.8 },
+  { cat:'Toys & Games',     sector:'Retail',      cogs:1200, inv:185, itr:6.5,  dio:56,  dead:11.3, gmroi:2.3 },
+  { cat:'Sporting Goods',   sector:'Retail',      cogs:980,  inv:130, itr:7.5,  dio:49,  dead:7.5,  gmroi:2.8 },
+  // FMCG
+  { cat:'Packaged Food',    sector:'FMCG',        cogs:6800, inv:520, itr:13.1, dio:28,  dead:2.1,  gmroi:4.6 },
+  { cat:'Beverages',        sector:'FMCG',        cogs:4500, inv:390, itr:11.5, dio:32,  dead:1.8,  gmroi:4.0 },
+  { cat:'Personal Care',    sector:'FMCG',        cogs:3200, inv:310, itr:10.3, dio:35,  dead:3.4,  gmroi:3.6 },
+  { cat:'Household Chem.',  sector:'FMCG',        cogs:2700, inv:270, itr:10.0, dio:37,  dead:4.0,  gmroi:3.4 },
+  { cat:'Baby Products',    sector:'FMCG',        cogs:1900, inv:210, itr:9.0,  dio:41,  dead:5.1,  gmroi:3.1 },
+  { cat:'Pet Supplies',     sector:'FMCG',        cogs:1400, inv:145, itr:9.7,  dio:38,  dead:4.6,  gmroi:3.3 },
+  // Industrial
+  { cat:'MRO Parts',        sector:'Industrial',  cogs:4100, inv:1100,itr:3.7,  dio:99,  dead:14.2, gmroi:1.8 },
+  { cat:'Machinery',        sector:'Industrial',  cogs:7800, inv:1900,itr:4.1,  dio:89,  dead:12.0, gmroi:2.0 },
+  { cat:'Chemicals',        sector:'Industrial',  cogs:3300, inv:720, itr:4.6,  dio:79,  dead:8.5,  gmroi:2.2 },
+  { cat:'Safety Equipment', sector:'Industrial',  cogs:1100, inv:280, itr:3.9,  dio:94,  dead:10.3, gmroi:1.9 },
+  { cat:'Electrical',       sector:'Industrial',  cogs:2800, inv:590, itr:4.7,  dio:78,  dead:7.8,  gmroi:2.3 },
+  { cat:'Hydraulics',       sector:'Industrial',  cogs:2100, inv:500, itr:4.2,  dio:87,  dead:11.1, gmroi:2.0 },
+  // Automotive
+  { cat:'OEM Parts',        sector:'Automotive',  cogs:9200, inv:2100,itr:4.4,  dio:83,  dead:9.8,  gmroi:2.3 },
+  { cat:'Aftermarket',      sector:'Automotive',  cogs:3800, inv:810, itr:4.7,  dio:78,  dead:8.2,  gmroi:2.5 },
+  { cat:'Tyres',            sector:'Automotive',  cogs:2600, inv:550, itr:4.7,  dio:78,  dead:6.5,  gmroi:2.6 },
+  { cat:'Lubricants',       sector:'Automotive',  cogs:1400, inv:260, itr:5.4,  dio:68,  dead:5.1,  gmroi:2.9 },
+  { cat:'Accessories',      sector:'Automotive',  cogs:900,  inv:230, itr:3.9,  dio:94,  dead:12.7, gmroi:1.9 },
+  { cat:'EV Components',    sector:'Automotive',  cogs:5100, inv:1300,itr:3.9,  dio:94,  dead:10.8, gmroi:2.0 },
+];
+
+// Compute derived fields
+const DATA = CATEGORIES.map(d => {
+  const bm = BENCHMARKS[d.sector];
+  const itrGap = d.itr - bm.itr;
+  const dioGap = d.dio - bm.dio;
+  let rag = 'G';
+  if (itrGap < -1.5 || dioGap > 20) rag = 'R';
+  else if (itrGap < -0.5 || dioGap > 8) rag = 'A';
+  const bmInv = (d.cogs / bm.itr) * 1000; // benchmark target avg inventory (€)
+  const actualInv = (d.inv) * 1000;
+  const trappedWC = Math.max(0, actualInv - bmInv);
+  return { ...d, bm, itrGap, dioGap, rag, trappedWC };
+});
+
+let activeFilters = { sector: 'All', rag: 'All' };
+let charts = {};
+let forecastScenario = 'base';
+
+function getFiltered() {
+  return DATA.filter(d =>
+    (activeFilters.sector === 'All' || d.sector === activeFilters.sector) &&
+    (activeFilters.rag === 'All' || d.rag === activeFilters.rag)
+  );
+}
+
+function filterData(type, val, btn) {
+  activeFilters[type] = val;
+  const group = btn.parentElement;
+  group.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function applyFilters() {
+  const fd = getFiltered();
+  renderRAGPanel(fd);
+  renderKPIs(fd);
+  renderTable(fd);
+  rebuildCharts(fd);
+}
+
+// ─── RAG PANEL ───────────────────────────────────────────────────────
+function renderRAGPanel(data) {
+  const r = data.filter(d => d.rag === 'R').length;
+  const a = data.filter(d => d.rag === 'A').length;
+  const g = data.filter(d => d.rag === 'G').length;
+  const totalWC = data.filter(d => d.rag === 'R').reduce((s, d) => s + d.trappedWC, 0);
+  const panel = document.getElementById('ragPanel');
+  panel.innerHTML = `
+    <div class="rag-item red-item">
+      <div class="rag-dot r"></div>
+      <div class="rag-info">
+        <div class="rag-label">RED — Below Benchmark ITR</div>
+        <div class="rag-val">${r} SKUs</div>
+      </div>
+    </div>
+    <div class="rag-item amber-item">
+      <div class="rag-dot a"></div>
+      <div class="rag-info">
+        <div class="rag-label">AMBER — Near Benchmark</div>
+        <div class="rag-val">${a} SKUs</div>
+      </div>
+    </div>
+    <div class="rag-item green-item">
+      <div class="rag-dot g"></div>
+      <div class="rag-info">
+        <div class="rag-label">GREEN — Meets/Exceeds Benchmark</div>
+        <div class="rag-val">${g} SKUs</div>
+      </div>
+    </div>
+    <div class="rag-item red-item">
+      <div class="rag-dot r"></div>
+      <div class="rag-info">
+        <div class="rag-label">Trapped Working Capital (RED)</div>
+        <div class="rag-val">€${(totalWC/1e6).toFixed(1)}M</div>
+      </div>
+    </div>
+  `;
+}
+
+// ─── KPIs ─────────────────────────────────────────────────────────────
+function renderKPIs(data) {
+  const avgITR = (data.reduce((s,d) => s + d.itr, 0) / data.length).toFixed(1);
+  const avgBmITR = (data.reduce((s,d) => s + d.bm.itr, 0) / data.length).toFixed(1);
+  const avgDIO = Math.round(data.reduce((s,d) => s + d.dio, 0) / data.length);
+  const avgBmDIO = Math.round(data.reduce((s,d) => s + d.bm.dio, 0) / data.length);
+  const avgGMROI = (data.reduce((s,d) => s + d.gmroi, 0) / data.length).toFixed(2);
+  const avgDead = (data.reduce((s,d) => s + d.dead, 0) / data.length).toFixed(1);
+  const totalTrapped = data.filter(d=>d.rag==='R').reduce((s,d) => s + d.trappedWC, 0);
+  const totalCOGS = data.reduce((s,d) => s + d.cogs, 0);
+  const redPct = Math.round(data.filter(d=>d.rag==='R').length / data.length * 100);
+
+  const kpis = [
+    { label:'AVG ACTUAL ITR', val: avgITR + 'x', trend: avgITR >= avgBmITR ? '▲ At Benchmark' : `▼ Bench: ${avgBmITR}x`, cls: avgITR >= avgBmITR ? 'trend-up' : 'trend-down' },
+    { label:'AVG DIO (DAYS)',  val: avgDIO + 'd',  trend: avgDIO <= avgBmDIO ? '▲ At Benchmark' : `▼ Bench: ${avgBmDIO}d`, cls: avgDIO <= avgBmDIO ? 'trend-up' : 'trend-down' },
+    { label:'AVG GMROI',       val: avgGMROI + 'x', trend: avgGMROI >= 3.0 ? '▲ Healthy' : '▼ Below 3.0x', cls: avgGMROI >= 3.0 ? 'trend-up' : 'trend-down' },
+    { label:'AVG DEAD STOCK',  val: avgDead + '%', trend: avgDead <= 5 ? '▲ Controlled' : '▼ Above Target', cls: avgDead <= 5 ? 'trend-up' : 'trend-down' },
+    { label:'RED SKU SHARE',   val: redPct + '%',  trend: redPct < 20 ? '▲ Managed' : '▼ High', cls: redPct < 20 ? 'trend-up' : 'trend-down' },
+    { label:'TRAPPED WC',      val: '€' + (totalTrapped/1e6).toFixed(1) + 'M', trend: '▼ Below Benchmark', cls: 'trend-down' },
+    { label:'TOTAL COGS',      val: '€' + (totalCOGS/1000).toFixed(0) + 'M', trend: '— Portfolio', cls: 'trend-neutral' },
+    { label:'SKUs ANALYSED',   val: data.length, trend: '— In Filter', cls: 'trend-neutral' },
+  ];
+  document.getElementById('kpiGrid').innerHTML = kpis.map(k => `
+    <div class="kpi-card">
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-val">${k.val}</div>
+      <div class="kpi-trend ${k.cls}">${k.trend}</div>
+    </div>`).join('');
+}
+
+// ─── TABLE ────────────────────────────────────────────────────────────
+function renderTable(data) {
+  document.getElementById('tableInfo').textContent = `Showing ${data.length} of ${DATA.length} categories`;
+  document.getElementById('tableBody').innerHTML = data.map(d => {
+    const itrTag = d.itrGap >= 0 ? `<span class="status-tag st-green">BEATS BM</span>` : (d.itrGap > -1.5 ? `<span class="status-tag st-amber">NEAR</span>` : `<span class="status-tag st-red">BELOW</span>`);
+    return `<tr>
+      <td>${d.cat}</td>
+      <td>${d.sector}</td>
+      <td>${d.cogs.toLocaleString()}</td>
+      <td>${d.inv.toLocaleString()}</td>
+      <td>${d.itr.toFixed(1)} ${itrTag}</td>
+      <td>${d.bm.itr.toFixed(1)}</td>
+      <td>${d.dio}</td>
+      <td>${d.bm.dio}</td>
+      <td>${d.dead.toFixed(1)}%</td>
+      <td>${d.gmroi.toFixed(2)}x</td>
+      <td><span class="rag-badge ${d.rag}"></span>${d.rag}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── CHART HELPERS ────────────────────────────────────────────────────
+function destroyAll() { Object.values(charts).forEach(c => { try { c.destroy(); } catch(_){} }); charts = {}; }
+
+function getCSSVar(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+function cfg() {
+  return {
+    color: getCSSVar('--muted'),
+    gridColor: getCSSVar('--chart-grid'),
+    cyan: getCSSVar('--cyan'),
+    red: getCSSVar('--red'),
+    amber: getCSSVar('--amber'),
+    green: getCSSVar('--green'),
+    purple: getCSSVar('--purple'),
+    text: getCSSVar('--text'),
+  };
+}
+
+// ─── BUILD CHARTS ─────────────────────────────────────────────────────
+function rebuildCharts(data) {
+  destroyAll();
+  const c = cfg();
+
+  // 1. ITR Actual vs Benchmark (clustered bar)
+  const itrCtx = document.getElementById('itrChart').getContext('2d');
+  const itrLabels = data.map(d => d.cat.length > 12 ? d.cat.slice(0,12)+'…' : d.cat);
+  charts.itr = new Chart(itrCtx, {
+    type: 'bar',
+    data: {
+      labels: itrLabels,
+      datasets: [
+        { label: 'Actual ITR', data: data.map(d => d.itr), backgroundColor: data.map(d => d.rag === 'R' ? 'rgba(255,68,102,0.75)' : d.rag === 'A' ? 'rgba(255,184,0,0.7)' : 'rgba(0,255,136,0.7)'), borderRadius: 4 },
+        { label: 'Benchmark ITR', data: data.map(d => d.bm.itr), backgroundColor: 'rgba(255,255,255,0.12)', borderColor: 'rgba(255,255,255,0.4)', borderWidth: 1, borderRadius: 4 }
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: c.color, font: { size: 11 } } } }, scales: { x: { ticks: { color: c.color, font: { size: 9 }, maxRotation: 45 }, grid: { color: c.gridColor } }, y: { ticks: { color: c.color }, grid: { color: c.gridColor } } } }
+  });
+
+  // 2. DIO Actual vs Benchmark
+  const dioCtx = document.getElementById('dioChart').getContext('2d');
+  charts.dio = new Chart(dioCtx, {
+    type: 'bar',
+    data: {
+      labels: itrLabels,
+      datasets: [
+        { label: 'Actual DIO', data: data.map(d => d.dio), backgroundColor: data.map(d => d.dio > d.bm.dio + 20 ? 'rgba(255,68,102,0.75)' : d.dio > d.bm.dio + 8 ? 'rgba(255,184,0,0.7)' : 'rgba(0,212,255,0.7)'), borderRadius: 4 },
+        { label: 'Benchmark DIO', data: data.map(d => d.bm.dio), backgroundColor: 'rgba(255,255,255,0.12)', borderColor: 'rgba(255,255,255,0.35)', borderWidth: 1, borderRadius: 4 }
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: c.color, font: { size: 11 } } } }, scales: { x: { ticks: { color: c.color, font: { size: 9 }, maxRotation: 45 }, grid: { color: c.gridColor } }, y: { ticks: { color: c.color }, grid: { color: c.gridColor } } } }
+  });
+
+  // 3. GMROI by sector (grouped)
+  const sectors = ['Retail','FMCG','Industrial','Automotive'];
+  const gmroiCtx = document.getElementById('gmroiChart').getContext('2d');
+  const sectorData = sectors.map(s => {
+    const sd = DATA.filter(d => d.sector === s);
+    return { avg: sd.reduce((a,d)=>a+d.gmroi,0)/sd.length, bm: BENCHMARKS[s].gmroi };
+  });
+  charts.gmroi = new Chart(gmroiCtx, {
+    type: 'bar',
+    data: {
+      labels: sectors,
+      datasets: [
+        { label: 'Avg GMROI', data: sectorData.map(s=>parseFloat(s.avg.toFixed(2))), backgroundColor: ['rgba(0,212,255,0.75)','rgba(0,255,136,0.7)','rgba(255,68,102,0.7)','rgba(168,85,247,0.7)'], borderRadius: 6 },
+        { label: 'Benchmark', data: sectorData.map(s=>s.bm), backgroundColor: 'rgba(255,255,255,0.12)', borderColor: 'rgba(255,255,255,0.4)', borderWidth: 1, borderRadius: 6 }
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: c.color } } }, scales: { x: { ticks: { color: c.color }, grid: { color: c.gridColor } }, y: { ticks: { color: c.color }, grid: { color: c.gridColor } } } }
+  });
+
+  // 4. Dead Stock %
+  const deadCtx = document.getElementById('deadChart').getContext('2d');
+  charts.dead = new Chart(deadCtx, {
+    type: 'bar',
+    data: {
+      labels: itrLabels,
+      datasets: [{
+        label: 'Dead Stock %',
+        data: data.map(d => d.dead),
+        backgroundColor: data.map(d => d.dead > 10 ? 'rgba(255,68,102,0.8)' : d.dead > 5 ? 'rgba(255,184,0,0.75)' : 'rgba(0,255,136,0.7)'),
+        borderRadius: 4
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: c.color, callback: v => v + '%' }, grid: { color: c.gridColor } },
+        y: { ticks: { color: c.color, font: { size: 9 } }, grid: { color: c.gridColor } }
+      }
+    }
+  });
+
+  // 5. Trapped WC bar
+  const wcCtx = document.getElementById('wcChart').getContext('2d');
+  const redItems = DATA.filter(d => d.rag === 'R').sort((a,b) => b.trappedWC - a.trappedWC);
+  charts.wc = new Chart(wcCtx, {
+    type: 'bar',
+    data: {
+      labels: redItems.map(d => d.cat),
+      datasets: [{
+        label: 'Trapped WC (€K)',
+        data: redItems.map(d => Math.round(d.trappedWC / 1000)),
+        backgroundColor: 'rgba(255,68,102,0.75)',
+        borderColor: 'rgba(255,68,102,1)',
+        borderWidth: 1,
+        borderRadius: 5
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: c.color, callback: v => '€' + v + 'K' }, grid: { color: c.gridColor } },
+        y: { ticks: { color: c.color, font: { size: 9 } }, grid: { color: c.gridColor } }
+      }
+    }
+  });
+
+  // 6. RAG distribution by sector (stacked bar)
+  const ragDistCtx = document.getElementById('ragDistChart').getContext('2d');
+  charts.ragDist = new Chart(ragDistCtx, {
+    type: 'bar',
+    data: {
+      labels: sectors,
+      datasets: [
+        { label: 'Red', data: sectors.map(s => DATA.filter(d=>d.sector===s&&d.rag==='R').length), backgroundColor: 'rgba(255,68,102,0.8)', borderRadius: 4 },
+        { label: 'Amber', data: sectors.map(s => DATA.filter(d=>d.sector===s&&d.rag==='A').length), backgroundColor: 'rgba(255,184,0,0.75)', borderRadius: 4 },
+        { label: 'Green', data: sectors.map(s => DATA.filter(d=>d.sector===s&&d.rag==='G').length), backgroundColor: 'rgba(0,255,136,0.7)', borderRadius: 4 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: c.color } } },
+      scales: {
+        x: { stacked: true, ticks: { color: c.color }, grid: { color: c.gridColor } },
+        y: { stacked: true, ticks: { color: c.color }, grid: { color: c.gridColor } }
+      }
+    }
+  });
+}
+
+// ─── LIVE CALCULATOR ─────────────────────────────────────────────────
+function runCalc() {
+  const sector = document.getElementById('calcSector').value;
+  const cogs = parseFloat(document.getElementById('calcCOGS').value) || 0;
+  const inv = parseFloat(document.getElementById('calcInv').value) || 1;
+  const dead = parseFloat(document.getElementById('calcDead').value) || 0;
+
+  const actualITR = cogs / inv;
+  const bm = BENCHMARKS[sector];
+  const itrGap = actualITR - bm.itr;
+  const actualDIO = 365 / actualITR;
+  const bmDIO = 365 / bm.itr;
+  const targetInv = cogs / bm.itr;
+  const wcRelease = Math.max(0, inv - targetInv);
+
+  let ragClass = 'st-green', ragLabel = '✓ GREEN — At Benchmark';
+  if (itrGap < -1.5) { ragClass = 'st-red'; ragLabel = '✗ RED — Well Below Benchmark'; }
+  else if (itrGap < -0.5) { ragClass = 'st-amber'; ragLabel = '◐ AMBER — Near Benchmark'; }
+
+  const res = document.getElementById('calcResult');
+  res.classList.add('show');
+  document.getElementById('calcResultGrid').innerHTML = `
+    <div class="cr-item">
+      <div class="cr-label">ACTUAL ITR</div>
+      <div class="cr-val">${actualITR.toFixed(1)}x</div>
+      <div class="cr-sub">${sector} Benchmark: ${bm.itr}x</div>
+    </div>
+    <div class="cr-item">
+      <div class="cr-label">ACTUAL DIO</div>
+      <div class="cr-val">${Math.round(actualDIO)}d</div>
+      <div class="cr-sub">Benchmark: ${bmDIO}d</div>
+    </div>
+    <div class="cr-item">
+      <div class="cr-label">WC TO RELEASE</div>
+      <div class="cr-val" style="color:var(--red)">€${Math.round(wcRelease).toLocaleString()}</div>
+      <div class="cr-sub">If ITR hits benchmark</div>
+    </div>
+    <div class="cr-item">
+      <div class="cr-label">RAG STATUS</div>
+      <div class="cr-val" style="font-size:0.9rem;margin-top:6px"><span class="status-tag ${ragClass}">${ragLabel}</span></div>
+    </div>
+  `;
+  document.getElementById('calcFormula').innerHTML =
+    `ITR = COGS / Avg Inventory = ${cogs.toLocaleString()} / ${inv.toLocaleString()} = ${actualITR.toFixed(2)} &nbsp;|&nbsp; DIO = 365 / ITR = ${Math.round(actualDIO)} days &nbsp;|&nbsp; Target Inv = ${cogs.toLocaleString()} / ${bm.itr} = €${Math.round(targetInv).toLocaleString()}`;
+}
+
+// ─── FORECAST ────────────────────────────────────────────────────────
+const SCENARIO_PARAMS = {
+  base:       { rate: 0.5,  label: 'Base (+0.5 ITR/Qtr)', wcPct: 0.08 },
+  optimistic: { rate: 1.0,  label: 'Optimistic (+1.0 ITR/Qtr)', wcPct: 0.12 },
+  hold:       { rate: 0.0,  label: 'Status Quo (No Change)', wcPct: 0.0 }
+};
+
+let forecastChart;
+function buildForecastChart() {
+  if (forecastChart) { try { forecastChart.destroy(); } catch(_){} }
+  const c = cfg();
+  const sp = SCENARIO_PARAMS[forecastScenario];
+  const months = ['Now','M1','M2','M3','M4','M5','M6','M7','M8','M9','M10','M11','M12'];
+  const totalTrapped = DATA.filter(d=>d.rag==='R').reduce((s,d)=>s+d.trappedWC,0);
+
+  // How much WC is released as ITR improves each quarter
+  const wcRelease = months.map((_, i) => {
+    const quarters = Math.floor(i / 3);
+    const itrImproved = quarters * sp.rate;
+    return Math.round(itrImproved * totalTrapped * sp.wcPct / 1000); // €K per ITR point improved
+  });
+  const remainingTrapped = months.map((_, i) => Math.max(0, Math.round(totalTrapped/1000) - wcRelease[i]));
+
+  const ctx = document.getElementById('forecastChart').getContext('2d');
+  forecastChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: months,
+      datasets: [
+        {
+          label: 'Trapped WC Remaining (€K)',
+          data: remainingTrapped,
+          borderColor: c.red,
+          backgroundColor: 'rgba(255,68,102,0.08)',
+          fill: true,
+          tension: 0.35,
+          borderWidth: 2,
+          pointRadius: 4,
+          pointBackgroundColor: c.red
+        },
+        {
+          label: 'Cumulative WC Released (€K)',
+          data: wcRelease,
+          borderColor: c.green,
+          backgroundColor: 'rgba(0,255,136,0.07)',
+          fill: true,
+          tension: 0.35,
+          borderWidth: 2,
+          pointRadius: 4,
+          pointBackgroundColor: c.green,
+          borderDash: forecastScenario === 'hold' ? [6,4] : []
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: c.color } } },
+      scales: {
+        x: { ticks: { color: c.color }, grid: { color: c.gridColor } },
+        y: { ticks: { color: c.color, callback: v => '€' + v + 'K' }, grid: { color: c.gridColor } }
+      }
+    }
+  });
+
+  const totalRelease = wcRelease[12];
+  const totalReleaseM = (totalRelease / 1000).toFixed(2);
+  const summaries = {
+    base: `<strong>Base Scenario (+0.5 ITR improvement per quarter):</strong> Consistent quarterly effort to improve replenishment frequency and reduce overstock in RED-status categories projects a <strong style="color:var(--green)">€${totalReleaseM}M working capital release</strong> by Month 12. This assumes renegotiated reorder cycles and tighter safety stock targets — achievable with standard S&OP discipline.`,
+    optimistic: `<strong>Optimistic Scenario (+1.0 ITR improvement per quarter):</strong> Aggressive inventory rationalisation — including dead stock liquidation, supplier lead time reduction, and demand-driven replenishment — projects a <strong style="color:var(--green)">€${totalReleaseM}M working capital release</strong> by Month 12. Requires cross-functional commitment and potentially external consultancy support.`,
+    hold: `<strong>Status Quo (No ITR improvement):</strong> Without action, <strong style="color:var(--red)">€${(DATA.filter(d=>d.rag==='R').reduce((s,d)=>s+d.trappedWC,0)/1e6).toFixed(1)}M in working capital remains trapped</strong> in below-benchmark inventory. Each additional quarter of inaction compounds the opportunity cost versus competitors who are actively optimising turnover.`
+  };
+  document.getElementById('forecastSummary').innerHTML = summaries[forecastScenario];
+}
+
+function setScenario(s, btn) {
+  forecastScenario = s;
+  document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  buildForecastChart();
+}
+
+// ─── CSV DOWNLOAD ─────────────────────────────────────────────────────
+function downloadCSV() {
+  const fd = getFiltered();
+  const hdr = 'Product_Category,Sector,COGS_EUR_K,Avg_Inventory_EUR_K,Inventory_Turnover_Ratio,Days_Inventory_Outstanding,Dead_Stock_Pct,GMROI,Industry_Benchmark_Turnover,Benchmark_DIO,RAG_Status\n';
+  const rows = fd.map(d => `${d.cat},${d.sector},${d.cogs},${d.inv},${d.itr},${d.dio},${d.dead},${d.gmroi},${d.bm.itr},${d.bm.dio},${d.rag}`).join('\n');
+  const blob = new Blob([hdr + rows], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'inventory_turnover_benchmarker.csv';
+  a.click();
+}
+
+// ─── THEME CHART REBUILD ──────────────────────────────────────────────
+themeBtn.addEventListener('click', () => {
+  setTimeout(() => {
+    applyFilters();
+    buildForecastChart();
+  }, 60);
+});
+
+// ─── INIT ─────────────────────────────────────────────────────────────
+applyFilters();
+buildForecastChart();
+</script>
+</body>
+</html>

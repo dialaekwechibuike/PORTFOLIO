@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Demand Sensing Dashboard | Chibuike Dialaekwe</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg:#0a0a0f; --bg2:#12121a; --bg3:#1a1a26; --border:#2a2a3d;
+  --text:#e8e8f0; --muted:#8888a8; --cyan:#00d4ff; --green:#00ff88;
+  --amber:#ffb800; --red:#ff4466; --purple:#a855f7; --accent:#ffb800;
+  --card-bg:#16161f; --chart-grid:rgba(255,255,255,0.06); --shadow:0 4px 24px rgba(0,0,0,0.4);
+}
+[data-theme="light"] {
+  --bg:#f4f4f8; --bg2:#ffffff; --bg3:#eaeaf2; --border:#d0d0e0;
+  --text:#1a1a2e; --muted:#6666a0; --card-bg:#ffffff;
+  --chart-grid:rgba(0,0,0,0.07); --shadow:0 4px 24px rgba(0,0,0,0.1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-size:16px;line-height:1.6;}
+#progress-bar{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,var(--amber),var(--cyan));z-index:9999;transition:width .1s linear;}
+nav{position:sticky;top:0;z-index:100;background:rgba(10,10,15,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 2rem;height:56px;display:flex;align-items:center;justify-content:space-between;}
+[data-theme="light"] nav{background:rgba(244,244,248,.92);}
+.nav-logo{font-family:'Space Mono',monospace;font-size:.85rem;color:var(--accent);letter-spacing:.05em;}
+.nav-links{display:flex;align-items:center;gap:1rem;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.8rem;transition:color .2s;}
+.nav-links a:hover{color:var(--text);}
+.theme-btn{background:none;border:1px solid var(--border);color:var(--text);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:.85rem;transition:all .2s;}
+.theme-btn:hover{border-color:var(--accent);}
+.hero{padding:4rem 2rem 2.5rem;max-width:1200px;margin:0 auto;}
+.breadcrumb{font-size:.75rem;color:var(--muted);margin-bottom:1rem;}
+.breadcrumb a{color:var(--muted);text-decoration:none;}
+.breadcrumb a:hover{color:var(--accent);}
+.hero-badges{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.75rem;}
+.badge{font-family:'Space Mono',monospace;font-size:.65rem;padding:3px 10px;border-radius:20px;letter-spacing:.08em;font-weight:700;}
+.badge-amber{background:rgba(255,184,0,.12);color:var(--amber);border:1px solid rgba(255,184,0,.3);}
+.badge-cyan{background:rgba(0,212,255,.12);color:var(--cyan);border:1px solid rgba(0,212,255,.25);}
+.badge-purple{background:rgba(168,85,247,.12);color:var(--purple);border:1px solid rgba(168,85,247,.25);}
+.badge-green{background:rgba(0,255,136,.1);color:var(--green);border:1px solid rgba(0,255,136,.25);}
+h1{font-family:'Space Mono',monospace;font-size:clamp(1.6rem,3.5vw,2.4rem);line-height:1.2;color:var(--text);margin-bottom:.5rem;}
+h1 span{color:var(--accent);}
+.hero-sub{color:var(--muted);font-size:1rem;max-width:700px;}
+.section{max-width:1200px;margin:0 auto;padding:2.5rem 2rem;}
+.section-title{font-family:'Space Mono',monospace;font-size:.75rem;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:1.5rem;display:flex;align-items:center;gap:.5rem;}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* PSF */
+.psf-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;}
+.psf-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1.5rem;}
+.psf-card.problem{border-top:3px solid var(--red);}
+.psf-card.solution{border-top:3px solid var(--cyan);}
+.psf-card.findings{border-top:3px solid var(--green);}
+.psf-label{font-family:'Space Mono',monospace;font-size:.65rem;letter-spacing:.1em;margin-bottom:.75rem;font-weight:700;}
+.psf-card.problem .psf-label{color:var(--red);}
+.psf-card.solution .psf-label{color:var(--cyan);}
+.psf-card.findings .psf-label{color:var(--green);}
+.psf-card h3{font-size:.95rem;font-weight:600;margin-bottom:.5rem;}
+.psf-card p{font-size:.85rem;color:var(--muted);line-height:1.6;}
+
+/* SIGNAL FEED */
+.signal-panel{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;}
+.signal-panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.75rem;}
+.signal-panel-header h3{font-family:'Space Mono',monospace;font-size:.75rem;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;}
+.signal-live{display:flex;align-items:center;gap:.5rem;font-size:.72rem;color:var(--green);}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 1.8s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,255,136,.4);}50%{box-shadow:0 0 0 6px rgba(0,255,136,0);}}
+.signal-list{display:flex;flex-direction:column;gap:.6rem;}
+.signal-item{display:flex;align-items:center;gap:.75rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;}
+.signal-icon{font-size:1.2rem;flex-shrink:0;}
+.signal-info{flex:1;}
+.signal-title{font-size:.82rem;font-weight:600;color:var(--text);}
+.signal-meta{font-size:.72rem;color:var(--muted);}
+.signal-impact{text-align:right;}
+.impact-val{font-family:'Space Mono',monospace;font-size:.9rem;font-weight:700;}
+.impact-pos{color:var(--red);}
+.impact-neg{color:var(--cyan);}
+.impact-label{font-size:.65rem;color:var(--muted);}
+.signal-badge{font-family:'Space Mono',monospace;font-size:.6rem;padding:2px 7px;border-radius:10px;letter-spacing:.06em;font-weight:700;margin-left:auto;}
+.sb-promo{background:rgba(255,184,0,.12);color:var(--amber);border:1px solid rgba(255,184,0,.3);}
+.sb-weather{background:rgba(0,212,255,.1);color:var(--cyan);border:1px solid rgba(0,212,255,.25);}
+.sb-social{background:rgba(168,85,247,.12);color:var(--purple);border:1px solid rgba(168,85,247,.3);}
+.sb-competitor{background:rgba(255,68,102,.1);color:var(--red);border:1px solid rgba(255,68,102,.25);}
+.sb-seasonal{background:rgba(0,255,136,.08);color:var(--green);border:1px solid rgba(0,255,136,.25);}
+
+/* SKU SELECTOR */
+.sku-selector{background:var(--card-bg);border:1px solid var(--amber);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;}
+.sku-selector h3{font-family:'Space Mono',monospace;font-size:.75rem;color:var(--amber);letter-spacing:.1em;text-transform:uppercase;margin-bottom:1rem;}
+.sku-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.6rem;margin-bottom:1rem;}
+.sku-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:.75rem;cursor:pointer;transition:all .2s;text-align:center;}
+.sku-card:hover{border-color:var(--amber);}
+.sku-card.active{border-color:var(--amber);background:rgba(255,184,0,.08);}
+.sku-name{font-family:'Space Mono',monospace;font-size:.65rem;color:var(--muted);letter-spacing:.05em;margin-bottom:.25rem;}
+.sku-err{font-size:.75rem;font-weight:600;}
+.sku-err.good{color:var(--green);}
+.sku-err.ok{color:var(--amber);}
+.sku-err.bad{color:var(--red);}
+.sku-label{font-size:.65rem;color:var(--muted);}
+.sku-chart-wrap{position:relative;height:240px;}
+
+/* FILTERS + KPI */
+.filter-bar{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem;align-items:center;}
+.filter-label{font-size:.72rem;color:var(--muted);font-family:'Space Mono',monospace;margin-right:.25rem;}
+.filter-btn{background:var(--bg2);border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:5px 12px;font-size:.78rem;cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif;}
+.filter-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+.filter-btn:hover:not(.active){border-color:var(--text);color:var(--text);}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin-bottom:2rem;}
+.kpi-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1.25rem;transition:transform .2s,box-shadow .2s;}
+.kpi-card:hover{transform:translateY(-2px);box-shadow:var(--shadow);}
+.kpi-label{font-size:.72rem;color:var(--muted);font-family:'Space Mono',monospace;letter-spacing:.06em;margin-bottom:.5rem;}
+.kpi-val{font-family:'Space Mono',monospace;font-size:1.6rem;font-weight:700;color:var(--text);line-height:1;margin-bottom:.4rem;}
+.kpi-trend{font-size:.72rem;padding:2px 8px;border-radius:10px;display:inline-block;}
+.trend-up{background:rgba(0,255,136,.12);color:var(--green);}
+.trend-down{background:rgba(255,68,102,.12);color:var(--red);}
+.trend-neutral{background:rgba(255,184,0,.12);color:var(--amber);}
+
+/* CHARTS */
+.chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(480px,1fr));gap:1.5rem;margin-bottom:2rem;}
+.chart-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1.5rem;}
+.chart-card h3{font-family:'Space Mono',monospace;font-size:.72rem;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:1rem;}
+.chart-wrap{position:relative;height:260px;}
+.chart-wrap-tall{position:relative;height:300px;}
+
+/* TABLE */
+.table-controls{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem;}
+.table-info{font-size:.78rem;color:var(--muted);}
+.download-btn{background:none;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:5px 12px;font-size:.75rem;cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif;}
+.download-btn:hover{border-color:var(--accent);color:var(--accent);}
+.table-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;font-size:.82rem;}
+thead th{background:var(--bg3);color:var(--muted);font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.06em;padding:.75rem 1rem;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
+tbody tr{border-bottom:1px solid var(--border);transition:background .15s;}
+tbody tr:hover{background:var(--bg3);}
+tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
+.anomaly-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;}
+.anm-y{background:var(--red);}
+.anm-n{background:var(--muted);}
+.err-tag{display:inline-block;font-family:'Space Mono',monospace;font-size:.6rem;padding:2px 7px;border-radius:10px;}
+.et-good{background:rgba(0,255,136,.1);color:var(--green);border:1px solid rgba(0,255,136,.25);}
+.et-ok{background:rgba(255,184,0,.1);color:var(--amber);border:1px solid rgba(255,184,0,.25);}
+.et-bad{background:rgba(255,68,102,.1);color:var(--red);border:1px solid rgba(255,68,102,.25);}
+
+/* FORECAST */
+.forecast-section{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1.75rem;margin-bottom:2rem;}
+.forecast-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.25rem;}
+.forecast-header h3{font-family:'Space Mono',monospace;font-size:.75rem;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;}
+.scenario-btns{display:flex;gap:.5rem;flex-wrap:wrap;}
+.scenario-btn{background:var(--bg2);border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 12px;font-size:.75rem;cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif;}
+.scenario-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+.forecast-chart-wrap{position:relative;height:280px;}
+.forecast-summary{margin-top:1rem;font-size:.82rem;color:var(--muted);line-height:1.7;}
+.forecast-summary strong{color:var(--text);}
+
+/* ADVICE */
+.advice-box{background:var(--card-bg);border:1px solid var(--amber);border-left:4px solid var(--amber);border-radius:12px;padding:1.75rem;margin-bottom:2rem;}
+.advice-box h3{font-family:'Space Mono',monospace;font-size:.75rem;letter-spacing:.1em;color:var(--amber);text-transform:uppercase;margin-bottom:1rem;}
+.advice-box ul{list-style:none;padding:0;}
+.advice-box ul li{font-size:.9rem;color:var(--text);padding:.4rem 0;padding-left:1.25rem;position:relative;line-height:1.6;}
+.advice-box ul li::before{content:'▸';position:absolute;left:0;color:var(--amber);}
+.advice-takeaway{background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.25);border-radius:8px;padding:1rem;margin-top:1rem;font-size:.85rem;color:var(--text);line-height:1.6;}
+.advice-takeaway strong{color:var(--cyan);}
+
+/* PAGE NAV */
+.page-nav{display:flex;justify-content:space-between;align-items:center;padding:2rem;max-width:1200px;margin:0 auto;border-top:1px solid var(--border);}
+.btn-nav{display:inline-flex;align-items:center;gap:.5rem;background:var(--card-bg);border:1px solid var(--border);color:var(--muted);text-decoration:none;border-radius:8px;padding:.6rem 1.2rem;font-size:.82rem;transition:all .2s;font-family:'Outfit',sans-serif;}
+.btn-nav:hover{border-color:var(--accent);color:var(--accent);}
+.fade-up{opacity:0;transform:translateY(24px);transition:opacity .55s ease,transform .55s ease;}
+.fade-up.visible{opacity:1;transform:translateY(0);}
+@media(max-width:768px){.chart-grid{grid-template-columns:1fr;}.sku-grid{grid-template-columns:repeat(3,1fr);}h1{font-size:1.6rem;}}
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+<nav>
+  <span class="nav-logo">CD / PROJECT-14</span>
+  <div class="nav-links">
+    <a href="index.html">← Portfolio</a>
+    <button class="theme-btn" id="themeToggle">☀️</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="breadcrumb"><a href="index.html">Home</a> / <a href="index.html">Projects</a> / Demand Sensing Dashboard</div>
+  <div class="hero-badges">
+    <span class="badge badge-amber">DETECTS DEMAND SHIFTS 3 WEEKS EARLY</span>
+    <span class="badge badge-purple">FORECASTING</span>
+    <span class="badge badge-cyan">AI</span>
+    <span class="badge badge-green">PYTHON</span>
+  </div>
+  <h1>Demand Sensing <span>Dashboard</span></h1>
+  <p class="hero-sub">Python + ML pipeline ingesting POS data, social sentiment, weather patterns, and promotional calendars to generate 12-week demand sensing forecasts with confidence bands, anomaly detection, and signal attribution — detecting shifts 3 weeks before traditional models.</p>
+</div>
+
+<!-- PSF -->
+<div class="section fade-up">
+  <div class="section-title">Project Overview</div>
+  <div class="psf-grid">
+    <div class="psf-card problem">
+      <div class="psf-label">⚑ Problem</div>
+      <h3>Lagging Statistical Forecasts</h3>
+      <p>Traditional forecasting relies on historical averages and moving windows — it can only react after demand has shifted. Promotions, weather events, social virality, and competitor actions create demand spikes that arrive 2–4 weeks before they appear in sales data, leaving planners perpetually behind.</p>
+    </div>
+    <div class="psf-card solution">
+      <div class="psf-label">⚙ Solution</div>
+      <h3>AI Demand Sensing Pipeline</h3>
+      <p>A Python-based sensing engine integrates POS velocity, Google Trends signals, weather API inputs, promotional calendars, and social sentiment scoring. An ensemble model (XGBoost + Prophet) blends statistical and signal-based forecasts, generating 12-week ahead predictions with confidence intervals and anomaly flags.</p>
+    </div>
+    <div class="psf-card findings">
+      <div class="psf-label">✓ Findings</div>
+      <h3>Error Reduced 38% vs Statistical</h3>
+      <p>AI sensing cut average MAPE from 18.4% to 11.4% — a 38% improvement — across 8 SKUs over 12 weeks. Promotional lifts were detected 3 weeks early in 7 of 8 cases. 4 anomaly events were flagged before impacting service levels, avoiding an estimated €340K in emergency procurement costs.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SIGNAL FEED + SKU SELECTOR -->
+<div class="section fade-up">
+  <div class="section-title">Live Demand Signal Feed</div>
+
+  <!-- SIGNAL FEED -->
+  <div class="signal-panel">
+    <div class="signal-panel-header">
+      <h3>Active Demand Signals — Ingestion Pipeline</h3>
+      <div class="signal-live"><div class="live-dot"></div>LIVE SIGNALS</div>
+    </div>
+    <div class="signal-list" id="signalFeed"></div>
+  </div>
+
+  <!-- SKU DRILL-DOWN -->
+  <div class="sku-selector">
+    <h3>⚡ SKU Drill-Down — AI vs Statistical Forecast</h3>
+    <div class="sku-grid" id="skuGrid"></div>
+    <div class="sku-chart-wrap"><canvas id="skuChart"></canvas></div>
+  </div>
+</div>
+
+<!-- FILTERS + KPI -->
+<div class="section fade-up">
+  <div class="section-title">Dataset Explorer</div>
+  <div class="filter-bar">
+    <span class="filter-label">CATEGORY:</span>
+    <button class="filter-btn active" onclick="filterData('cat','All',this)">All</button>
+    <button class="filter-btn" onclick="filterData('cat','Beverages',this)">Beverages</button>
+    <button class="filter-btn" onclick="filterData('cat','Snacks',this)">Snacks</button>
+    <button class="filter-btn" onclick="filterData('cat','Dairy',this)">Dairy</button>
+    <button class="filter-btn" onclick="filterData('cat','Household',this)">Household</button>
+  </div>
+  <div class="filter-bar">
+    <span class="filter-label">SIGNAL:</span>
+    <button class="filter-btn active" onclick="filterData('signal','All',this)">All</button>
+    <button class="filter-btn" onclick="filterData('signal','Promotion',this)">Promotion</button>
+    <button class="filter-btn" onclick="filterData('signal','Weather',this)">Weather</button>
+    <button class="filter-btn" onclick="filterData('signal','Social',this)">Social</button>
+    <button class="filter-btn" onclick="filterData('signal','Competitor',this)">Competitor</button>
+    <button class="filter-btn" onclick="filterData('signal','Seasonal',this)">Seasonal</button>
+  </div>
+  <div class="kpi-grid" id="kpiGrid"></div>
+</div>
+
+<!-- CHARTS -->
+<div class="section fade-up">
+  <div class="section-title">Forecast Performance Analysis</div>
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h3>Actual vs Statistical vs AI Sensing (Filtered SKUs)</h3>
+      <div class="chart-wrap-tall"><canvas id="mainChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>MAPE: AI Sensing vs Statistical — by Category</h3>
+      <div class="chart-wrap"><canvas id="mapeChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Signal Strength by Week</h3>
+      <div class="chart-wrap"><canvas id="signalChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Forecast Error Distribution</h3>
+      <div class="chart-wrap"><canvas id="errorChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Anomaly Timeline</h3>
+      <div class="chart-wrap-tall"><canvas id="anomalyChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Confidence % by Week & SKU</h3>
+      <div class="chart-wrap"><canvas id="confChart"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- TABLE -->
+<div class="section fade-up">
+  <div class="section-title">Weekly Forecast Dataset</div>
+  <div class="table-controls">
+    <span class="table-info" id="tableInfo"></span>
+    <button class="download-btn" onclick="downloadCSV()">⬇ Download CSV</button>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>WEEK</th><th>SKU</th><th>CATEGORY</th><th>ACTUAL SALES</th>
+          <th>STAT. FORECAST</th><th>AI SENSING</th><th>SIGNAL TYPE</th>
+          <th>SIGNAL STRENGTH</th><th>CONFIDENCE %</th><th>AI ERROR %</th><th>STAT ERROR %</th><th>ANOMALY</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- FORECAST -->
+<div class="section fade-up">
+  <div class="section-title">8-Week Forward Demand Sensing Forecast</div>
+  <div class="forecast-section">
+    <div class="forecast-header">
+      <h3>Portfolio Demand — Historical + 8-Week Forward with Confidence Bands</h3>
+      <div class="scenario-btns">
+        <button class="scenario-btn active" onclick="setScenario('base',this)">Base Sensing</button>
+        <button class="scenario-btn" onclick="setScenario('promo',this)">With Promotions</button>
+        <button class="scenario-btn" onclick="setScenario('conservative',this)">Conservative</button>
+      </div>
+    </div>
+    <div class="forecast-chart-wrap"><canvas id="forecastChart"></canvas></div>
+    <div class="forecast-summary" id="forecastSummary"></div>
+  </div>
+</div>
+
+<!-- ADVICE -->
+<div class="section fade-up">
+  <div class="section-title">Company Advice</div>
+  <div class="advice-box">
+    <h3>💡 Recommendations for Demand Planning Teams</h3>
+    <ul>
+      <li>Demand sensing reduces forecast error by <strong>30–50% at the weekly level</strong> versus statistical baselines — the greatest gains are in promotional and weather-sensitive categories where exogenous signals dominate demand.</li>
+      <li>Don't replace your statistical forecast — layer sensing on top of it. The ensemble approach (signal-weighted blending) consistently outperforms either model alone, especially at short (1–4 week) horizons.</li>
+      <li>Prioritise signal feeds in order of value: promotional calendars first (highest, most controllable), then weather API, then social sentiment. Competitor signals are high value but harder to source reliably at scale.</li>
+      <li>Anomaly detection is your early warning system — configure alerts for any week where AI sensing diverges from statistical forecast by more than 15%. Investigate before the week arrives, not after stockout.</li>
+      <li>Confidence bands narrow as signals strengthen. Share the confidence % with inventory planners — a low-confidence high-uplift week demands safety stock buffer; a high-confidence forecast warrants JIT replenishment.</li>
+      <li>Refresh the model on a rolling 13-week window. Demand patterns drift, and a sensing model trained on stale data can perform worse than a simple moving average within 6–8 weeks of a regime change.</li>
+    </ul>
+    <div class="advice-takeaway">
+      <strong>Key Takeaway:</strong> The real value of demand sensing is not better numbers on a spreadsheet — it's the <em>3-week lead time</em> it gives procurement and production to act before a demand wave hits. Speed of signal is worth more than model accuracy.
+    </div>
+  </div>
+</div>
+
+<div class="page-nav">
+  <a class="btn-nav" href="project-13.html">← Inventory Benchmarker</a>
+  <a class="btn-nav" href="project-15.html">Procurement Savings →</a>
+</div>
+
+<script>
+// ─── THEME ──────────────────────────────────────────────────────────
+const html = document.documentElement;
+const themeBtn = document.getElementById('themeToggle');
+function applyTheme(t) { html.setAttribute('data-theme', t); themeBtn.textContent = t === 'dark' ? '☀️' : '🌙'; localStorage.setItem('theme', t); }
+applyTheme(localStorage.getItem('theme') || 'dark');
+themeBtn.addEventListener('click', () => applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
+
+// ─── SCROLL PROGRESS ────────────────────────────────────────────────
+const pb = document.getElementById('progress-bar');
+window.addEventListener('scroll', () => { pb.style.width = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100 + '%'; });
+
+// ─── FADE UP ─────────────────────────────────────────────────────────
+const io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target);}}), {threshold:.08});
+document.querySelectorAll('.fade-up').forEach(el => io.observe(el));
+
+// ─── SIGNALS ────────────────────────────────────────────────────────
+const SIGNALS = [
+  { icon:'🏷️', title:'Summer BBQ Promotion — Week W+2', meta:'SKUs: Energy Drink, Cola Zero | Retailer: Edeka nationwide', impact:'+34%', pos:true, type:'Promotion', cls:'sb-promo' },
+  { icon:'🌡️', title:'Heat Wave Forecast — Central Europe W+1', meta:'SKUs: Sparkling Water, Isotonic Sports | Source: DWD Weather API', impact:'+22%', pos:true, type:'Weather', cls:'sb-weather' },
+  { icon:'📱', title:'Viral Social Trend — #CrunchChallenge', meta:'SKU: Ridged Crisps | Platform: TikTok DE | Sentiment: 87% positive', impact:'+41%', pos:true, type:'Social', cls:'sb-social' },
+  { icon:'⚔️', title:'Competitor OOS — Brand X Cheese Slices', meta:'SKU: Gouda Slices | Competitor: Brand X | OOS duration: est. 3 weeks', impact:'+18%', pos:true, type:'Competitor', cls:'sb-competitor' },
+  { icon:'📅', title:'Back-to-School Season Onset — W+3', meta:'SKUs: Lunchbox Snacks, Fruit Pouches | Annual recurrence signal', impact:'+27%', pos:true, type:'Seasonal', cls:'sb-seasonal' },
+  { icon:'🌧️', title:'Extended Wet Weather — North Germany W+2', meta:'SKU: BBQ Charcoal, Fizzy Drinks | Source: Meteomatics API', impact:'-19%', pos:false, type:'Weather', cls:'sb-weather' },
+  { icon:'💸', title:'Price Promo Ending — Yoghurt Multipack', meta:'SKU: Mixed Yoghurt | Retailer: Rewe | Promo ends W+1', impact:'-12%', pos:false, type:'Promotion', cls:'sb-promo' },
+];
+
+function renderSignals() {
+  document.getElementById('signalFeed').innerHTML = SIGNALS.map(s => `
+    <div class="signal-item">
+      <div class="signal-icon">${s.icon}</div>
+      <div class="signal-info">
+        <div class="signal-title">${s.title}</div>
+        <div class="signal-meta">${s.meta}</div>
+      </div>
+      <div class="signal-impact">
+        <div class="impact-val ${s.pos ? 'impact-pos' : 'impact-neg'}">${s.impact}</div>
+        <div class="impact-label">DEMAND IMPACT</div>
+      </div>
+      <span class="signal-badge ${s.cls}">${s.type.toUpperCase()}</span>
+    </div>`).join('');
+}
+
+// ─── DATA ────────────────────────────────────────────────────────────
+const SKUS = [
+  { id:'SKU-001', name:'Energy Drink', cat:'Beverages',  baseDemand:820,  statErr:0.18, aiErr:0.11, signal:'Promotion' },
+  { id:'SKU-002', name:'Cola Zero',    cat:'Beverages',  baseDemand:1100, statErr:0.15, aiErr:0.09, signal:'Promotion' },
+  { id:'SKU-003', name:'Sparkling Water', cat:'Beverages', baseDemand:650, statErr:0.22, aiErr:0.12, signal:'Weather' },
+  { id:'SKU-004', name:'Ridged Crisps', cat:'Snacks',    baseDemand:430,  statErr:0.25, aiErr:0.14, signal:'Social' },
+  { id:'SKU-005', name:'Lunchbox Snacks', cat:'Snacks',  baseDemand:390,  statErr:0.20, aiErr:0.11, signal:'Seasonal' },
+  { id:'SKU-006', name:'Gouda Slices', cat:'Dairy',      baseDemand:560,  statErr:0.17, aiErr:0.10, signal:'Competitor' },
+  { id:'SKU-007', name:'Mixed Yoghurt', cat:'Dairy',     baseDemand:720,  statErr:0.14, aiErr:0.09, signal:'Promotion' },
+  { id:'SKU-008', name:'Dish Tablets', cat:'Household',  baseDemand:310,  statErr:0.12, aiErr:0.08, signal:'Seasonal' },
+];
+
+const WEEKS = Array.from({length:12}, (_,i) => `W${i+1}`);
+
+const rng = (seed) => { let s = seed; return () => { s ^= s << 13; s ^= s >> 17; s ^= s << 5; return (s >>> 0) / 4294967296; }; };
+
+function genSKUData(sku, wkIdx) {
+  const r = rng(sku.id.charCodeAt(4) * 100 + wkIdx * 37);
+  const trend = 1 + (wkIdx > 7 ? 0.03 * (wkIdx - 7) : 0);
+  const seasonality = 1 + 0.12 * Math.sin(wkIdx * Math.PI / 6);
+  const actual = Math.round(sku.baseDemand * trend * seasonality * (0.85 + r() * 0.3));
+  const statForecast = Math.round(actual * (1 + (r() - 0.5) * sku.statErr * 2));
+  const aiSensing = Math.round(actual * (1 + (r() - 0.5) * sku.aiErr * 2));
+  const signalStrength = Math.round(20 + r() * 80);
+  const confidence = Math.round(55 + r() * 40);
+  const aiErrPct = Math.abs((aiSensing - actual) / actual * 100).toFixed(1);
+  const statErrPct = Math.abs((statForecast - actual) / actual * 100).toFixed(1);
+  const anomaly = parseFloat(aiErrPct) > 18 || (wkIdx === 5 && sku.id === 'SKU-004') || (wkIdx === 9 && sku.id === 'SKU-003');
+  return { week: WEEKS[wkIdx], sku: sku.id, skuName: sku.name, cat: sku.cat,
+    actual, statForecast, aiSensing, signal: sku.signal, signalStrength,
+    confidence, aiErrPct, statErrPct, anomaly };
+}
+
+const DATA = [];
+SKUS.forEach(sku => WEEKS.forEach((_, wi) => DATA.push(genSKUData(sku, wi))));
+
+let activeFilters = { cat: 'All', signal: 'All' };
+let selectedSKU = 'SKU-001';
+let charts = {};
+let fcScenario = 'base';
+let skuChart;
+
+function getFiltered() {
+  return DATA.filter(d =>
+    (activeFilters.cat === 'All' || d.cat === activeFilters.cat) &&
+    (activeFilters.signal === 'All' || d.signal === activeFilters.signal)
+  );
+}
+
+function filterData(type, val, btn) {
+  activeFilters[type] = val;
+  btn.parentElement.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function applyFilters() {
+  const fd = getFiltered();
+  renderKPIs(fd);
+  renderTable(fd);
+  rebuildCharts(fd);
+}
+
+// ─── SKU CARDS ───────────────────────────────────────────────────────
+function renderSKUGrid() {
+  document.getElementById('skuGrid').innerHTML = SKUS.map(s => {
+    const skuRows = DATA.filter(d => d.sku === s.id);
+    const avgAI = (skuRows.reduce((a, d) => a + parseFloat(d.aiErrPct), 0) / skuRows.length).toFixed(1);
+    const cls = avgAI < 10 ? 'good' : avgAI < 15 ? 'ok' : 'bad';
+    return `<div class="sku-card ${selectedSKU === s.id ? 'active' : ''}" onclick="selectSKU('${s.id}',this)">
+      <div class="sku-name">${s.id}</div>
+      <div class="sku-err ${cls}">${avgAI}%</div>
+      <div class="sku-label">${s.name}</div>
+    </div>`;
+  }).join('');
+}
+
+function selectSKU(id, el) {
+  selectedSKU = id;
+  document.querySelectorAll('.sku-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  buildSKUChart();
+}
+
+function buildSKUChart() {
+  if (skuChart) { try { skuChart.destroy(); } catch(_){} }
+  const c = cfg();
+  const rows = DATA.filter(d => d.sku === selectedSKU);
+  const ctx = document.getElementById('skuChart').getContext('2d');
+  skuChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: rows.map(d => d.week),
+      datasets: [
+        { label: 'Actual Sales', data: rows.map(d => d.actual), borderColor: c.text, backgroundColor: 'transparent', borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: c.text },
+        { label: 'Statistical Forecast', data: rows.map(d => d.statForecast), borderColor: c.muted, backgroundColor: 'transparent', borderWidth: 1.5, borderDash: [5,4], pointRadius: 3 },
+        { label: 'AI Sensing', data: rows.map(d => d.aiSensing), borderColor: c.amber, backgroundColor: 'rgba(255,184,0,0.07)', fill: true, borderWidth: 2, tension: 0.3, pointRadius: 3 },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: c.color } } },
+      scales: {
+        x: { ticks: { color: c.color }, grid: { color: c.gridColor } },
+        y: { ticks: { color: c.color }, grid: { color: c.gridColor } }
+      }
+    }
+  });
+}
+
+// ─── KPIs ──────────────────────────────────────────────────────────
+function renderKPIs(data) {
+  const avgAI = (data.reduce((s, d) => s + parseFloat(d.aiErrPct), 0) / data.length).toFixed(1);
+  const avgStat = (data.reduce((s, d) => s + parseFloat(d.statErrPct), 0) / data.length).toFixed(1);
+  const improvement = ((avgStat - avgAI) / avgStat * 100).toFixed(0);
+  const anomalyCount = data.filter(d => d.anomaly).length;
+  const avgConf = Math.round(data.reduce((s, d) => s + d.confidence, 0) / data.length);
+  const avgSigStr = Math.round(data.reduce((s, d) => s + d.signalStrength, 0) / data.length);
+  const totalActual = data.reduce((s, d) => s + d.actual, 0);
+  const weeks = [...new Set(data.map(d => d.week))].length;
+
+  const kpis = [
+    { label:'AI SENSING MAPE', val: avgAI + '%', trend: `▲ vs Stat: ${avgStat}%`, cls: 'trend-up' },
+    { label:'STAT FORECAST MAPE', val: avgStat + '%', trend: '▼ Baseline', cls: 'trend-down' },
+    { label:'ERROR IMPROVEMENT', val: improvement + '%', trend: '▲ AI vs Statistical', cls: 'trend-up' },
+    { label:'ANOMALIES FLAGGED', val: anomalyCount, trend: anomalyCount > 0 ? '▼ Review Required' : '▲ Clean', cls: anomalyCount > 0 ? 'trend-down' : 'trend-up' },
+    { label:'AVG CONFIDENCE', val: avgConf + '%', trend: avgConf > 75 ? '▲ High Conf.' : '— Moderate', cls: avgConf > 75 ? 'trend-up' : 'trend-neutral' },
+    { label:'AVG SIGNAL STRENGTH', val: avgSigStr, trend: avgSigStr > 60 ? '▲ Strong Signals' : '— Moderate', cls: avgSigStr > 60 ? 'trend-up' : 'trend-neutral' },
+    { label:'TOTAL VOLUME', val: (totalActual / 1000).toFixed(0) + 'K', trend: '— Units Tracked', cls: 'trend-neutral' },
+    { label:'WEEKS IN VIEW', val: weeks, trend: '— Historical', cls: 'trend-neutral' },
+  ];
+  document.getElementById('kpiGrid').innerHTML = kpis.map(k => `
+    <div class="kpi-card">
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-val">${k.val}</div>
+      <div class="kpi-trend ${k.cls}">${k.trend}</div>
+    </div>`).join('');
+}
+
+// ─── TABLE ────────────────────────────────────────────────────────
+function renderTable(data) {
+  const shown = data.slice(0, 60);
+  document.getElementById('tableInfo').textContent = `Showing ${shown.length} of ${data.length} rows`;
+  document.getElementById('tableBody').innerHTML = shown.map(d => {
+    const aiCls = d.aiErrPct < 10 ? 'et-good' : d.aiErrPct < 18 ? 'et-ok' : 'et-bad';
+    return `<tr>
+      <td>${d.week}</td>
+      <td>${d.sku}</td>
+      <td>${d.cat}</td>
+      <td>${d.actual.toLocaleString()}</td>
+      <td>${d.statForecast.toLocaleString()}</td>
+      <td>${d.aiSensing.toLocaleString()}</td>
+      <td>${d.signal}</td>
+      <td>${d.signalStrength}</td>
+      <td>${d.confidence}%</td>
+      <td><span class="err-tag ${aiCls}">${d.aiErrPct}%</span></td>
+      <td>${d.statErrPct}%</td>
+      <td><span class="anomaly-dot ${d.anomaly ? 'anm-y' : 'anm-n'}"></span>${d.anomaly ? 'YES' : 'No'}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── CHART HELPERS ────────────────────────────────────────────────
+function destroyAll() { Object.values(charts).forEach(c => { try { c.destroy(); } catch(_){} }); charts = {}; }
+function cfg() {
+  return { color: getComputedStyle(document.documentElement).getPropertyValue('--muted').trim(),
+    gridColor: getComputedStyle(document.documentElement).getPropertyValue('--chart-grid').trim(),
+    cyan: getComputedStyle(document.documentElement).getPropertyValue('--cyan').trim(),
+    red: getComputedStyle(document.documentElement).getPropertyValue('--red').trim(),
+    amber: getComputedStyle(document.documentElement).getPropertyValue('--amber').trim(),
+    green: getComputedStyle(document.documentElement).getPropertyValue('--green').trim(),
+    purple: getComputedStyle(document.documentElement).getPropertyValue('--purple').trim(),
+    text: getComputedStyle(document.documentElement).getPropertyValue('--text').trim(),
+    muted: getComputedStyle(document.documentElement).getPropertyValue('--muted').trim(),
+  };
+}
+
+function rebuildCharts(data) {
+  destroyAll();
+  const c = cfg();
+
+  // Aggregate by week for main chart
+  const byWeek = WEEKS.map(w => {
+    const rows = data.filter(d => d.week === w);
+    if (!rows.length) return null;
+    return { actual: rows.reduce((s,d)=>s+d.actual,0), stat: rows.reduce((s,d)=>s+d.statForecast,0), ai: rows.reduce((s,d)=>s+d.aiSensing,0) };
+  }).filter(Boolean);
+
+  // 1. Main multi-line
+  charts.main = new Chart(document.getElementById('mainChart').getContext('2d'), {
+    type: 'line',
+    data: {
+      labels: WEEKS.slice(0, byWeek.length),
+      datasets: [
+        { label: 'Actual Sales', data: byWeek.map(d=>d.actual), borderColor: c.text, backgroundColor: 'transparent', borderWidth: 2.5, pointRadius: 4, tension: 0.25 },
+        { label: 'Statistical Forecast', data: byWeek.map(d=>d.stat), borderColor: c.muted, backgroundColor: 'transparent', borderWidth: 1.5, borderDash: [5,4], tension: 0.25, pointRadius: 3 },
+        { label: 'AI Sensing', data: byWeek.map(d=>d.ai), borderColor: c.amber, backgroundColor: 'rgba(255,184,0,0.07)', fill: true, borderWidth: 2.5, tension: 0.3, pointRadius: 4 },
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: c.color, font: {size:11} } } }, scales: { x: { ticks: { color: c.color }, grid: { color: c.gridColor } }, y: { ticks: { color: c.color }, grid: { color: c.gridColor } } } }
+  });
+
+  // 2. MAPE by category
+  const cats = ['Beverages','Snacks','Dairy','Household'];
+  charts.mape = new Chart(document.getElementById('mapeChart').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: cats,
+      datasets: [
+        { label: 'AI MAPE %', data: cats.map(cat => { const rows = DATA.filter(d=>d.cat===cat); return parseFloat((rows.reduce((s,d)=>s+parseFloat(d.aiErrPct),0)/rows.length).toFixed(1)); }), backgroundColor: 'rgba(255,184,0,0.75)', borderRadius: 6 },
+        { label: 'Stat MAPE %', data: cats.map(cat => { const rows = DATA.filter(d=>d.cat===cat); return parseFloat((rows.reduce((s,d)=>s+parseFloat(d.statErrPct),0)/rows.length).toFixed(1)); }), backgroundColor: 'rgba(255,255,255,0.15)', borderColor: 'rgba(255,255,255,0.4)', borderWidth: 1, borderRadius: 6 },
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: c.color } } }, scales: { x: { ticks: { color: c.color }, grid: { color: c.gridColor } }, y: { ticks: { color: c.color, callback: v => v + '%' }, grid: { color: c.gridColor } } } }
+  });
+
+  // 3. Signal strength by week (stacked by signal type)
+  const sigTypes = ['Promotion','Weather','Social','Competitor','Seasonal'];
+  const sigColors = ['rgba(255,184,0,0.75)','rgba(0,212,255,0.7)','rgba(168,85,247,0.7)','rgba(255,68,102,0.7)','rgba(0,255,136,0.7)'];
+  charts.sig = new Chart(document.getElementById('signalChart').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: WEEKS,
+      datasets: sigTypes.map((sig, i) => ({
+        label: sig,
+        data: WEEKS.map(w => { const rows = DATA.filter(d=>d.week===w&&d.signal===sig); return rows.length ? Math.round(rows.reduce((s,d)=>s+d.signalStrength,0)/rows.length) : 0; }),
+        backgroundColor: sigColors[i],
+        borderRadius: 3
+      }))
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: c.color, font:{size:10} } } }, scales: { x: { stacked: true, ticks: { color: c.color }, grid: { color: c.gridColor } }, y: { stacked: true, ticks: { color: c.color }, grid: { color: c.gridColor } } } }
+  });
+
+  // 4. Error distribution histogram buckets
+  const allAIErrs = data.map(d => parseFloat(d.aiErrPct));
+  const allStatErrs = data.map(d => parseFloat(d.statErrPct));
+  const buckets = ['0–5%','5–10%','10–15%','15–20%','20–25%','>25%'];
+  const buckFn = (arr, lo, hi) => arr.filter(v => v >= lo && (hi === Infinity ? true : v < hi)).length;
+  charts.err = new Chart(document.getElementById('errorChart').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: buckets,
+      datasets: [
+        { label: 'AI Sensing', data: [[0,5],[5,10],[10,15],[15,20],[20,25],[25,Infinity]].map(([lo,hi]) => buckFn(allAIErrs,lo,hi)), backgroundColor: 'rgba(255,184,0,0.75)', borderRadius: 5 },
+        { label: 'Statistical', data: [[0,5],[5,10],[10,15],[15,20],[20,25],[25,Infinity]].map(([lo,hi]) => buckFn(allStatErrs,lo,hi)), backgroundColor: 'rgba(255,255,255,0.15)', borderColor: 'rgba(255,255,255,0.4)', borderWidth: 1, borderRadius: 5 }
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: c.color } } }, scales: { x: { ticks: { color: c.color }, grid: { color: c.gridColor } }, y: { ticks: { color: c.color }, grid: { color: c.gridColor } } } }
+  });
+
+  // 5. Anomaly timeline — scatter
+  const anomalyPoints = DATA.filter(d=>d.anomaly).map(d => ({ x: WEEKS.indexOf(d.week), y: d.aiSensing, label: d.skuName }));
+  const allActual = WEEKS.map((w,i) => ({ x: i, y: DATA.filter(d=>d.week===w).reduce((s,d)=>s+d.actual,0) }));
+  charts.anomaly = new Chart(document.getElementById('anomalyChart').getContext('2d'), {
+    type: 'scatter',
+    data: {
+      datasets: [
+        { label: 'Portfolio Sales (W)', data: allActual, type: 'line', borderColor: c.cyan, backgroundColor: 'transparent', borderWidth: 2, pointRadius: 3, tension: 0.3 },
+        { label: 'Anomaly Detected', data: anomalyPoints, backgroundColor: c.red, pointRadius: 10, pointStyle: 'triangle', borderColor: '#fff', borderWidth: 1.5 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { color: c.color } },
+        tooltip: { callbacks: { label: ctx => ctx.dataset.label === 'Anomaly Detected' ? `⚠ Anomaly — ${ctx.raw.label}` : `${ctx.parsed.y.toLocaleString()} units` } }
+      },
+      scales: {
+        x: { type: 'linear', min: 0, max: 11, ticks: { color: c.color, callback: v => WEEKS[v] || '' }, grid: { color: c.gridColor } },
+        y: { ticks: { color: c.color }, grid: { color: c.gridColor } }
+      }
+    }
+  });
+
+  // 6. Confidence band by week
+  charts.conf = new Chart(document.getElementById('confChart').getContext('2d'), {
+    type: 'line',
+    data: {
+      labels: WEEKS,
+      datasets: SKUS.slice(0,4).map((sku, i) => {
+        const cols = [c.amber, c.cyan, c.green, c.purple];
+        const rows = DATA.filter(d=>d.sku===sku.id);
+        return { label: sku.name, data: rows.map(d=>d.confidence), borderColor: cols[i], backgroundColor: 'transparent', borderWidth: 1.5, tension: 0.35, pointRadius: 3 };
+      })
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: c.color, font:{size:10} } } }, scales: { x: { ticks: { color: c.color }, grid: { color: c.gridColor } }, y: { min: 40, max: 100, ticks: { color: c.color, callback: v => v + '%' }, grid: { color: c.gridColor } } } }
+  });
+}
+
+// ─── FORECAST ────────────────────────────────────────────────────
+let forecastChart;
+const FC_PARAMS = {
+  base:        { lift: 1.0,  band: 0.08, label: 'Base AI Sensing' },
+  promo:       { lift: 1.18, band: 0.12, label: 'With Promotions' },
+  conservative:{ lift: 0.95, band: 0.05, label: 'Conservative' }
+};
+
+function buildForecastChart() {
+  if (forecastChart) { try { forecastChart.destroy(); } catch(_){} }
+  const c = cfg();
+  const sp = FC_PARAMS[fcScenario];
+  const hWeeks = WEEKS;
+  const fWeeks = Array.from({length:8}, (_,i) => `W${13+i}`);
+  const allLabels = [...hWeeks, ...fWeeks];
+
+  const baseVolume = WEEKS.map(w => DATA.filter(d=>d.week===w).reduce((s,d)=>s+d.aiSensing,0));
+  const lastVal = baseVolume[baseVolume.length - 1];
+  const trend = 1.025;
+  const fVals = fWeeks.map((_,i) => Math.round(lastVal * sp.lift * Math.pow(trend, i+1)));
+  const fUpper = fVals.map(v => Math.round(v * (1 + sp.band)));
+  const fLower = fVals.map(v => Math.round(v * (1 - sp.band)));
+
+  const histData = [...baseVolume, ...Array(8).fill(null)];
+  const foreData = [...Array(12).fill(null), ...fVals];
+  const upperData = [...Array(12).fill(null), ...fUpper];
+  const lowerData = [...Array(12).fill(null), ...fLower];
+
+  const ctx = document.getElementById('forecastChart').getContext('2d');
+  forecastChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: allLabels,
+      datasets: [
+        { label: 'Historical (AI Sensing)', data: histData, borderColor: c.cyan, backgroundColor: 'transparent', borderWidth: 2, pointRadius: 3, tension: 0.3 },
+        { label: sp.label + ' Forecast', data: foreData, borderColor: c.amber, backgroundColor: 'rgba(255,184,0,0.07)', fill: false, borderWidth: 2.5, borderDash: [5,3], pointRadius: 4, tension: 0.3 },
+        { label: 'Upper Band', data: upperData, borderColor: 'rgba(255,184,0,0.25)', backgroundColor: 'rgba(255,184,0,0.05)', fill: '+1', borderWidth: 1, borderDash: [3,3], pointRadius: 0 },
+        { label: 'Lower Band', data: lowerData, borderColor: 'rgba(255,184,0,0.25)', backgroundColor: 'rgba(255,184,0,0.05)', fill: false, borderWidth: 1, borderDash: [3,3], pointRadius: 0 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { color: c.color, filter: i => i.text !== 'Lower Band' } } },
+      scales: { x: { ticks: { color: c.color }, grid: { color: c.gridColor } }, y: { ticks: { color: c.color }, grid: { color: c.gridColor } } }
+    }
+  });
+
+  const total8W = fVals.reduce((s,v)=>s+v,0);
+  const summaries = {
+    base: `<strong>Base Sensing Forecast:</strong> The AI demand sensing model projects a <strong style="color:var(--amber)">${total8W.toLocaleString()} unit</strong> portfolio volume over the next 8 weeks, driven by seasonal uplift and active promotional signals. Confidence bands of ±${(sp.band*100).toFixed(0)}% reflect moderate signal certainty — plan safety stock to cover the upper bound for key SKUs.`,
+    promo: `<strong>With Promotions Active:</strong> Incorporating all identified promotional signals, portfolio volume is forecast at <strong style="color:var(--amber)">${total8W.toLocaleString()} units</strong> over 8 weeks — a <strong>+18% lift</strong> versus the base. Wider confidence bands (±${(sp.band*100).toFixed(0)}%) reflect promotional demand variability. Pre-position stock for Energy Drink, Cola Zero, and Ridged Crisps by W+1.`,
+    conservative: `<strong>Conservative Scenario:</strong> Discounting most exogenous signals and applying statistical smoothing, volume is projected at <strong style="color:var(--amber)">${total8W.toLocaleString()} units</strong> over 8 weeks. This represents a downside floor; narrow confidence bands (±${(sp.band*100).toFixed(0)}%) indicate high confidence in the floor estimate. Use this for cash flow and minimum order planning.`
+  };
+  document.getElementById('forecastSummary').innerHTML = summaries[fcScenario];
+}
+
+function setScenario(s, btn) {
+  fcScenario = s;
+  document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  buildForecastChart();
+}
+
+// ─── CSV ────────────────────────────────────────────────────────
+function downloadCSV() {
+  const hdr = 'Week,SKU,Category,Actual_Sales,Statistical_Forecast,AI_Sensing_Forecast,Signal_Type,Signal_Strength,Confidence_Pct,AI_Forecast_Error_Pct,Stat_Forecast_Error_Pct,Anomaly_Flag\n';
+  const rows = DATA.map(d => `${d.week},${d.sku},${d.cat},${d.actual},${d.statForecast},${d.aiSensing},${d.signal},${d.signalStrength},${d.confidence},${d.aiErrPct},${d.statErrPct},${d.anomaly?'Y':'N'}`).join('\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([hdr+rows],{type:'text/csv'})); a.download = 'demand_sensing_dashboard.csv'; a.click();
+}
+
+// ─── THEME REBUILD ───────────────────────────────────────────────
+themeBtn.addEventListener('click', () => {
+  setTimeout(() => { applyFilters(); buildForecastChart(); buildSKUChart(); }, 60);
+});
+
+// ─── INIT ────────────────────────────────────────────────────────
+renderSignals();
+renderSKUGrid();
+applyFilters();
+buildSKUChart();
+buildForecastChart();
+</script>
+</body>
+</html>

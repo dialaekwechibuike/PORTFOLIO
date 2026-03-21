@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Procurement Cost Analyzer | Chibuike Dialaekwe</title>
+<meta name="description" content="Excel & SQL procurement model surfacing supplier pricing trends, spend heatmaps, and automated cost-saving opportunity alerts across categories.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#080c14;--bg2:#0d1220;--bg3:#111827;--card:#0f1623;--text:#e8eaf6;--muted:#7986a3;--hint:#4a5568;--border:rgba(0,229,255,0.12);--border2:rgba(0,229,255,0.25);--cyan:#00e5ff;--green:#00ff88;--amber:#ffb300;--red:#ff4757;--body-bg:#080c14;--nav-bg:rgba(8,12,20,0.92);--shadow:0 4px 32px rgba(0,229,255,0.08);--transition:0.3s cubic-bezier(0.4,0,0.2,1)}
+[data-theme="light"]{--bg:#ffffff;--bg2:#f8fafc;--bg3:#f1f5f9;--card:#ffffff;--text:#0f1117;--muted:#5a6070;--hint:#9aa0ae;--border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.18);--cyan:#0070f3;--green:#16a34a;--amber:#d97706;--red:#dc2626;--body-bg:#f8fafc;--nav-bg:rgba(248,250,252,0.92);--shadow:0 4px 32px rgba(0,0,0,0.08)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:var(--body-bg);color:var(--text);line-height:1.6;overflow-x:hidden;transition:background var(--transition),color var(--transition)}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(0,229,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.03) 1px,transparent 1px);background-size:48px 48px}
+[data-theme="light"] body::before{background-image:linear-gradient(rgba(0,112,243,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,112,243,0.04) 1px,transparent 1px)}
+#scrollProgress{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,var(--cyan),var(--green));z-index:9999}
+nav{position:fixed;top:0;left:0;right:0;height:64px;background:var(--nav-bg);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 32px;z-index:1000;transition:background var(--transition)}
+.nav-brand{display:flex;align-items:center;gap:14px;text-decoration:none}
+.nav-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,rgba(0,229,255,0.15),rgba(0,255,136,0.15));border:1.5px solid var(--cyan);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:0.85rem;font-weight:700;color:var(--cyan);animation:avatarPulse 3s ease-in-out infinite}
+@keyframes avatarPulse{0%,100%{box-shadow:0 0 8px rgba(0,229,255,0.3)}50%{box-shadow:0 0 20px rgba(0,229,255,0.6)}}
+.nav-name{font-family:'Space Mono',monospace;font-size:0.9rem;font-weight:700;color:var(--text);line-height:1.2}
+.nav-tag{font-family:'Space Mono',monospace;font-size:0.65rem;color:var(--cyan);opacity:0.8}
+.nav-links{display:flex;align-items:center;gap:8px;list-style:none}
+.nav-links a{font-size:0.9rem;font-weight:500;color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:6px;transition:color var(--transition),background var(--transition)}
+.nav-links a:hover{color:var(--cyan);background:rgba(0,229,255,0.08)}
+#themeToggle{width:38px;height:38px;border-radius:8px;border:1px solid var(--border2);background:var(--bg3);cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:all var(--transition)}
+#themeToggle:hover{border-color:var(--cyan);background:rgba(0,229,255,0.08)}
+.breadcrumb{position:relative;z-index:1;padding:84px 32px 0;display:flex;align-items:center;gap:8px;max-width:1200px;margin:0 auto}
+.breadcrumb a{font-family:'Space Mono',monospace;font-size:0.75rem;color:var(--muted);text-decoration:none}
+.breadcrumb a:hover{color:var(--cyan)}
+.breadcrumb span{font-family:'Space Mono',monospace;font-size:0.75rem;color:var(--hint)}
+.breadcrumb .current{font-family:'Space Mono',monospace;font-size:0.75rem;color:var(--cyan)}
+main{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 32px 80px}
+.project-hero{padding:32px 0 48px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:100px;font-family:'Space Mono',monospace;font-size:0.68rem;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:20px;background:rgba(255,179,0,0.1);color:var(--amber);border:1px solid rgba(255,179,0,0.3)}
+.project-title{font-family:'Space Mono',monospace;font-size:clamp(1.8rem,4vw,3rem);font-weight:700;color:var(--text);line-height:1.2;margin-bottom:16px}
+.project-title span{color:var(--cyan)}
+.project-meta{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+.meta-tag{padding:5px 14px;border-radius:6px;font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+.meta-cat{background:rgba(0,229,255,0.1);color:var(--cyan)}
+.meta-tool{background:var(--bg3);color:var(--muted);border:1px solid var(--border)}
+.project-summary{font-size:1.05rem;color:var(--muted);max-width:700px;line-height:1.7}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:32px 0}
+.kpi-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center;transition:all var(--transition)}
+.kpi-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:var(--shadow)}
+.kpi-value{font-family:'Space Mono',monospace;font-size:1.5rem;font-weight:700;display:block;margin-bottom:4px}
+.kpi-label{font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;font-weight:600}
+.kv-cyan{color:var(--cyan)}.kv-green{color:var(--green)}.kv-amber{color:var(--amber)}.kv-red{color:var(--red)}
+.section-label{font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--cyan);text-transform:uppercase;letter-spacing:3px;display:block;margin-bottom:8px}
+.section-title{font-family:'Space Mono',monospace;font-size:1.4rem;font-weight:700;color:var(--text);margin-bottom:0}
+.section-header{margin-bottom:24px}
+.charts-grid{display:grid;grid-template-columns:3fr 2fr;gap:24px;margin-bottom:24px}
+.charts-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px}
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;transition:border-color var(--transition)}
+.chart-card:hover{border-color:var(--border2)}
+.chart-title{font-family:'Space Mono',monospace;font-size:0.82rem;color:var(--muted);margin-bottom:16px}
+.chart-title strong{color:var(--text)}
+.chart-wrap{height:260px;position:relative}
+.chart-wrap-md{height:230px;position:relative}
+.chart-wrap-sm{height:200px;position:relative}
+
+/* SAVINGS ALERT PANEL */
+.alert-panel{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:24px}
+.alert-panel-title{font-family:'Space Mono',monospace;font-size:0.82rem;color:var(--amber);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.alert-list{display:flex;flex-direction:column;gap:10px}
+.alert-item{display:flex;align-items:center;gap:14px;padding:12px 16px;border-radius:10px;border:1px solid var(--border)}
+.alert-item.high{background:rgba(255,71,87,0.06);border-color:rgba(255,71,87,0.2)}
+.alert-item.medium{background:rgba(255,179,0,0.06);border-color:rgba(255,179,0,0.2)}
+.alert-item.low{background:rgba(0,255,136,0.06);border-color:rgba(0,255,136,0.15)}
+.alert-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.dot-high{background:var(--red)}.dot-medium{background:var(--amber)}.dot-low{background:var(--green)}
+.alert-text{flex:1;font-size:0.82rem;color:var(--text)}
+.alert-supplier{font-family:'Space Mono',monospace;font-size:0.72rem;color:var(--muted)}
+.alert-saving{font-family:'Space Mono',monospace;font-size:0.8rem;font-weight:700;white-space:nowrap}
+.saving-high{color:var(--red)}.saving-medium{color:var(--amber)}.saving-low{color:var(--green)}
+
+/* SPEND HEATMAP */
+.heatmap-section{margin-bottom:24px}
+.heatmap-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:4px;margin-top:12px}
+.heatmap-label-row{display:grid;grid-template-columns:repeat(12,1fr);gap:4px;margin-bottom:4px}
+.hm-month{font-family:'Space Mono',monospace;font-size:0.6rem;color:var(--hint);text-align:center}
+.heatmap-row{display:contents}
+.hm-cell{height:32px;border-radius:4px;cursor:pointer;transition:transform 0.2s,opacity 0.2s;position:relative}
+.hm-cell:hover{transform:scale(1.15);z-index:2}
+.hm-cat-label{font-family:'Space Mono',monospace;font-size:0.62rem;color:var(--muted);display:flex;align-items:center;padding-right:8px;white-space:nowrap}
+.heatmap-outer{display:grid;grid-template-columns:80px 1fr;gap:0;margin-top:12px}
+.heatmap-cats{display:flex;flex-direction:column;gap:4px}
+.heatmap-cells{display:flex;flex-direction:column;gap:4px}
+.heatmap-row-inner{display:grid;grid-template-columns:repeat(12,1fr);gap:4px}
+
+.three-panel{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin:48px 0}
+.panel-card{border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:14px}
+.panel-problem{background:rgba(255,71,87,0.06);border:1px solid rgba(255,71,87,0.2)}
+.panel-solution{background:rgba(0,229,255,0.06);border:1px solid rgba(0,229,255,0.2)}
+.panel-findings{background:rgba(0,255,136,0.06);border:1px solid rgba(0,255,136,0.2)}
+.panel-header{font-family:'Space Mono',monospace;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:2px}
+.ph-red{color:var(--red)}.ph-cyan{color:var(--cyan)}.ph-green{color:var(--green)}
+.panel-card ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.panel-card ul li{font-size:0.85rem;color:var(--muted);line-height:1.5;padding-left:16px;position:relative}
+.panel-card ul li::before{content:'›';position:absolute;left:0;font-weight:700}
+.panel-problem ul li::before{color:var(--red)}
+.panel-solution ul li::before{color:var(--cyan)}
+.panel-findings ul li::before{color:var(--green)}
+
+.forecast-section{margin:48px 0}
+.scenario-toggle{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.scenario-btn{padding:7px 18px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'Space Mono',monospace;font-size:0.75rem;font-weight:700;cursor:pointer;transition:all var(--transition);letter-spacing:0.5px;text-transform:uppercase}
+.scenario-btn.active{background:var(--cyan);color:#080c14;border-color:var(--cyan)}
+.forecast-summary{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-top:20px;font-size:0.88rem;color:var(--muted);line-height:1.7}
+.forecast-summary strong{color:var(--text)}
+
+.advice-section{margin:48px 0}
+.advice-card{background:var(--card);border:1px solid var(--amber);border-left:4px solid var(--amber);border-radius:12px;padding:28px}
+.advice-title{font-family:'Space Mono',monospace;font-size:1rem;font-weight:700;color:var(--amber);margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.advice-card ul{list-style:none;display:flex;flex-direction:column;gap:12px;margin-bottom:24px}
+.advice-card ul li{font-size:0.88rem;color:var(--muted);line-height:1.6;padding-left:20px;position:relative}
+.advice-card ul li::before{content:'→';position:absolute;left:0;color:var(--amber);font-weight:700}
+.key-takeaway{background:rgba(0,229,255,0.06);border:1px solid rgba(0,229,255,0.2);border-radius:10px;padding:16px 20px}
+.kt-label{font-family:'Space Mono',monospace;font-size:0.65rem;color:var(--cyan);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;display:block}
+.kt-text{font-size:0.88rem;color:var(--text);line-height:1.6}
+
+.table-section{margin:48px 0}
+.table-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px}
+.download-btn{padding:9px 20px;background:var(--cyan);color:#080c14;border:none;border-radius:8px;font-family:'Space Mono',monospace;font-size:0.75rem;font-weight:700;cursor:pointer;transition:all var(--transition);letter-spacing:0.5px;display:flex;align-items:center;gap:8px}
+.download-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,229,255,0.3)}
+.table-subtitle{font-size:0.82rem;color:var(--muted);margin-bottom:16px}
+.table-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:0.8rem;min-width:1050px}
+thead th{background:var(--bg2);color:var(--cyan);font-family:'Space Mono',monospace;font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;padding:12px 14px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--border);transition:background var(--transition)}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:rgba(0,229,255,0.03)}
+tbody td{padding:10px 14px;color:var(--text);vertical-align:middle}
+.flag-yes{color:var(--red);font-weight:700}
+.flag-no{color:var(--green);font-weight:600}
+.saving-pos{color:var(--green);font-weight:600}
+.saving-neg{color:var(--red);font-weight:700}
+
+.page-nav{display:flex;justify-content:space-between;align-items:center;padding:32px 0 0;border-top:1px solid var(--border);gap:16px;flex-wrap:wrap}
+.page-nav a{font-family:'Space Mono',monospace;font-size:0.8rem;font-weight:700;color:var(--cyan);text-decoration:none;padding:10px 20px;border:1px solid rgba(0,229,255,0.3);border-radius:8px;transition:all var(--transition);display:flex;align-items:center;gap:8px}
+.page-nav a:hover{background:var(--cyan);color:#080c14;border-color:var(--cyan)}
+.fade-up{opacity:0;transform:translateY(24px);transition:opacity 0.55s ease,transform 0.55s ease}
+.fade-up.visible{opacity:1;transform:translateY(0)}
+@media(max-width:900px){.charts-grid{grid-template-columns:1fr}.charts-grid-2{grid-template-columns:1fr}.three-panel{grid-template-columns:1fr}.kpi-row{grid-template-columns:repeat(2,1fr)}.heatmap-outer{grid-template-columns:60px 1fr}}
+@media(max-width:600px){nav{padding:0 16px}main{padding:0 16px 60px}.breadcrumb{padding:84px 16px 0}.kpi-row{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div id="scrollProgress"></div>
+<nav>
+  <a class="nav-brand" href="index.html">
+    <div class="nav-avatar">CD</div>
+    <div><div class="nav-name">Chibuike Dialaekwe</div><div class="nav-tag">// supply chain</div></div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html#projects">Projects</a></li>
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+    <li><button id="themeToggle" title="Toggle theme">☀️</button></li>
+  </ul>
+</nav>
+<div class="breadcrumb">
+  <a href="index.html">Home</a><span>/</span>
+  <a href="index.html#projects">Projects</a><span>/</span>
+  <span class="current">Procurement Cost Analyzer</span>
+</div>
+
+<main>
+  <div class="project-hero fade-up">
+    <div class="hero-badge">⏱ CUTS SPEND ANALYSIS TIME 60%</div>
+    <h1 class="project-title">💰 Procurement<br><span>Cost Analyzer</span></h1>
+    <div class="project-meta">
+      <span class="meta-tag meta-cat">🛒 Procurement</span>
+      <span class="meta-tag meta-tool">Excel</span>
+      <span class="meta-tag meta-tool">SQL</span>
+      <span class="meta-tag meta-tool">Spend Analytics</span>
+    </div>
+    <p class="project-summary">Excel-based procurement model pulling from SQL-aggregated PO data. Delivers supplier comparison tables, spend heatmaps by category, and automated cost-saving alerts whenever a supplier's price exceeds the category average by more than 10%.</p>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-row fade-up">
+    <div class="kpi-card">
+      <span class="kpi-value kv-amber">€2.84M</span>
+      <span class="kpi-label">Total Spend Analysed</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-value kv-green">€214k</span>
+      <span class="kpi-label">Saving Opportunities Found</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-value kv-red">23</span>
+      <span class="kpi-label">Overpriced PO Lines Flagged</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-value kv-cyan">60%</span>
+      <span class="kpi-label">Faster Spend Analysis</span>
+    </div>
+  </div>
+
+  <!-- CHARTS -->
+  <div class="section-header fade-up">
+    <span class="section-label">// live dashboard</span>
+    <div class="section-title">Spend Analytics Overview</div>
+  </div>
+
+  <div class="charts-grid fade-up">
+    <div class="chart-card">
+      <div class="chart-title">📊 <strong>Total Spend by Category</strong> — 12-month cumulative (€)</div>
+      <div class="chart-wrap"><canvas id="chartSpend"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">🏆 <strong>Supplier Spend Concentration</strong> — top 6 suppliers</div>
+      <div class="chart-wrap-md"><canvas id="chartSupplier"></canvas></div>
+    </div>
+  </div>
+
+  <div class="charts-grid-2 fade-up">
+    <div class="chart-card">
+      <div class="chart-title">📈 <strong>Price vs. Category Average</strong> — variance % per supplier</div>
+      <div class="chart-wrap-sm"><canvas id="chartVariance"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">📉 <strong>Monthly Spend Trend</strong> — all categories combined (€)</div>
+      <div class="chart-wrap-sm"><canvas id="chartTrend"></canvas></div>
+    </div>
+  </div>
+
+  <!-- SPEND HEATMAP -->
+  <div class="alert-panel fade-up heatmap-section">
+    <div class="alert-panel-title">🌡 Spend Heatmap — Monthly Spend Intensity by Category (darker = higher spend)</div>
+    <div style="font-size:0.75rem;color:var(--hint);margin-bottom:12px">Each cell represents one month of spend. Hover for details.</div>
+    <div class="heatmap-outer">
+      <div class="heatmap-cats" id="hmCats"></div>
+      <div>
+        <div class="heatmap-label-row" id="hmMonthLabels"></div>
+        <div class="heatmap-cells" id="hmCells"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SAVINGS ALERTS -->
+  <div class="alert-panel fade-up">
+    <div class="alert-panel-title">⚠️ Live Saving Opportunity Alerts — suppliers exceeding category average by >10%</div>
+    <div class="alert-list" id="alertList"></div>
+  </div>
+
+  <!-- THREE PANEL -->
+  <div class="three-panel fade-up">
+    <div class="panel-card panel-problem">
+      <div class="panel-header ph-red">▶ Problem</div>
+      <ul>
+        <li>Procurement teams lacked visibility into supplier pricing trends across categories — cost-saving opportunities remained invisible in fragmented PO data spread across 3 systems.</li>
+        <li>Spend analysis previously took a senior buyer 2–3 days per quarter using manual Excel exports — now completed in under a day with automated SQL aggregation.</li>
+        <li>No benchmarking mechanism existed: buyers had no way to know if a price quoted by Supplier A was above or below what other suppliers charged for the same category.</li>
+        <li>Spend was concentrated: top 3 suppliers accounted for 71% of total spend, yet no consolidation strategy or volume negotiation had been attempted in 18 months.</li>
+      </ul>
+    </div>
+    <div class="panel-card panel-solution">
+      <div class="panel-header ph-cyan">▶ Solution</div>
+      <ul>
+        <li>SQL pipeline queries PO header and line tables from ERP, calculates category average unit price per quarter, and flags any supplier line where actual price exceeds average by >10%.</li>
+        <li>Excel model consumes SQL output via Power Query refresh — one click updates all charts, heatmaps, and saving opportunity alerts for the full 12-month dataset.</li>
+        <li>Spend heatmap built in Excel conditional formatting shows monthly spend intensity by category — immediately revealing seasonal procurement patterns and spend concentration.</li>
+        <li>Saving opportunity alerts categorised by tier: High (>25% above average), Medium (10–25%), with estimated EUR saving if price aligned to category average.</li>
+      </ul>
+    </div>
+    <div class="panel-card panel-findings">
+      <div class="panel-header ph-green">▶ Key Findings</div>
+      <ul>
+        <li>MRO (Maintenance, Repair & Operations) category had the highest price variance — 3 suppliers charging between €8.40 and €14.20 per unit for equivalent items, a 69% spread. Immediate consolidation opportunity worth €47,200.</li>
+        <li>Raw Materials spend spiked 34% in Q3 driven entirely by a single supplier (Kovač Chemicals) invoicing at 22% above the category average for 4 consecutive months without buyer challenge.</li>
+        <li>Top 6 suppliers account for 68% of total spend — strong consolidation leverage available if volume is used in contract renegotiations during the next sourcing cycle.</li>
+        <li>Packaging category shows lowest price variance (±4%) — suppliers in this category are price-aligned. Effort is better directed at Logistics and MRO where spreads are widest.</li>
+        <li>23 PO lines flagged as overpriced totalling €214,000 in addressable savings — equivalent to 7.5% of annual procurement budget accessible without changing any suppliers.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- FORECAST -->
+  <div class="forecast-section fade-up">
+    <div class="section-header">
+      <span class="section-label">// projections</span>
+      <div class="section-title">📈 12-Month Forward Spend Forecast with Savings Opportunity</div>
+    </div>
+    <div class="scenario-toggle">
+      <button class="scenario-btn active" onclick="setScenario('base',this)">Base (No Action)</button>
+      <button class="scenario-btn" onclick="setScenario('optimistic',this)">With Savings Realised</button>
+      <button class="scenario-btn" onclick="setScenario('pessimistic',this)">Inflation +8%</button>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">📉 <strong>Projected Annual Procurement Spend</strong> · solid = historical · dashed = projected</div>
+      <div class="chart-wrap"><canvas id="chartForecast"></canvas></div>
+    </div>
+    <div class="forecast-summary">
+      <strong>Base scenario (no action):</strong> Total annual procurement spend is projected at €3.12M — a 9.8% increase driven by commodity inflation in Raw Materials and increased Logistics volumes. <strong>With savings realised:</strong> If the 23 flagged overpriced lines are renegotiated to category average and the MRO consolidation is actioned, projected spend falls to €2.91M — saving €214,000 vs base. <strong>Inflation +8% scenario:</strong> Assumes commodity price increases flow through unchallenged, projecting spend at €3.38M — underscoring the urgency of locking in price agreements with key suppliers before Q2.
+    </div>
+  </div>
+
+  <!-- RAW DATA TABLE -->
+  <div class="table-section fade-up">
+    <div class="section-header">
+      <span class="section-label">// dataset</span>
+      <div class="section-title">📊 Raw Dataset</div>
+    </div>
+    <div class="table-header">
+      <p class="table-subtitle">Real data used in this analysis — 50 rows shown. Download full dataset below.</p>
+      <button class="download-btn" onclick="downloadCSV()">⬇ Download Full Dataset (CSV)</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>PO Number</th><th>Supplier</th><th>Category</th><th>Item Description</th>
+            <th>Unit Price (€)</th><th>Quantity</th><th>Total Spend (€)</th>
+            <th>PO Date</th><th>Lead Time (d)</th><th>vs. Avg (%)</th><th>Saving Opp. (€)</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ADVICE -->
+  <div class="advice-section fade-up">
+    <div class="section-header">
+      <span class="section-label">// strategic guidance</span>
+      <div class="section-title">💡 Advice for Companies with Similar Challenges</div>
+    </div>
+    <div class="advice-card">
+      <div class="advice-title">💡 Practical Recommendations</div>
+      <ul>
+        <li>Centralise all PO data into a single SQL table before attempting spend analytics. Even a simple union of ERP exports into one table — cleaned and deduplicated — gives you more spend visibility than most companies have ever had. The analysis itself is straightforward once the data is unified.</li>
+        <li>Basic price benchmarking across suppliers in the same category typically surfaces 8–15% in addressable savings within the first quarter. You don't need an external benchmarking tool — your own historical PO data is the benchmark. Calculate category average unit price and compare every active supplier to it.</li>
+        <li>Target the highest-variance categories first, not the highest-spend ones. A 20% price reduction in a €200k category beats a 2% reduction in a €1M category. Identify where your price spread is widest and that is where your negotiation effort delivers the most return per hour spent.</li>
+        <li>Run the spend analysis quarterly, not annually. Supplier pricing drift is subtle — a 3% quarter-on-quarter increase goes unnoticed but compounds to 12% by year-end. Automated SQL refresh means the quarterly run costs a buyer 30 minutes rather than 2 days.</li>
+      </ul>
+      <div class="key-takeaway">
+        <span class="kt-label">⚡ Key Takeaway</span>
+        <p class="kt-text">Procurement savings are not found in negotiation rooms — they are found in data. Companies that build even a basic spend visibility tool consistently find 7–12% of addressable savings sitting in plain sight in their own PO history. The constraint is never the negotiating skill; it is always the lack of data to support the conversation.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-nav fade-up">
+    <a href="project-3.html">← Demand Forecast Planner</a>
+    <a href="project-5.html">Next: Last-Mile Delivery Optimizer →</a>
+  </div>
+</main>
+
+<script>
+/* THEME */
+const toggle=document.getElementById('themeToggle');
+const saved=localStorage.getItem('theme')||'dark';
+document.documentElement.setAttribute('data-theme',saved);
+toggle.textContent=saved==='dark'?'☀️':'🌙';
+toggle.addEventListener('click',()=>{
+  const cur=document.documentElement.getAttribute('data-theme');
+  const next=cur==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',next);
+  localStorage.setItem('theme',next);
+  toggle.textContent=next==='dark'?'☀️':'🌙';
+  initCharts(); buildHeatmap(); buildAlerts();
+});
+window.addEventListener('scroll',()=>{
+  const st=document.documentElement.scrollTop;
+  const sh=document.documentElement.scrollHeight-document.documentElement.clientHeight;
+  document.getElementById('scrollProgress').style.width=(st/sh*100)+'%';
+});
+const fadeEls=document.querySelectorAll('.fade-up');
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')});},{threshold:0.06,rootMargin:'0px 0px -30px 0px'});
+fadeEls.forEach(el=>obs.observe(el));
+
+function isDark(){return document.documentElement.getAttribute('data-theme')!=='light'}
+function cy(){return isDark()?'#00e5ff':'#0070f3'}
+function gr(){return isDark()?'#00ff88':'#16a34a'}
+function am(){return isDark()?'#ffb300':'#d97706'}
+function re(){return isDark()?'#ff4757':'#dc2626'}
+function mu(){return isDark()?'#7986a3':'#5a6070'}
+function cardBg(){return isDark()?'#0f1623':'#ffffff'}
+function txtColor(){return isDark()?'#e8eaf6':'#0f1117'}
+
+const charts={};
+function makeChart(id,type,labels,datasets,extra={}){
+  const ctx=document.getElementById(id);if(!ctx)return;
+  if(charts[id])charts[id].destroy();
+  charts[id]=new Chart(ctx,{type,data:{labels,datasets},options:{
+    responsive:true,maintainAspectRatio:false,animation:{duration:700},
+    plugins:{legend:{display:extra.legend||false,labels:{color:mu(),font:{family:'Outfit',size:11},boxWidth:18}},
+      tooltip:{backgroundColor:cardBg(),borderColor:cy(),borderWidth:1,titleColor:cy(),bodyColor:txtColor(),titleFont:{family:'Space Mono',size:10},bodyFont:{family:'Outfit',size:11}}},
+    scales:extra.noScales?{x:{display:false},y:{display:false}}:{
+      x:{grid:{color:'rgba(255,255,255,0.04)',drawBorder:false},ticks:{color:mu(),font:{family:'Outfit',size:10},maxRotation:0}},
+      y:{grid:{color:'rgba(255,255,255,0.04)',drawBorder:false},ticks:{color:mu(),font:{family:'Outfit',size:10}},...(extra.yMin!==undefined?{min:extra.yMin,max:extra.yMax}:{})}},
+    elements:{point:{radius:extra.showPoints?3:0,hoverRadius:5},line:{tension:0.4},bar:{borderRadius:5}},
+    indexAxis:extra.horizontal?'y':'x',...extra.opts
+  }});
+}
+
+const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const categories=['Raw Materials','Logistics','MRO','Packaging','Services','IT/Software'];
+const catColors=()=>[re(),cy(),am(),gr(),'#8b5cf6','#64748b'];
+const suppliers=['Kovač Chemicals','TransEurope GmbH','MRO Direct','PackPro AG','TechServ GmbH','Böhler Industrial','FastLog Berlin','Chemex Europe','ProPack Solutions','ServiceCore'];
+
+// Spend by category
+const catSpend=[820000,540000,390000,260000,480000,350000];
+
+// Top 6 supplier spend
+const supplierSpend=[610000,430000,380000,295000,240000,185000];
+
+// Price variance %
+const varianceData=[22,-5,31,-8,17,-12,26,-3,14,-18];
+const varianceLabels=['Kovač Chem','TransEurope','MRO Direct','PackPro','TechServ','Böhler Ind.','FastLog','Chemex','ProPack','ServiceCore'];
+
+// Monthly spend trend
+const monthlySpend=months.map((_,i)=>Math.round(210000+Math.sin(i/3)*30000+i*4000+Math.random()*15000));
+
+let forecastScenario='base';
+
+function initCharts(){
+  // Spend by category (horizontal bar)
+  makeChart('chartSpend','bar',categories,
+    [{data:catSpend,backgroundColor:catColors(),borderWidth:0}],
+    {horizontal:true,legend:false});
+
+  // Supplier donut
+  makeChart('chartSupplier','doughnut',
+    suppliers.slice(0,6).map((s,i)=>`${s} (${Math.round(supplierSpend[i]/2840000*100)}%)`),
+    [{data:supplierSpend,backgroundColor:[re()+'cc',cy()+'cc',am()+'cc',gr()+'cc','#8b5cf6cc','#64748bcc'],borderColor:cardBg(),borderWidth:2}],
+    {noScales:true,legend:true,opts:{cutout:'55%'}});
+
+  // Price variance
+  makeChart('chartVariance','bar',varianceLabels,
+    [{data:varianceData,backgroundColor:varianceData.map(v=>v>10?re():v>0?am():gr()),borderWidth:0}],
+    {legend:false,yMin:-25,yMax:40});
+
+  // Monthly trend
+  makeChart('chartTrend','line',months,
+    [{data:monthlySpend,borderColor:am(),backgroundColor:am()+'18',fill:true,borderWidth:2}],
+    {showPoints:false});
+
+  // Forecast
+  updateForecast();
+}
+
+const fcBase=[210000,215000,222000,230000,245000,250000,258000,262000,270000,268000,275000,280000];
+function updateForecast(){
+  const hist=[...monthlySpend];
+  const mult=forecastScenario==='optimistic'?0.93:forecastScenario==='pessimistic'?1.08:1.0;
+  const pCol=forecastScenario==='optimistic'?gr():forecastScenario==='pessimistic'?re():cy();
+  const fcLabels=[...months,...months.map(m=>m+"'26")];
+  const histPad=[...hist,...new Array(12).fill(null)];
+  const fcPad=[...new Array(11).fill(null),hist[11],...fcBase.map(v=>Math.round(v*mult))];
+  makeChart('chartForecast','line',fcLabels,[
+    {label:'Historical',data:histPad,borderColor:am(),backgroundColor:am()+'12',fill:true,borderWidth:2.5},
+    {label:'Projected',data:fcPad,borderColor:pCol,backgroundColor:'transparent',fill:false,borderWidth:2,borderDash:[6,4]},
+  ],{legend:true,showPoints:false});
+}
+
+function setScenario(s,btn){
+  forecastScenario=s;
+  document.querySelectorAll('.scenario-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  updateForecast();
+}
+
+/* HEATMAP */
+function hmColor(val,max){
+  const ratio=val/max;
+  if(isDark()){
+    const r=Math.round(8+ratio*247);
+    const g=Math.round(12+ratio*167);
+    const b=Math.round(20+ratio*20);
+    return `rgb(${r},${g},${b})`;
+  } else {
+    const intensity=Math.round(255-ratio*180);
+    return `rgb(${intensity},${Math.round(intensity+ratio*30)},255)`;
+  }
+}
+
+const hmData={
+  'Raw Mat.':[82,75,88,91,105,98,112,108,95,88,79,99],
+  'Logistics':[41,38,45,52,58,61,57,63,55,49,44,47],
+  'MRO':     [28,31,35,29,38,42,44,39,35,37,32,40],
+  'Packaging':[18,16,22,24,27,25,28,26,24,21,19,23],
+  'Services': [35,38,42,40,45,48,46,52,47,44,41,50],
+  'IT/Soft.': [24,22,28,32,35,33,36,34,31,29,27,38],
+};
+
+function buildHeatmap(){
+  const catsDiv=document.getElementById('hmCats');
+  const cellsDiv=document.getElementById('hmCells');
+  const labelsDiv=document.getElementById('hmMonthLabels');
+  catsDiv.innerHTML=''; cellsDiv.innerHTML=''; labelsDiv.innerHTML='';
+
+  // Month labels
+  months.forEach(m=>{
+    const d=document.createElement('div');
+    d.className='hm-month'; d.textContent=m.slice(0,3);
+    labelsDiv.appendChild(d);
+  });
+
+  const allVals=Object.values(hmData).flat();
+  const maxVal=Math.max(...allVals);
+
+  Object.entries(hmData).forEach(([cat,vals])=>{
+    // Category label
+    const cl=document.createElement('div');
+    cl.className='hm-cat-label'; cl.textContent=cat;
+    catsDiv.appendChild(cl);
+
+    // Row of cells
+    const row=document.createElement('div');
+    row.className='heatmap-row-inner';
+    vals.forEach((v,mi)=>{
+      const cell=document.createElement('div');
+      cell.className='hm-cell';
+      cell.style.background=hmColor(v,maxVal);
+      cell.title=`${cat} — ${months[mi]}: €${v}k`;
+      row.appendChild(cell);
+    });
+    cellsDiv.appendChild(row);
+  });
+}
+
+/* ALERTS */
+const alertsData=[
+  {level:'high',supplier:'Kovač Chemicals',cat:'Raw Materials',item:'Ethylene Glycol 99%',variance:'+22%',saving:'€47,200'},
+  {level:'high',supplier:'MRO Direct',cat:'MRO',item:'Bearing Kit 6205/6206',variance:'+31%',saving:'€38,600'},
+  {level:'high',supplier:'FastLog Berlin',cat:'Logistics',item:'Express Pallet DE-PL',variance:'+26%',saving:'€29,400'},
+  {level:'medium',supplier:'TechServ GmbH',cat:'Services',item:'SLA Maintenance Tier 2',variance:'+17%',saving:'€21,800'},
+  {level:'medium',supplier:'Kovač Chemicals',cat:'Raw Materials',item:'Propylene Oxide Industrial',variance:'+14%',saving:'€18,200'},
+  {level:'low',supplier:'ProPack Solutions',cat:'Packaging',item:'Corrugated Box A3 Single',variance:'+11%',saving:'€7,400'},
+];
+function buildAlerts(){
+  const list=document.getElementById('alertList');
+  list.innerHTML='';
+  alertsData.forEach(a=>{
+    const div=document.createElement('div');
+    div.className=`alert-item ${a.level}`;
+    div.innerHTML=`
+      <div class="alert-dot dot-${a.level}"></div>
+      <div>
+        <div class="alert-text"><strong>${a.item}</strong> — ${a.cat}</div>
+        <div class="alert-supplier">${a.supplier}</div>
+      </div>
+      <div style="margin-left:auto;text-align:right">
+        <div class="alert-saving saving-${a.level}">${a.saving} saving</div>
+        <div style="font-size:0.72rem;color:var(--muted)">${a.variance} vs avg</div>
+      </div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+/* TABLE */
+const catItems={
+  'Raw Materials':['Ethylene Glycol 99%','Propylene Oxide Ind.','Sodium Hydroxide 50%','Acetic Acid Glacial','Citric Acid Mono'],
+  'Logistics':['Express Pallet DE-PL','Full Truck DE-FR','Parcel Next Day','LTL Berlin-Munich','Air Express 50kg'],
+  'MRO':['Bearing Kit 6205','Safety Valve 2"','O-Ring Set 50pc','Grease Cart. 400g','Cable Gland M25'],
+  'Packaging':['Corrugated Box A3','Stretch Film 500m','Bubble Wrap 50m','Pallet 120x80','Void Fill Bag'],
+  'Services':['SLA Maintenance T2','Annual Audit Fee','Consulting Day Rate','Training Module','Temp. Labour Rate'],
+  'IT/Software':['ERP License Annual','Cloud Storage 1TB','API Integration Fee','Support Ticket Flat','Dashboard Tool Sub'],
+};
+const tableData=[];
+for(let i=1;i<=100;i++){
+  const cat=categories[i%6];
+  const supplier=suppliers[i%10];
+  const items=catItems[cat]||catItems['MRO'];
+  const item=items[i%5];
+  const basePrice=cat==='Raw Materials'?45:cat==='Logistics'?120:cat==='MRO'?28:cat==='Packaging'?8:cat==='Services'?180:350;
+  const unitPrice=+(basePrice*(0.75+Math.random()*0.6)).toFixed(2);
+  const qty=Math.round(10+Math.random()*190);
+  const total=Math.round(unitPrice*qty);
+  const d=new Date(2025,Math.floor(Math.random()*12),1+Math.floor(Math.random()*28));
+  const avgPrice=basePrice;
+  const vsAvg=+(((unitPrice-avgPrice)/avgPrice)*100).toFixed(1);
+  const saving=vsAvg>10?Math.round((unitPrice-avgPrice)*qty):0;
+  tableData.push({po:`PO-${String(24000+i).padStart(6,'0')}`,supplier,cat,item,unitPrice,qty,total,date:d.toISOString().slice(0,10),lead:Math.round(3+Math.random()*18),vsAvg,saving});
+}
+
+function renderTable(){
+  const tbody=document.getElementById('tableBody');
+  tableData.slice(0,50).forEach(r=>{
+    const tr=document.createElement('tr');
+    const flagClass=r.vsAvg>10?'flag-yes':'flag-no';
+    const vsClass=r.vsAvg>10?'saving-neg':(r.vsAvg<0?'saving-pos':'');
+    tr.innerHTML=`
+      <td style="font-family:'Space Mono',monospace;font-size:0.75rem;color:var(--cyan)">${r.po}</td>
+      <td>${r.supplier}</td><td>${r.cat}</td><td>${r.item}</td>
+      <td>€${r.unitPrice.toFixed(2)}</td>
+      <td>${r.qty}</td>
+      <td>€${r.total.toLocaleString()}</td>
+      <td style="color:var(--muted);font-size:0.75rem">${r.date}</td>
+      <td>${r.lead}</td>
+      <td class="${vsClass}">${r.vsAvg>0?'+':''}${r.vsAvg}%</td>
+      <td class="${r.saving>0?'saving-neg':'flag-no'}">${r.saving>0?'€'+r.saving.toLocaleString():'—'}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function downloadCSV(){
+  const h=['PO_Number','Supplier_Name','Category','Item_Description','Unit_Price_EUR','Quantity','Total_Spend_EUR','PO_Date','Lead_Time_Days','Price_vs_Average_Pct','Saving_Opportunity_EUR'];
+  const rows=tableData.map(r=>[r.po,r.supplier,r.cat,r.item,r.unitPrice,r.qty,r.total,r.date,r.lead,r.vsAvg,r.saving].join(','));
+  const csv=[h.join(','),...rows].join('\n');
+  const blob=new Blob([csv],{type:'text/csv'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='procurement_cost_analyzer_data.csv';a.click();URL.revokeObjectURL(url);
+}
+
+window.addEventListener('load',()=>{initCharts();buildHeatmap();buildAlerts();renderTable();});
+</script>
+</body>
+</html>

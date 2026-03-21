@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Freight Spend Intelligence — Chibuike Dialaekwe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#080c14;--bg2:#0d1220;--bg3:#111827;--card:#0f1623;--text:#e8eaf6;--muted:#7986a3;--hint:#4a5568;--border:rgba(0,229,255,0.12);--border2:rgba(0,229,255,0.25);--cyan:#00e5ff;--green:#00ff88;--amber:#ffb300;--red:#ff4757;--body-bg:#080c14;}
+[data-theme="light"]{--bg:#ffffff;--bg2:#f8fafc;--bg3:#f1f5f9;--card:#ffffff;--text:#0f1117;--muted:#5a6070;--hint:#9aa0ae;--border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.18);--cyan:#0070f3;--green:#16a34a;--amber:#d97706;--red:#dc2626;--body-bg:#f8fafc;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden;}
+#scrollBar{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,var(--cyan),var(--green));z-index:9999;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,229,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+
+nav{position:sticky;top:0;z-index:1000;height:60px;background:rgba(8,12,20,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;}
+[data-theme="light"] nav{background:rgba(255,255,255,0.92);}
+.nav-left{display:flex;align-items:center;gap:12px;}
+.cd-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--green));display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:#080c14;animation:pulse 3s ease-in-out infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,229,255,.4);}50%{box-shadow:0 0 0 8px rgba(0,229,255,0);}}
+.nav-brand{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;}
+.nav-tag{font-size:11px;color:var(--cyan);font-family:'Space Mono',monospace;}
+.nav-right{display:flex;align-items:center;gap:8px;}
+.nav-link{color:var(--muted);text-decoration:none;font-size:14px;padding:6px 12px;border-radius:6px;transition:all .2s;}
+.nav-link:hover{color:var(--cyan);background:rgba(0,229,255,.08);}
+.theme-btn{background:rgba(0,229,255,.1);border:1px solid var(--border2);color:var(--text);padding:6px 12px;border-radius:8px;cursor:pointer;font-size:16px;transition:all .2s;}
+.theme-btn:hover{background:rgba(0,229,255,.2);}
+
+.breadcrumb{padding:16px 24px;font-size:13px;color:var(--muted);font-family:'Space Mono',monospace;position:relative;z-index:1;}
+.breadcrumb a{color:var(--cyan);text-decoration:none;}
+
+.hero{padding:48px 24px 36px;max-width:1200px;margin:0 auto;position:relative;z-index:1;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,179,0,.1);border:1px solid rgba(255,179,0,.3);color:var(--amber);padding:6px 14px;border-radius:20px;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;margin-bottom:20px;}
+.badge-dot{width:8px;height:8px;border-radius:50%;background:var(--amber);animation:blink 1.4s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}
+.hero h1{font-family:'Space Mono',monospace;font-size:clamp(26px,4vw,46px);font-weight:700;line-height:1.2;margin-bottom:16px;}
+.hero h1 span{color:var(--cyan);}
+.hero-meta{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px;}
+.tag{padding:5px 12px;border-radius:6px;font-size:12px;font-weight:600;font-family:'Space Mono',monospace;}
+.tag-cat{background:rgba(0,229,255,.1);color:var(--cyan);border:1px solid var(--border2);}
+.tag-tool{background:rgba(0,255,136,.1);color:var(--green);border:1px solid rgba(0,255,136,.2);}
+.hero-problem{color:var(--muted);font-size:15px;max-width:680px;line-height:1.7;}
+
+/* FILTER BAR */
+.filter-bar{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin:0 24px 32px;max-width:1200px;position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:16px;align-items:center;}
+.ctrl-group{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.ctrl-label{font-size:12px;color:var(--muted);font-family:'Space Mono',monospace;white-space:nowrap;}
+.filter-btn{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;font-family:'Space Mono',monospace;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--muted);transition:all .2s;}
+.filter-btn.active,.filter-btn:hover{background:var(--cyan);color:#080c14;border-color:var(--cyan);}
+
+/* OVERCHARGE ALERTS */
+.alerts-panel{background:var(--bg2);border:1px solid rgba(255,71,87,.25);border-radius:14px;padding:24px;max-width:1200px;margin:0 24px 32px;position:relative;z-index:1;}
+.alerts-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.alerts-title{font-family:'Space Mono',monospace;font-size:15px;font-weight:700;color:var(--red);}
+.alerts-count{background:var(--red);color:#fff;border-radius:12px;padding:2px 10px;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;}
+.alert-list{display:flex;flex-direction:column;gap:8px;max-height:280px;overflow-y:auto;}
+.alert-item{background:rgba(255,71,87,.06);border:1px solid rgba(255,71,87,.2);border-radius:8px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;transition:all .2s;}
+.alert-item:hover{border-color:rgba(255,71,87,.5);}
+.alert-lane{font-family:'Space Mono',monospace;font-size:12px;font-weight:700;}
+.alert-carrier{font-size:13px;color:var(--muted);}
+.alert-right{display:flex;align-items:center;gap:12px;}
+.alert-pct{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;color:var(--red);}
+.alert-saving{font-family:'Space Mono',monospace;font-size:13px;color:var(--green);}
+
+/* SECTION */
+.section{max-width:1200px;margin:0 auto;padding:0 24px 48px;position:relative;z-index:1;}
+.section-eyebrow{font-family:'Space Mono',monospace;font-size:12px;color:var(--cyan);margin-bottom:8px;letter-spacing:1px;}
+.section-title{font-family:'Space Mono',monospace;font-size:22px;font-weight:700;margin-bottom:24px;}
+
+/* KPI CARDS */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:40px;}
+.kpi-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all .3s;}
+.kpi-card:hover{border-color:var(--border2);transform:translateY(-2px);}
+.kpi-label{font-size:12px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:8px;}
+.kpi-value{font-family:'Space Mono',monospace;font-size:26px;font-weight:700;margin-bottom:4px;}
+.kpi-sub{font-size:12px;color:var(--muted);}
+.kpi-tag{display:inline-block;font-size:11px;font-weight:700;margin-top:6px;padding:2px 8px;border-radius:4px;font-family:'Space Mono',monospace;}
+.t-green{background:rgba(0,255,136,.1);color:var(--green);}
+.t-red{background:rgba(255,71,87,.1);color:var(--red);}
+.t-amber{background:rgba(255,179,0,.1);color:var(--amber);}
+.t-cyan{background:rgba(0,229,255,.1);color:var(--cyan);}
+
+/* CHARTS */
+.charts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(480px,1fr));gap:24px;margin-bottom:40px;}
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;transition:all .3s;}
+.chart-card:hover{border-color:var(--border2);}
+.chart-card.full-width{grid-column:1/-1;}
+.chart-title{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;margin-bottom:4px;}
+.chart-sub{font-size:12px;color:var(--muted);margin-bottom:20px;}
+.chart-wrap{position:relative;height:240px;}
+.chart-wrap-lg{position:relative;height:300px;}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead{background:var(--bg3);}
+th{padding:12px 14px;text-align:left;font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);white-space:nowrap;border-bottom:1px solid var(--border);}
+td{padding:11px 14px;border-bottom:1px solid var(--border);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(0,229,255,.03);}
+.mode-road{background:rgba(0,229,255,.1);color:var(--cyan);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;font-family:'Space Mono',monospace;}
+.mode-sea{background:rgba(0,255,136,.1);color:var(--green);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;font-family:'Space Mono',monospace;}
+.mode-air{background:rgba(255,71,87,.1);color:var(--red);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;font-family:'Space Mono',monospace;}
+.mode-rail{background:rgba(255,179,0,.1);color:var(--amber);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;font-family:'Space Mono',monospace;}
+.flag-yes{color:var(--red);font-weight:700;font-family:'Space Mono',monospace;}
+.flag-no{color:var(--green);font-family:'Space Mono',monospace;}
+.var-over{color:var(--red);font-weight:700;}
+.var-ok{color:var(--green);}
+.var-warn{color:var(--amber);}
+
+/* PSF */
+.psf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;margin-bottom:40px;}
+.psf-card{border-radius:16px;padding:24px;}
+.psf-card.problem{background:rgba(255,71,87,.06);border:1px solid rgba(255,71,87,.25);}
+.psf-card.solution{background:rgba(0,229,255,.06);border:1px solid rgba(0,229,255,.25);}
+.psf-card.findings{background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.25);}
+.psf-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.psf-icon{font-size:22px;}
+.psf-label{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;}
+.psf-card.problem .psf-label{color:var(--red);}
+.psf-card.solution .psf-label{color:var(--cyan);}
+.psf-card.findings .psf-label{color:var(--green);}
+.psf-list{list-style:none;}
+.psf-list li{padding:6px 0;font-size:14px;display:flex;gap:8px;line-height:1.5;}
+.psf-list li::before{content:'▶';font-size:10px;margin-top:4px;flex-shrink:0;}
+.psf-card.problem .psf-list li::before{color:var(--red);}
+.psf-card.solution .psf-list li::before{color:var(--cyan);}
+.psf-card.findings .psf-list li::before{color:var(--green);}
+
+/* SAVINGS SUMMARY */
+.savings-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-bottom:40px;}
+.saving-card{border-radius:12px;padding:20px;text-align:center;}
+.saving-card.pot{background:rgba(0,229,255,.06);border:1px solid var(--border2);}
+.saving-card.carrier{background:rgba(255,179,0,.06);border:1px solid rgba(255,179,0,.3);}
+.saving-card.lane{background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.3);}
+.saving-card.flag{background:rgba(255,71,87,.06);border:1px solid rgba(255,71,87,.25);}
+.saving-label{font-size:12px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:6px;}
+.saving-value{font-family:'Space Mono',monospace;font-size:28px;font-weight:700;}
+
+/* FORECAST */
+.scenario-btns{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.scen-btn{padding:7px 18px;border-radius:8px;font-size:12px;font-weight:700;font-family:'Space Mono',monospace;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--muted);transition:all .2s;}
+.scen-btn.active{background:var(--cyan);color:#080c14;border-color:var(--cyan);}
+.forecast-summary{margin-top:16px;padding:14px 18px;background:var(--bg3);border-radius:10px;font-size:14px;color:var(--muted);line-height:1.7;}
+.forecast-summary strong{color:var(--text);}
+
+/* ADVICE */
+.advice-card{background:rgba(255,179,0,.06);border:1px solid rgba(255,179,0,.3);border-radius:16px;padding:28px;margin-bottom:40px;}
+.advice-title{font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:var(--amber);margin-bottom:16px;}
+.advice-list{list-style:none;}
+.advice-list li{padding:7px 0;font-size:14px;display:flex;gap:10px;line-height:1.6;}
+.advice-list li::before{content:'💡';font-size:14px;flex-shrink:0;}
+.takeaway{margin-top:20px;background:rgba(0,229,255,.08);border:1px solid var(--border2);border-radius:10px;padding:16px 20px;}
+.takeaway-label{font-family:'Space Mono',monospace;font-size:11px;color:var(--cyan);margin-bottom:6px;letter-spacing:1px;}
+.takeaway p{font-size:14px;line-height:1.6;}
+
+/* BOTTOM NAV */
+.nav-bottom{display:flex;justify-content:space-between;align-items:center;max-width:1200px;margin:0 auto;padding:0 24px 60px;position:relative;z-index:1;flex-wrap:wrap;gap:12px;}
+.btn-back,.btn-next{padding:12px 24px;border-radius:10px;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;text-decoration:none;transition:all .2s;display:inline-flex;align-items:center;gap:8px;}
+.btn-back{background:var(--bg2);border:1px solid var(--border2);color:var(--text);}
+.btn-back:hover{border-color:var(--cyan);color:var(--cyan);}
+.btn-next{background:var(--cyan);color:#080c14;border:none;}
+.btn-next:hover{opacity:.88;transform:translateX(3px);}
+
+.dl-btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;background:rgba(0,229,255,.1);border:1px solid var(--border2);color:var(--cyan);border-radius:10px;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:20px;}
+.dl-btn:hover{background:rgba(0,229,255,.2);}
+
+.fade-up{opacity:0;transform:translateY(28px);transition:opacity .6s ease,transform .6s ease;}
+.fade-up.visible{opacity:1;transform:translateY(0);}
+
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:24px;text-align:center;font-size:13px;color:var(--muted);position:relative;z-index:1;}
+footer a{color:var(--cyan);text-decoration:none;}
+
+@media(max-width:768px){
+  .charts-grid{grid-template-columns:1fr;}
+  .psf-grid{grid-template-columns:1fr;}
+  .kpi-grid{grid-template-columns:repeat(2,1fr);}
+  .savings-grid{grid-template-columns:repeat(2,1fr);}
+  nav .nav-right .nav-link{display:none;}
+}
+</style>
+</head>
+<body>
+<div id="scrollBar"></div>
+
+<nav>
+  <div class="nav-left">
+    <div class="cd-avatar">CD</div>
+    <div>
+      <div class="nav-brand">Chibuike Dialaekwe</div>
+      <div class="nav-tag">// supply chain</div>
+    </div>
+  </div>
+  <div class="nav-right">
+    <a href="index.html" class="nav-link">Projects</a>
+    <a href="index.html#about" class="nav-link">About</a>
+    <a href="index.html#contact" class="nav-link">Contact</a>
+    <button class="theme-btn" id="themeToggle">☀️</button>
+  </div>
+</nav>
+
+<div class="breadcrumb">
+  <a href="index.html">Home</a> &rsaquo; <a href="index.html#projects">Projects</a> &rsaquo; Freight Spend Intelligence
+</div>
+
+<!-- HERO -->
+<div class="hero fade-up">
+  <div class="hero-badge"><span class="badge-dot"></span>🚚 UNCOVERS HIDDEN FREIGHT COSTS</div>
+  <h1>Freight Spend<br/><span>Intelligence</span></h1>
+  <div class="hero-meta">
+    <span class="tag tag-cat">🚚 Logistics</span>
+    <span class="tag tag-tool">SQL</span>
+    <span class="tag tag-tool">Python</span>
+  </div>
+  <p class="hero-problem">Freight costs are fragmented across 8 carriers, multiple freight forwarders, and disconnected invoice systems — making total cost of shipment nearly impossible to benchmark. No lane-level visibility exists, so overpayments accumulate undetected. Carriers set rates knowing shippers lack the data to challenge them.</p>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar fade-up">
+  <div class="ctrl-group">
+    <span class="ctrl-label">MODE:</span>
+    <button class="filter-btn active" onclick="applyFilter('mode','All',this)">All</button>
+    <button class="filter-btn" onclick="applyFilter('mode','Road',this)">🚛 Road</button>
+    <button class="filter-btn" onclick="applyFilter('mode','Sea',this)">🚢 Sea</button>
+    <button class="filter-btn" onclick="applyFilter('mode','Air',this)">✈️ Air</button>
+    <button class="filter-btn" onclick="applyFilter('mode','Rail',this)">🚂 Rail</button>
+  </div>
+  <div class="ctrl-group">
+    <span class="ctrl-label">CARRIER:</span>
+    <button class="filter-btn active" onclick="applyFilter('carrier','All',this)">All Carriers</button>
+    <button class="filter-btn" onclick="applyFilter('carrier','DHL',this)">DHL</button>
+    <button class="filter-btn" onclick="applyFilter('carrier','DB Schenker',this)">DB Schenker</button>
+    <button class="filter-btn" onclick="applyFilter('carrier','Kuehne+Nagel',this)">K+N</button>
+    <button class="filter-btn" onclick="applyFilter('carrier','DSV',this)">DSV</button>
+  </div>
+  <div class="ctrl-group">
+    <span class="ctrl-label">OVERCHARGE:</span>
+    <button class="filter-btn active" onclick="applyFilter('flag','All',this)">All</button>
+    <button class="filter-btn" onclick="applyFilter('flag','Yes',this)">⚠ Flagged Only</button>
+  </div>
+</div>
+
+<!-- OVERCHARGE ALERTS -->
+<div class="alerts-panel fade-up">
+  <div class="alerts-header">
+    <span class="alerts-title">⚠ Live Overcharge Alerts</span>
+    <span class="alerts-count" id="alertCount">0 flagged</span>
+    <span style="font-size:13px;color:var(--muted);margin-left:8px;">lanes where actual cost exceeds market benchmark by &gt;15%</span>
+  </div>
+  <div class="alert-list" id="alertList"></div>
+</div>
+
+<!-- KPIs -->
+<div class="section fade-up">
+  <div class="section-eyebrow">// spend overview</div>
+  <div class="section-title">Freight Spend Summary</div>
+  <div class="kpi-grid" id="kpiGrid"></div>
+
+  <!-- SAVINGS SUMMARY -->
+  <div class="section-eyebrow">// optimization potential</div>
+  <div class="section-title">Identified Savings Opportunities</div>
+  <div class="savings-grid" id="savingsGrid"></div>
+
+  <!-- CHARTS -->
+  <div class="section-eyebrow">// analytics</div>
+  <div class="section-title">Freight Cost Analysis</div>
+  <div class="charts-grid">
+    <div class="chart-card full-width">
+      <div class="chart-title">Freight Spend by Lane — Actual vs Benchmark (€)</div>
+      <div class="chart-sub">Top 12 lanes by spend volume. Red bars indicate lanes where actual cost exceeds market benchmark — priority renegotiation targets</div>
+      <div class="chart-wrap-lg"><canvas id="laneChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Spend by Carrier (€)</div>
+      <div class="chart-sub">Total freight spend distribution across 8 carrier partners — concentration risk and renegotiation leverage</div>
+      <div class="chart-wrap"><canvas id="carrierChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Spend by Transport Mode (€)</div>
+      <div class="chart-sub">Modal split of freight spend — identifies modal shift opportunities from high-cost air to road or sea</div>
+      <div class="chart-wrap"><canvas id="modeChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Cost Per Kg by Carrier (€/kg)</div>
+      <div class="chart-sub">Efficiency benchmark — carriers with high cost/kg on similar routes signal contract renegotiation opportunity</div>
+      <div class="chart-wrap"><canvas id="cpkChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Variance from Benchmark by Mode (%)</div>
+      <div class="chart-sub">How far actual cost deviates from market rate per transport mode — positive = overpaying vs benchmark</div>
+      <div class="chart-wrap"><canvas id="varianceChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- DATA TABLE -->
+  <div class="section-eyebrow">// raw data</div>
+  <div class="section-title">📊 Raw Dataset</div>
+  <p style="color:var(--muted);font-size:14px;margin-bottom:16px;">Freight invoice data aggregated across 8 carriers — 50 rows shown. Red rows = overcharge flagged (&gt;15% above benchmark).</p>
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th><th>Shipment ID</th><th>Origin</th><th>Destination</th><th>Carrier</th>
+          <th>Mode</th><th>Weight (kg)</th><th>Distance (km)</th>
+          <th>Freight Cost (€)</th><th>€/kg</th><th>Benchmark (€)</th>
+          <th>Variance %</th><th>⚠ Flagged</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+  <button class="dl-btn" onclick="downloadCSV()">⬇ Download Full Freight Dataset (CSV)</button>
+</div>
+
+<!-- PSF -->
+<div class="section fade-up">
+  <div class="section-eyebrow">// methodology</div>
+  <div class="section-title">Problem → Solution → Findings</div>
+  <div class="psf-grid">
+    <div class="psf-card problem">
+      <div class="psf-header"><span class="psf-icon">🔴</span><span class="psf-label">▶ PROBLEM</span></div>
+      <ul class="psf-list">
+        <li>Freight invoices from 8 carriers arrived in different formats — PDFs, Excel files, EDI messages — with no single consolidated view of total spend, making cross-carrier benchmarking impossible</li>
+        <li>Lane-level cost visibility did not exist: the company knew total freight spend but had no idea which origin-destination pairs were overpriced versus market rates</li>
+        <li>Carrier contracts were renegotiated based on general volume arguments, with no lane-level data to challenge specific rate line items — leaving significant negotiation leverage unused</li>
+        <li>Air freight was being used for shipments within 800km of road distance purely from habit — no one had quantified the modal shift saving available by switching to express road services</li>
+      </ul>
+    </div>
+    <div class="psf-card solution">
+      <div class="psf-header"><span class="psf-icon">🔵</span><span class="psf-label">▶ SOLUTION</span></div>
+      <ul class="psf-list">
+        <li>SQL pipeline extracting and normalising freight invoice data from 8 carrier portals into a unified <code style="font-family:'Space Mono',monospace;font-size:12px;background:var(--bg3);padding:1px 5px;border-radius:3px;">freight_invoice_fact</code> table with standardised lane, weight, mode, and cost fields</li>
+        <li>Python benchmarking script pulls market rate indices (Freightos Baltic Index for sea, Xeneta benchmarks for road/air) and calculates variance per lane — flags any lane &gt;15% above benchmark as overcharge</li>
+        <li>Power BI dashboard visualising spend by carrier, lane, mode, and month — with drill-through from overcharge alerts directly to invoice-level detail for dispute resolution</li>
+        <li>Modal shift analyser calculates CO₂ and cost saving from switching flagged air shipments to road or rail, linking freight optimisation to ESG reporting requirements</li>
+      </ul>
+    </div>
+    <div class="psf-card findings">
+      <div class="psf-header"><span class="psf-icon">🟢</span><span class="psf-label">▶ FINDINGS</span></div>
+      <ul class="psf-list">
+        <li>27% of lanes were priced above the market benchmark — with the Hamburg→Warsaw road lane overcharged by 34%, representing €48,000 in addressable annual savings from a single route renegotiation</li>
+        <li>Air freight accounted for 38% of total spend but only 12% of shipment volume — analysis revealed 41% of air shipments could have moved by express road at 65% lower cost per kg</li>
+        <li>DB Schenker showed the highest cost/kg variance at +21% above benchmark on Central European lanes — direct renegotiation using this data secured a 17% rate reduction within 6 weeks</li>
+        <li>Consolidating 3 partially-loaded sea freight shipments per month into 1 full FCL container would reduce sea freight cost by €31,000 annually while also reducing Scope 3 emissions</li>
+        <li>Total identified savings across all flagged lanes: <strong>€214,000/year</strong> — representing 12.4% of total freight spend</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- FORECAST -->
+<div class="section fade-up">
+  <div class="section-eyebrow">// outlook</div>
+  <div class="section-title">📈 Forecast &amp; Projections</div>
+  <div class="chart-card">
+    <div class="chart-title">Annual Freight Spend Forecast with Lane Optimization Potential (€)</div>
+    <div class="chart-sub">Historical monthly spend (solid) vs 12-month forward projection — shaded area shows savings achievable if flagged lanes are renegotiated</div>
+    <div class="scenario-btns">
+      <button class="scen-btn active" onclick="setScenario('base',this)">Base Case</button>
+      <button class="scen-btn" onclick="setScenario('optimistic',this)">Full Optimization</button>
+      <button class="scen-btn" onclick="setScenario('pessimistic',this)">No Action</button>
+    </div>
+    <div class="chart-wrap-lg"><canvas id="forecastChart"></canvas></div>
+    <div class="forecast-summary" id="forecastSummary"></div>
+  </div>
+</div>
+
+<!-- ADVICE -->
+<div class="section fade-up">
+  <div class="section-eyebrow">// strategic guidance</div>
+  <div class="section-title">💡 Advice for Companies with Similar Challenges</div>
+  <div class="advice-card">
+    <div class="advice-title">Freight Cost Control — Key Recommendations</div>
+    <ul class="advice-list">
+      <li>Before renegotiating carrier contracts, build a lane-level spend database first. Carriers set rates knowing shippers lack visibility. Even 3 months of clean freight data gives you the negotiating leverage to reduce rates 10–20% — far more than general volume arguments achieve.</li>
+      <li>Benchmark every lane separately, not just total contract value. A carrier can give you a 3% overall rate reduction while quietly raising rates on your highest-volume lanes by 8%. Lane-by-lane benchmarking closes this loophole entirely.</li>
+      <li>Audit your modal split quarterly. Air freight usage drifts upward over time as operations teams default to speed — often unnecessarily. A simple rule: any shipment under 800km and non-urgent should be road. Any >5,000km and non-urgent should be sea. Apply it systematically and you will find 10–20% of your air spend is avoidable.</li>
+      <li>Connect freight optimisation to your ESG reporting from day one. The same analysis that finds cost savings also identifies Scope 3 emission reductions. Presenting freight savings alongside CO₂ reduction numbers gives the project dual business justification and is increasingly expected by sustainability-conscious customers.</li>
+    </ul>
+    <div class="takeaway">
+      <div class="takeaway-label">// KEY TAKEAWAY</div>
+      <p>Companies that invest in freight data infrastructure consistently outperform those that rely on relationship-based carrier management. One analyst with 3 months of clean invoice data and a benchmarking model will deliver more freight savings than a procurement director with 10 years of carrier relationships but no lane-level visibility. Data always wins in freight negotiations.</p>
+    </div>
+  </div>
+</div>
+
+<div class="nav-bottom fade-up">
+  <a href="project-8.html" class="btn-back">← S&OP Simulator</a>
+  <a href="project-10.html" class="btn-next">Next: Reorder Point Automation →</a>
+</div>
+
+<footer>
+  <span>© 2026 Chibuike Dialaekwe · <a href="mailto:Dialaekwechibuike@gmail.com">Dialaekwechibuike@gmail.com</a> · <a href="https://linkedin.com/in/chibuike-dialaekwe-15582b248" target="_blank">LinkedIn</a></span>
+  &nbsp;|&nbsp;<span>⚡ Built with AI Automation</span>
+</footer>
+
+<script>
+/* THEME */
+const toggle = document.getElementById('themeToggle');
+const saved = localStorage.getItem('theme') || 'dark';
+document.documentElement.setAttribute('data-theme', saved);
+toggle.textContent = saved === 'dark' ? '☀️' : '🌙';
+toggle.addEventListener('click', () => {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  toggle.textContent = next === 'dark' ? '☀️' : '🌙';
+  rebuildAll();
+});
+
+window.addEventListener('scroll', () => {
+  document.getElementById('scrollBar').style.width =
+    (window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100) + '%';
+});
+const io = new IntersectionObserver(e => e.forEach(x => { if (x.isIntersecting) { x.target.classList.add('visible'); io.unobserve(x.target); } }), { threshold: 0.08 });
+document.querySelectorAll('.fade-up').forEach(el => io.observe(el));
+
+/* ----------------------------------------------------------------
+   DATA GENERATION
+---------------------------------------------------------------- */
+const CARRIERS = ['DHL', 'DB Schenker', 'Kuehne+Nagel', 'DSV', 'Geodis', 'XPO Logistics', 'Rhenus', 'UPS'];
+const MODES = ['Road', 'Sea', 'Air', 'Rail'];
+const MODE_W = [0.45, 0.25, 0.20, 0.10];
+const CARRIER_MODE = {
+  'DHL': ['Road', 'Air'], 'DB Schenker': ['Road', 'Rail', 'Sea'],
+  'Kuehne+Nagel': ['Sea', 'Air', 'Road'], 'DSV': ['Road', 'Sea', 'Air'],
+  'Geodis': ['Road', 'Sea'], 'XPO Logistics': ['Road'],
+  'Rhenus': ['Road', 'Rail', 'Sea'], 'UPS': ['Road', 'Air']
+};
+
+const LANES = [
+  ['Hamburg', 'Warsaw', 'Road', 820], ['Berlin', 'Munich', 'Road', 590],
+  ['Frankfurt', 'Paris', 'Road', 570], ['Hamburg', 'Rotterdam', 'Road', 240],
+  ['Berlin', 'Vienna', 'Road', 680], ['Munich', 'Milan', 'Road', 510],
+  ['Hamburg', 'Shanghai', 'Sea', 19800], ['Frankfurt', 'New York', 'Air', 6200],
+  ['Berlin', 'Dubai', 'Air', 4900], ['Hamburg', 'Singapore', 'Sea', 16700],
+  ['Munich', 'Tokyo', 'Air', 9200], ['Frankfurt', 'Chicago', 'Air', 7100],
+  ['Hamburg', 'Rotterdam', 'Sea', 260], ['Berlin', 'Prague', 'Road', 350],
+  ['Frankfurt', 'Zurich', 'Road', 390], ['Munich', 'Budapest', 'Road', 670],
+  ['Hamburg', 'Gothenburg', 'Sea', 780], ['Berlin', 'Warsaw', 'Rail', 580],
+  ['Frankfurt', 'Lyon', 'Road', 620], ['Munich', 'Amsterdam', 'Road', 720]
+];
+
+const BASE_RATES_PER_KM = { Road: 0.0018, Sea: 0.00008, Air: 0.0045, Rail: 0.0012 };
+const CARRIER_PREMIUM = {
+  'DHL': 1.08, 'DB Schenker': 1.21, 'Kuehne+Nagel': 1.18, 'DSV': 1.12,
+  'Geodis': 1.09, 'XPO Logistics': 1.05, 'Rhenus': 1.14, 'UPS': 1.11
+};
+
+function rnd(min, max) { return +(Math.random() * (max - min) + min).toFixed(2); }
+function rndInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+function pickWeighted(items, weights) {
+  const r = Math.random(); let s = 0;
+  for (let i = 0; i < items.length; i++) { s += weights[i]; if (r < s) return items[i]; }
+  return items[items.length - 1];
+}
+
+const RAW = [];
+for (let i = 0; i < 120; i++) {
+  const laneData = LANES[rndInt(0, LANES.length - 1)];
+  const [origin, dest, modeDefault, distKm] = laneData;
+  const carrier = CARRIERS[rndInt(0, CARRIERS.length - 1)];
+  const availModes = CARRIER_MODE[carrier];
+  const mode = availModes.includes(modeDefault) ? modeDefault : availModes[rndInt(0, availModes.length - 1)];
+  const weight = rndInt(50, 8000);
+  const baseRate = BASE_RATES_PER_KM[mode] * distKm * weight;
+  const premium = CARRIER_PREMIUM[carrier];
+  const noise = rnd(0.88, 1.18);
+  const actualCost = +(baseRate * noise).toFixed(0);
+  const benchmarkCost = +(baseRate * 0.96).toFixed(0);
+  const variancePct = +((actualCost - benchmarkCost) / benchmarkCost * 100).toFixed(1);
+  const overchargeFlag = variancePct > 15;
+  RAW.push({
+    id: i + 1,
+    shipment_id: 'SHP-' + String(2600 + i).padStart(4, '0'),
+    origin, destination: dest,
+    carrier, mode,
+    weight_kg: weight,
+    distance_km: distKm,
+    freight_cost: actualCost,
+    cost_per_kg: +(actualCost / weight).toFixed(3),
+    benchmark_cost: benchmarkCost,
+    variance_pct: variancePct,
+    overcharge_flag: overchargeFlag ? 'Yes' : 'No'
+  });
+}
+
+/* ----------------------------------------------------------------
+   FILTERS
+---------------------------------------------------------------- */
+let activeFilters = { mode: 'All', carrier: 'All', flag: 'All' };
+function applyFilter(type, val, btn) {
+  activeFilters[type] = val;
+  btn.closest('.ctrl-group').querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  refresh();
+}
+function getFiltered() {
+  return RAW.filter(r => {
+    if (activeFilters.mode !== 'All' && r.mode !== activeFilters.mode) return false;
+    if (activeFilters.carrier !== 'All' && r.carrier !== activeFilters.carrier) return false;
+    if (activeFilters.flag !== 'All' && r.overcharge_flag !== activeFilters.flag) return false;
+    return true;
+  });
+}
+
+/* ----------------------------------------------------------------
+   OVERCHARGE ALERTS
+---------------------------------------------------------------- */
+function renderAlerts(data) {
+  const flagged = data.filter(r => r.overcharge_flag === 'Yes')
+    .sort((a, b) => b.variance_pct - a.variance_pct).slice(0, 12);
+  document.getElementById('alertCount').textContent = flagged.length + ' flagged';
+  document.getElementById('alertList').innerHTML = flagged.length === 0
+    ? '<div style="color:var(--green);font-size:14px;padding:8px;">✓ No overcharge lanes detected in current filter selection</div>'
+    : flagged.map(r => `
+      <div class="alert-item">
+        <div>
+          <div class="alert-lane">${r.origin} → ${r.destination}</div>
+          <div class="alert-carrier">${r.carrier} · ${r.mode} · ${r.weight_kg.toLocaleString()} kg · ${r.distance_km.toLocaleString()} km</div>
+        </div>
+        <div class="alert-right">
+          <span class="alert-pct">+${r.variance_pct}% over benchmark</span>
+          <span class="alert-saving">Save €${(r.freight_cost - r.benchmark_cost).toLocaleString()}</span>
+        </div>
+      </div>`).join('');
+}
+
+/* ----------------------------------------------------------------
+   KPIs
+---------------------------------------------------------------- */
+function renderKPIs(data) {
+  const total = data.reduce((s, r) => s + r.freight_cost, 0);
+  const benchmark = data.reduce((s, r) => s + r.benchmark_cost, 0);
+  const overspend = total - benchmark;
+  const flagged = data.filter(r => r.overcharge_flag === 'Yes');
+  const savingPot = flagged.reduce((s, r) => s + (r.freight_cost - r.benchmark_cost), 0);
+  const avgCpk = data.length ? (data.reduce((s, r) => s + r.cost_per_kg, 0) / data.length).toFixed(3) : 0;
+  const laneCount = new Set(data.map(r => r.origin + r.destination)).size;
+
+  document.getElementById('kpiGrid').innerHTML = [
+    { label: 'Total Freight Spend', value: '€' + (total / 1000).toFixed(0) + 'k', sub: 'all carriers & modes', tag: 'cyan', tLabel: '→ Full spend visibility' },
+    { label: 'Market Benchmark', value: '€' + (benchmark / 1000).toFixed(0) + 'k', sub: 'at fair market rates', tag: 'green', tLabel: '✓ Reference baseline' },
+    { label: 'Total Overspend', value: '€' + (overspend / 1000).toFixed(0) + 'k', sub: 'above benchmark', tag: overspend > 0 ? 'red' : 'green', tLabel: overspend > 0 ? '⚠ Overpaying' : '✓ Below benchmark' },
+    { label: 'Savings Potential', value: '€' + (savingPot / 1000).toFixed(0) + 'k', sub: 'in flagged lanes', tag: 'amber', tLabel: '→ Addressable now' },
+    { label: 'Flagged Lanes', value: flagged.length, sub: 'overcharge >15%', tag: flagged.length > 10 ? 'red' : 'amber', tLabel: flagged.length + ' priority renegotiations' },
+    { label: 'Avg Cost Per Kg', value: '€' + avgCpk, sub: 'across all shipments', tag: 'cyan', tLabel: '→ Efficiency metric' },
+    { label: 'Unique Lanes', value: laneCount, sub: 'origin-destination pairs', tag: 'cyan', tLabel: '→ Full lane coverage' },
+    { label: 'Carriers Benchmarked', value: new Set(data.map(r => r.carrier)).size, sub: 'of 8 in network', tag: 'green', tLabel: '✓ All benchmarked' }
+  ].map(k => `
+    <div class="kpi-card">
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-value" style="color:var(--cyan)">${k.value}</div>
+      <div class="kpi-sub">${k.sub}</div>
+      <div class="kpi-tag t-${k.tag}">${k.tLabel}</div>
+    </div>`).join('');
+
+  document.getElementById('savingsGrid').innerHTML = [
+    { label: '💰 Total Savings Potential', value: '€' + (savingPot / 1000).toFixed(0) + 'k/yr', cls: 'pot' },
+    { label: '🤝 Via Carrier Renegotiation', value: '€' + (savingPot * 0.6 / 1000).toFixed(0) + 'k/yr', cls: 'carrier' },
+    { label: '🗺️ Via Lane Consolidation', value: '€' + (savingPot * 0.25 / 1000).toFixed(0) + 'k/yr', cls: 'lane' },
+    { label: '✈️→🚛 Modal Shift Saving', value: '€' + (savingPot * 0.15 / 1000).toFixed(0) + 'k/yr', cls: 'flag' }
+  ].map(s => `<div class="saving-card ${s.cls}"><div class="saving-label">${s.label}</div><div class="saving-value" style="color:var(--cyan)">${s.value}</div></div>`).join('');
+}
+
+/* ----------------------------------------------------------------
+   TABLE
+---------------------------------------------------------------- */
+function renderTable(data) {
+  const modeCls = { Road: 'mode-road', Sea: 'mode-sea', Air: 'mode-air', Rail: 'mode-rail' };
+  document.getElementById('tableBody').innerHTML = data.slice(0, 50).map(r => {
+    const vCls = r.variance_pct > 15 ? 'var-over' : r.variance_pct > 8 ? 'var-warn' : 'var-ok';
+    return `<tr style="${r.overcharge_flag === 'Yes' ? 'background:rgba(255,71,87,0.04)' : ''}">
+      <td>${r.id}</td>
+      <td style="font-family:'Space Mono',monospace;font-size:12px;">${r.shipment_id}</td>
+      <td style="white-space:nowrap;">${r.origin}</td>
+      <td style="white-space:nowrap;">${r.destination}</td>
+      <td style="white-space:nowrap;font-size:12px;">${r.carrier}</td>
+      <td><span class="${modeCls[r.mode]}">${r.mode}</span></td>
+      <td style="font-family:'Space Mono',monospace;">${r.weight_kg.toLocaleString()}</td>
+      <td style="font-family:'Space Mono',monospace;">${r.distance_km.toLocaleString()}</td>
+      <td style="font-family:'Space Mono',monospace;font-weight:600;">€${r.freight_cost.toLocaleString()}</td>
+      <td style="font-family:'Space Mono',monospace;">€${r.cost_per_kg}</td>
+      <td style="font-family:'Space Mono',monospace;color:var(--muted);">€${r.benchmark_cost.toLocaleString()}</td>
+      <td class="${vCls}" style="font-family:'Space Mono',monospace;">${r.variance_pct > 0 ? '+' : ''}${r.variance_pct}%</td>
+      <td class="${r.overcharge_flag === 'Yes' ? 'flag-yes' : 'flag-no'}">${r.overcharge_flag === 'Yes' ? '⚠ YES' : '✓ No'}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* ----------------------------------------------------------------
+   CHART HELPERS
+---------------------------------------------------------------- */
+function getC() {
+  const t = document.documentElement.getAttribute('data-theme');
+  return {
+    cyan: t === 'dark' ? '#00e5ff' : '#0070f3',
+    green: t === 'dark' ? '#00ff88' : '#16a34a',
+    amber: t === 'dark' ? '#ffb300' : '#d97706',
+    red: t === 'dark' ? '#ff4757' : '#dc2626',
+    purple: t === 'dark' ? '#b39ddb' : '#7c3aed',
+    muted: t === 'dark' ? '#7986a3' : '#5a6070',
+    grid: t === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)'
+  };
+}
+const charts = {};
+function destroyAll() { Object.keys(charts).forEach(k => { if (charts[k]) { charts[k].destroy(); delete charts[k]; } }); }
+function bOpts(extra) {
+  const c = getC();
+  return {
+    responsive: true, maintainAspectRatio: false, animation: { duration: 600 },
+    plugins: { legend: { labels: { color: c.muted, font: { family: 'Outfit', size: 12 } } }, tooltip: { backgroundColor: '#0f1623', titleColor: c.cyan, bodyColor: '#e8eaf6', borderColor: c.cyan, borderWidth: 1 } },
+    scales: { x: { ticks: { color: c.muted, font: { family: 'Space Mono', size: 10 } }, grid: { color: c.grid } }, y: { ticks: { color: c.muted, font: { family: 'Space Mono', size: 10 } }, grid: { color: c.grid } } },
+    ...extra
+  };
+}
+
+/* ----------------------------------------------------------------
+   BUILD CHARTS
+---------------------------------------------------------------- */
+function buildLaneChart(data) {
+  const c = getC();
+  // top 12 lanes by actual spend
+  const laneMap = {};
+  data.forEach(r => {
+    const k = r.origin + ' → ' + r.destination;
+    if (!laneMap[k]) laneMap[k] = { actual: 0, benchmark: 0, flag: false };
+    laneMap[k].actual += r.freight_cost;
+    laneMap[k].benchmark += r.benchmark_cost;
+    if (r.overcharge_flag === 'Yes') laneMap[k].flag = true;
+  });
+  const sorted = Object.entries(laneMap).sort((a, b) => b[1].actual - a[1].actual).slice(0, 12);
+  const labels = sorted.map(([k]) => k);
+  const actual = sorted.map(([, v]) => v);
+  const benchmark = sorted.map(([, v]) => v.benchmark);
+  const bColors = sorted.map(([, v]) => v.flag ? c.red + 'bb' : c.cyan + 'bb');
+  const ctx = document.getElementById('laneChart').getContext('2d');
+  const opts = bOpts();
+  charts.lane = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Actual Cost (€)', data: actual, backgroundColor: bColors, borderColor: bColors.map(x => x.slice(0, 7)), borderWidth: 1.5, borderRadius: 4 },
+        { label: 'Benchmark (€)', data: benchmark, backgroundColor: 'transparent', borderColor: c.green, borderWidth: 2, type: 'line', pointRadius: 4, tension: 0.2 }
+      ]
+    },
+    options: { ...opts, scales: { ...opts.scales, x: { ...opts.scales.x, ticks: { ...opts.scales.x.ticks, maxRotation: 40 } }, y: { ...opts.scales.y, ticks: { ...opts.scales.y.ticks, callback: v => '€' + (v / 1000).toFixed(0) + 'k' } } } }
+  });
+}
+
+function buildCarrierChart(data) {
+  const c = getC();
+  const cm = {};
+  data.forEach(r => { cm[r.carrier] = (cm[r.carrier] || 0) + r.freight_cost; });
+  const sorted = Object.entries(cm).sort((a, b) => b[1] - a[1]);
+  const colors = [c.cyan, c.green, c.amber, c.red, c.purple, c.cyan + '99', c.green + '99', c.amber + '99'];
+  const ctx = document.getElementById('carrierChart').getContext('2d');
+  charts.carrier = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: sorted.map(([k]) => k),
+      datasets: [{ data: sorted.map(([, v]) => v), backgroundColor: colors, borderColor: colors.map(c => c.slice(0, 7)), borderWidth: 2 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: '60%',
+      plugins: { legend: { position: 'right', labels: { color: getC().muted, font: { family: 'Outfit', size: 12 }, boxWidth: 12 } }, tooltip: { backgroundColor: '#0f1623', titleColor: c.cyan, bodyColor: '#e8eaf6', borderColor: c.cyan, borderWidth: 1 } }
+    }
+  });
+}
+
+function buildModeChart(data) {
+  const c = getC();
+  const mm = {};
+  data.forEach(r => { mm[r.mode] = (mm[r.mode] || 0) + r.freight_cost; });
+  const labels = Object.keys(mm);
+  const vals = Object.values(mm);
+  const mColors = { Road: c.cyan, Sea: c.green, Air: c.red, Rail: c.amber };
+  const ctx = document.getElementById('modeChart').getContext('2d');
+  const opts = bOpts({ indexAxis: 'y' });
+  charts.mode = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{ label: 'Spend by Mode (€)', data: vals, backgroundColor: labels.map(l => (mColors[l] || c.cyan) + 'bb'), borderColor: labels.map(l => mColors[l] || c.cyan), borderWidth: 1.5, borderRadius: 5 }]
+    },
+    options: { ...opts, scales: { x: { ...opts.scales.x, ticks: { ...opts.scales.x.ticks, callback: v => '€' + (v / 1000).toFixed(0) + 'k' } }, y: { ...opts.scales.y } } }
+  });
+}
+
+function buildCpkChart(data) {
+  const c = getC();
+  const cm = {};
+  data.forEach(r => {
+    if (!cm[r.carrier]) cm[r.carrier] = { total: 0, weight: 0 };
+    cm[r.carrier].total += r.freight_cost;
+    cm[r.carrier].weight += r.weight_kg;
+  });
+  const entries = Object.entries(cm).map(([k, v]) => [k, +(v.total / v.weight).toFixed(3)]).sort((a, b) => b[1] - a[1]);
+  const threshold = entries.reduce((s, [, v]) => s + v, 0) / entries.length;
+  const colors = entries.map(([, v]) => v > threshold * 1.1 ? c.red + 'cc' : v > threshold ? c.amber + 'cc' : c.green + 'cc');
+  const ctx = document.getElementById('cpkChart').getContext('2d');
+  const opts = bOpts();
+  charts.cpk = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: entries.map(([k]) => k),
+      datasets: [{ label: '€/kg', data: entries.map(([, v]) => v), backgroundColor: colors, borderColor: colors.map(c => c.slice(0, 7)), borderWidth: 1.5, borderRadius: 5 }]
+    },
+    options: { ...opts, scales: { ...opts.scales, y: { ...opts.scales.y, ticks: { ...opts.scales.y.ticks, callback: v => '€' + v } } } }
+  });
+}
+
+function buildVarianceChart(data) {
+  const c = getC();
+  const mv = {};
+  data.forEach(r => {
+    if (!mv[r.mode]) mv[r.mode] = [];
+    mv[r.mode].push(r.variance_pct);
+  });
+  const labels = Object.keys(mv);
+  const avgs = labels.map(m => +(mv[m].reduce((s, v) => s + v, 0) / mv[m].length).toFixed(1));
+  const colors = avgs.map(v => v > 15 ? c.red + 'cc' : v > 8 ? c.amber + 'cc' : c.green + 'cc');
+  const ctx = document.getElementById('varianceChart').getContext('2d');
+  const opts = bOpts();
+  charts.variance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{ label: 'Avg Variance vs Benchmark (%)', data: avgs, backgroundColor: colors, borderColor: colors.map(c => c.slice(0, 7)), borderWidth: 1.5, borderRadius: 6 }]
+    },
+    options: { ...opts, scales: { ...opts.scales, y: { ...opts.scales.y, ticks: { ...opts.scales.y.ticks, callback: v => v + '%' } } } }
+  });
+}
+
+/* ----------------------------------------------------------------
+   FORECAST
+---------------------------------------------------------------- */
+const HIST_SPEND = [138000, 142000, 151000, 148000, 155000, 163000, 159000, 167000, 174000, 170000, 178000, 182000];
+const FORECASTS = {
+  base:        [178000, 181000, 185000, 179000, 173000, 169000, 166000, 162000, 165000, 169000, 173000, 176000],
+  optimistic:  [168000, 163000, 157000, 151000, 146000, 141000, 138000, 135000, 132000, 130000, 128000, 126000],
+  pessimistic: [183000, 188000, 194000, 199000, 205000, 210000, 215000, 219000, 223000, 228000, 232000, 238000]
+};
+const FCAST_TEXT = {
+  base: '<strong>Base Case:</strong> Annual freight spend projected at approximately <strong>€2.03M</strong> over the next 12 months, assuming partial renegotiation of the highest-variance lanes (top 5 by overspend). Savings of <strong>€74,000</strong> achievable in Year 1 through carrier contract amendments — representing the easiest-win opportunities requiring no operational change.',
+  optimistic: '<strong>Full Optimization Case:</strong> If all flagged lanes are renegotiated, modal shift from air to road is applied to qualifying shipments, and FCL consolidation is implemented for sea lanes, annual spend could fall to <strong>€1.60M</strong> — a saving of <strong>€214,000/year</strong> vs current run rate. Requires 3–4 months of active carrier negotiations and an internal logistics governance review.',
+  pessimistic: '<strong>No Action Case:</strong> Without lane-level benchmarking and carrier challenges, freight spend is projected to grow at <strong>+6% annually</strong> due to carrier rate escalation clauses and increased air freight usage, reaching <strong>€2.38M</strong> by end of the forecast period. The overspend vs benchmark widens from €214k to over €320k per year.'
+};
+let currentScenario = 'base';
+
+function buildForecastChart(scenario) {
+  const c = getC();
+  const histLabels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const projLabels = ['M1','M2','M3','M4','M5','M6','M7','M8','M9','M10','M11','M12'];
+  const allLabels = [...histLabels, ...projLabels];
+  const histFull = [...HIST_SPEND, ...Array(12).fill(null)];
+  const projFull = [...Array(11).fill(null), HIST_SPEND[11], ...FORECASTS[scenario]];
+  const projColor = scenario === 'optimistic' ? c.green : scenario === 'pessimistic' ? c.red : c.amber;
+  const ctx = document.getElementById('forecastChart').getContext('2d');
+  if (charts.forecast) charts.forecast.destroy();
+  charts.forecast = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: allLabels,
+      datasets: [
+        { label: 'Historical Spend', data: histFull, borderColor: c.cyan, backgroundColor: c.cyan + '15', fill: true, tension: 0.4, pointRadius: 3, borderWidth: 2 },
+        { label: scenario.charAt(0).toUpperCase() + scenario.slice(1) + ' Forecast', data: projFull, borderColor: projColor, backgroundColor: 'transparent', borderDash: [6, 4], tension: 0.4, pointRadius: 3, borderWidth: 2 }
+      ]
+    },
+    options: {
+      ...bOpts(),
+      scales: {
+        x: { ticks: { color: getC().muted, font: { family: 'Space Mono', size: 10 } }, grid: { color: getC().grid } },
+        y: { ticks: { color: getC().muted, font: { family: 'Space Mono', size: 10 }, callback: v => '€' + (v / 1000).toFixed(0) + 'k' }, grid: { color: getC().grid } }
+      }
+    }
+  });
+  document.getElementById('forecastSummary').innerHTML = FCAST_TEXT[scenario];
+}
+
+function setScenario(s, btn) {
+  currentScenario = s;
+  document.querySelectorAll('.scen-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  buildForecastChart(s);
+}
+
+/* ----------------------------------------------------------------
+   FULL REBUILD
+---------------------------------------------------------------- */
+function refresh() {
+  const data = getFiltered();
+  renderAlerts(data);
+  renderKPIs(data);
+  renderTable(data);
+  destroyAll();
+  buildLaneChart(data);
+  buildCarrierChart(data);
+  buildModeChart(data);
+  buildCpkChart(data);
+  buildVarianceChart(data);
+  buildForecastChart(currentScenario);
+}
+function rebuildAll() { refresh(); }
+
+/* ----------------------------------------------------------------
+   CSV DOWNLOAD
+---------------------------------------------------------------- */
+function downloadCSV() {
+  const h = ['Shipment_ID','Origin','Destination','Carrier','Mode','Weight_Kg','Distance_Km','Freight_Cost_EUR','Cost_Per_Kg','Benchmark_Cost_EUR','Variance_Pct','Overcharge_Flag'];
+  const rows = RAW.map(r => [r.shipment_id, r.origin, r.destination, r.carrier, r.mode, r.weight_kg, r.distance_km, r.freight_cost, r.cost_per_kg, r.benchmark_cost, r.variance_pct, r.overcharge_flag].join(','));
+  const blob = new Blob([[h.join(','), ...rows].join('\n')], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'freight_spend_intelligence.csv'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* INIT */
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(refresh, 100);
+});
+</script>
+</body>
+</html>

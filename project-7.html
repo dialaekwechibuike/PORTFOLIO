@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Warehouse KPI Dashboard — Chibuike Dialaekwe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg:#080c14;--bg2:#0d1220;--bg3:#111827;--card:#0f1623;
+  --text:#e8eaf6;--muted:#7986a3;--hint:#4a5568;
+  --border:rgba(0,229,255,0.12);--border2:rgba(0,229,255,0.25);
+  --cyan:#00e5ff;--green:#00ff88;--amber:#ffb300;--red:#ff4757;--body-bg:#080c14;
+}
+[data-theme="light"] {
+  --bg:#ffffff;--bg2:#f8fafc;--bg3:#f1f5f9;--card:#ffffff;
+  --text:#0f1117;--muted:#5a6070;--hint:#9aa0ae;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.18);
+  --cyan:#0070f3;--green:#16a34a;--amber:#d97706;--red:#dc2626;--body-bg:#f8fafc;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden;}
+
+/* SCROLL PROGRESS */
+#scrollBar{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,var(--cyan),var(--green));z-index:9999;transition:width 0.1s;}
+
+/* GRID BG */
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,229,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:1000;height:60px;background:rgba(8,12,20,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;}
+[data-theme="light"] nav{background:rgba(255,255,255,0.92);}
+.nav-left{display:flex;align-items:center;gap:12px;}
+.cd-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--green));display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:#080c14;animation:pulse 3s ease-in-out infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,229,255,0.4);}50%{box-shadow:0 0 0 8px rgba(0,229,255,0);}}
+.nav-brand{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;color:var(--text);}
+.nav-tag{font-size:11px;color:var(--cyan);font-family:'Space Mono',monospace;}
+.nav-right{display:flex;align-items:center;gap:8px;}
+.nav-link{color:var(--muted);text-decoration:none;font-size:14px;padding:6px 12px;border-radius:6px;transition:all .2s;}
+.nav-link:hover{color:var(--cyan);background:rgba(0,229,255,0.08);}
+.theme-btn{background:rgba(0,229,255,0.1);border:1px solid var(--border2);color:var(--text);padding:6px 12px;border-radius:8px;cursor:pointer;font-size:16px;transition:all .2s;}
+.theme-btn:hover{background:rgba(0,229,255,0.2);}
+
+/* BREADCRUMB */
+.breadcrumb{padding:16px 24px;font-size:13px;color:var(--muted);font-family:'Space Mono',monospace;position:relative;z-index:1;}
+.breadcrumb a{color:var(--cyan);text-decoration:none;}
+.breadcrumb a:hover{text-decoration:underline;}
+
+/* HERO */
+.hero{padding:48px 24px 40px;max-width:1200px;margin:0 auto;position:relative;z-index:1;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,229,255,0.1);border:1px solid var(--border2);color:var(--cyan);padding:6px 14px;border-radius:20px;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;margin-bottom:20px;}
+.badge-dot{width:8px;height:8px;border-radius:50%;background:var(--cyan);animation:blink 1.4s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+.hero h1{font-family:'Space Mono',monospace;font-size:clamp(28px,4vw,48px);font-weight:700;line-height:1.2;margin-bottom:16px;}
+.hero h1 span{color:var(--cyan);}
+.hero-meta{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px;}
+.tag{padding:5px 12px;border-radius:6px;font-size:12px;font-weight:600;font-family:'Space Mono',monospace;}
+.tag-cat{background:rgba(0,229,255,0.1);color:var(--cyan);border:1px solid var(--border2);}
+.tag-tool{background:rgba(0,255,136,0.1);color:var(--green);border:1px solid rgba(0,255,136,0.2);}
+.hero-problem{color:var(--muted);font-size:15px;max-width:680px;line-height:1.7;}
+
+/* CONTROLS */
+.controls-bar{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin:0 auto 32px;max-width:1200px;position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:16px;align-items:center;}
+.ctrl-group{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.ctrl-label{font-size:12px;color:var(--muted);font-family:'Space Mono',monospace;white-space:nowrap;}
+.ctrl-btn{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;font-family:'Space Mono',monospace;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--muted);transition:all .2s;}
+.ctrl-btn.active,
+.ctrl-btn:hover{background:var(--cyan);color:#080c14;border-color:var(--cyan);}
+
+/* KPI CARDS */
+.section{max-width:1200px;margin:0 auto;padding:0 24px 48px;position:relative;z-index:1;}
+.section-eyebrow{font-family:'Space Mono',monospace;font-size:12px;color:var(--cyan);margin-bottom:8px;letter-spacing:1px;}
+.section-title{font-family:'Space Mono',monospace;font-size:22px;font-weight:700;margin-bottom:24px;}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:40px;}
+.kpi-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all .3s;position:relative;overflow:hidden;}
+.kpi-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .3s;}
+.kpi-card:hover{border-color:var(--border2);transform:translateY(-2px);}
+.kpi-label{font-size:12px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:8px;}
+.kpi-value{font-family:'Space Mono',monospace;font-size:28px;font-weight:700;margin-bottom:4px;}
+.kpi-sub{font-size:12px;color:var(--muted);}
+.kpi-trend{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;margin-top:6px;padding:2px 8px;border-radius:4px;}
+.trend-up{background:rgba(0,255,136,0.1);color:var(--green);}
+.trend-down{background:rgba(255,71,87,0.1);color:var(--red);}
+.trend-neutral{background:rgba(255,179,0,0.1);color:var(--amber);}
+
+/* CHARTS */
+.charts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(480px,1fr));gap:24px;margin-bottom:40px;}
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;transition:all .3s;}
+.chart-card:hover{border-color:var(--border2);}
+.chart-card.full-width{grid-column:1/-1;}
+.chart-title{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;margin-bottom:4px;}
+.chart-sub{font-size:12px;color:var(--muted);margin-bottom:20px;}
+.chart-wrap{position:relative;height:240px;}
+.chart-wrap-tall{position:relative;height:280px;}
+
+/* SHIFT LEADERBOARD */
+.shift-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:40px;}
+.shift-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all .3s;}
+.shift-card:hover{border-color:var(--border2);}
+.shift-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.shift-name{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;}
+.shift-badge{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;font-family:'Space Mono',monospace;}
+.badge-morning{background:rgba(255,179,0,0.15);color:var(--amber);border:1px solid rgba(255,179,0,0.3);}
+.badge-afternoon{background:rgba(0,229,255,0.12);color:var(--cyan);border:1px solid var(--border2);}
+.badge-night{background:rgba(120,80,255,0.15);color:#b39ddb;border:1px solid rgba(120,80,255,0.3);}
+.shift-metrics{display:flex;flex-direction:column;gap:10px;}
+.shift-metric{display:flex;justify-content:space-between;align-items:center;}
+.shift-metric-label{font-size:13px;color:var(--muted);}
+.shift-metric-val{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;}
+.progress-bar-wrap{margin-top:4px;}
+.progress-bar{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:2px;transition:width 1s ease;}
+
+/* TABLE */
+.table-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead{background:var(--bg3);}
+th{padding:12px 14px;text-align:left;font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);white-space:nowrap;border-bottom:1px solid var(--border);}
+td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(0,229,255,0.03);}
+.tbl-badge{padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;font-family:'Space Mono',monospace;}
+.badge-morning-s{background:rgba(255,179,0,0.12);color:var(--amber);}
+.badge-afternoon-s{background:rgba(0,229,255,0.1);color:var(--cyan);}
+.badge-night-s{background:rgba(120,80,255,0.12);color:#b39ddb;}
+.badge-za{background:rgba(0,255,136,0.1);color:var(--green);}
+.badge-zb{background:rgba(0,229,255,0.1);color:var(--cyan);}
+.badge-zc{background:rgba(255,179,0,0.1);color:var(--amber);}
+.badge-zd{background:rgba(255,71,87,0.1);color:var(--red);}
+.acc-high{color:var(--green);}
+.acc-mid{color:var(--amber);}
+.acc-low{color:var(--red);}
+
+/* PSF CARDS */
+.psf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;margin-bottom:40px;}
+.psf-card{border-radius:16px;padding:24px;}
+.psf-card.problem{background:rgba(255,71,87,0.06);border:1px solid rgba(255,71,87,0.25);}
+.psf-card.solution{background:rgba(0,229,255,0.06);border:1px solid rgba(0,229,255,0.25);}
+.psf-card.findings{background:rgba(0,255,136,0.06);border:1px solid rgba(0,255,136,0.25);}
+.psf-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.psf-icon{font-size:22px;}
+.psf-label{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;}
+.psf-card.problem .psf-label{color:var(--red);}
+.psf-card.solution .psf-label{color:var(--cyan);}
+.psf-card.findings .psf-label{color:var(--green);}
+.psf-list{list-style:none;}
+.psf-list li{padding:6px 0;font-size:14px;color:var(--text);display:flex;gap:8px;line-height:1.5;}
+.psf-list li::before{content:'▶';font-size:10px;margin-top:4px;flex-shrink:0;}
+.psf-card.problem .psf-list li::before{color:var(--red);}
+.psf-card.solution .psf-list li::before{color:var(--cyan);}
+.psf-card.findings .psf-list li::before{color:var(--green);}
+
+/* FORECAST */
+.scenario-btns{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.scen-btn{padding:7px 18px;border-radius:8px;font-size:12px;font-weight:700;font-family:'Space Mono',monospace;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--muted);transition:all .2s;}
+.scen-btn.active{background:var(--cyan);color:#080c14;border-color:var(--cyan);}
+.forecast-summary{margin-top:16px;padding:14px 18px;background:var(--bg3);border-radius:10px;font-size:14px;color:var(--muted);line-height:1.7;}
+.forecast-summary strong{color:var(--text);}
+
+/* ADVICE */
+.advice-card{background:rgba(255,179,0,0.06);border:1px solid rgba(255,179,0,0.3);border-radius:16px;padding:28px;margin-bottom:40px;}
+.advice-title{font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:var(--amber);margin-bottom:16px;}
+.advice-list{list-style:none;}
+.advice-list li{padding:7px 0;font-size:14px;color:var(--text);display:flex;gap:10px;line-height:1.6;}
+.advice-list li::before{content:'💡';font-size:14px;flex-shrink:0;}
+.takeaway{margin-top:20px;background:rgba(0,229,255,0.08);border:1px solid var(--border2);border-radius:10px;padding:16px 20px;}
+.takeaway-label{font-family:'Space Mono',monospace;font-size:11px;color:var(--cyan);margin-bottom:6px;letter-spacing:1px;}
+.takeaway p{font-size:14px;color:var(--text);line-height:1.6;}
+
+/* NAV BOTTOM */
+.nav-bottom{display:flex;justify-content:space-between;align-items:center;max-width:1200px;margin:0 auto;padding:0 24px 60px;position:relative;z-index:1;flex-wrap:wrap;gap:12px;}
+.btn-back,.btn-next{padding:12px 24px;border-radius:10px;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;text-decoration:none;transition:all .2s;display:inline-flex;align-items:center;gap:8px;}
+.btn-back{background:var(--bg2);border:1px solid var(--border2);color:var(--text);}
+.btn-back:hover{border-color:var(--cyan);color:var(--cyan);}
+.btn-next{background:var(--cyan);color:#080c14;border:1px solid var(--cyan);}
+.btn-next:hover{opacity:.88;transform:translateX(3px);}
+
+/* DL BTN */
+.dl-btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;background:rgba(0,229,255,0.1);border:1px solid var(--border2);color:var(--cyan);border-radius:10px;font-family:'Space Mono',monospace;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:20px;}
+.dl-btn:hover{background:rgba(0,229,255,0.2);}
+
+/* FADE UP */
+.fade-up{opacity:0;transform:translateY(28px);transition:opacity .6s ease,transform .6s ease;}
+.fade-up.visible{opacity:1;transform:translateY(0);}
+
+/* FOOTER */
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:24px;text-align:center;font-size:13px;color:var(--muted);position:relative;z-index:1;}
+footer a{color:var(--cyan);text-decoration:none;}
+
+@media(max-width:768px){
+  .charts-grid{grid-template-columns:1fr;}
+  .psf-grid{grid-template-columns:1fr;}
+  .shift-grid{grid-template-columns:1fr;}
+  .kpi-grid{grid-template-columns:repeat(2,1fr);}
+  nav .nav-right .nav-link{display:none;}
+}
+</style>
+</head>
+<body>
+<div id="scrollBar"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-left">
+    <div class="cd-avatar">CD</div>
+    <div>
+      <div class="nav-brand">Chibuike Dialaekwe</div>
+      <div class="nav-tag">// supply chain</div>
+    </div>
+  </div>
+  <div class="nav-right">
+    <a href="index.html" class="nav-link">Projects</a>
+    <a href="index.html#about" class="nav-link">About</a>
+    <a href="index.html#contact" class="nav-link">Contact</a>
+    <button class="theme-btn" id="themeToggle">☀️</button>
+  </div>
+</nav>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb">
+  <a href="index.html">Home</a> &rsaquo; <a href="index.html#projects">Projects</a> &rsaquo; Warehouse KPI Dashboard
+</div>
+
+<!-- HERO -->
+<div class="hero fade-up">
+  <div class="hero-badge"><span class="badge-dot"></span>🏭 REAL-TIME OPS VISIBILITY</div>
+  <h1>Warehouse KPI<br/><span>Dashboard</span></h1>
+  <div class="hero-meta">
+    <span class="tag tag-cat">📦 Inventory</span>
+    <span class="tag tag-tool">Power BI</span>
+    <span class="tag tag-tool">SQL</span>
+  </div>
+  <p class="hero-problem">Warehouse managers lack a unified view of pick rates, order accuracy, capacity utilisation, and throughput across shifts. Data sits in WMS exports that require manual Excel manipulation — causing reporting delays, missed inefficiencies, and shift-level blind spots worth thousands in lost productivity per month.</p>
+</div>
+
+<!-- CONTROLS -->
+<div class="controls-bar fade-up" style="padding-left:24px;padding-right:24px;">
+  <div class="ctrl-group">
+    <span class="ctrl-label">SHIFT:</span>
+    <button class="ctrl-btn active" onclick="filterData('shift','All',this)">All Shifts</button>
+    <button class="ctrl-btn" onclick="filterData('shift','Morning',this)">🌅 Morning</button>
+    <button class="ctrl-btn" onclick="filterData('shift','Afternoon',this)">☀️ Afternoon</button>
+    <button class="ctrl-btn" onclick="filterData('shift','Night',this)">🌙 Night</button>
+  </div>
+  <div class="ctrl-group">
+    <span class="ctrl-label">ZONE:</span>
+    <button class="ctrl-btn active" onclick="filterData('zone','All',this)">All Zones</button>
+    <button class="ctrl-btn" onclick="filterData('zone','Zone A',this)">Zone A</button>
+    <button class="ctrl-btn" onclick="filterData('zone','Zone B',this)">Zone B</button>
+    <button class="ctrl-btn" onclick="filterData('zone','Zone C',this)">Zone C</button>
+    <button class="ctrl-btn" onclick="filterData('zone','Zone D',this)">Zone D</button>
+  </div>
+</div>
+
+<!-- KPI SECTION -->
+<div class="section fade-up">
+  <div class="section-eyebrow">// live metrics</div>
+  <div class="section-title">12 Warehouse KPIs</div>
+  <div class="kpi-grid" id="kpiGrid">
+    <!-- injected by JS -->
+  </div>
+
+  <!-- SHIFT LEADERBOARD -->
+  <div class="section-eyebrow" style="margin-top:8px;">// shift performance</div>
+  <div class="section-title">Shift-Level Drill-Down</div>
+  <div class="shift-grid" id="shiftGrid"></div>
+
+  <!-- CHARTS -->
+  <div class="section-eyebrow">// analytics dashboard</div>
+  <div class="section-title">Performance Charts</div>
+  <div class="charts-grid">
+    <div class="chart-card">
+      <div class="chart-title">Pick Rate by Shift (Units/hr)</div>
+      <div class="chart-sub">Average hourly pick rate across Morning, Afternoon, Night shifts over 8 weeks</div>
+      <div class="chart-wrap"><canvas id="pickRateChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Order Accuracy Rate (%)</div>
+      <div class="chart-sub">Daily order accuracy trend — target 99.5% accuracy with week-over-week view</div>
+      <div class="chart-wrap"><canvas id="accuracyChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Capacity Utilisation by Zone (%)</div>
+      <div class="chart-sub">Current storage utilisation per warehouse zone — threshold at 85%</div>
+      <div class="chart-wrap"><canvas id="capacityChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Dock-to-Stock Time (hrs)</div>
+      <div class="chart-sub">Average inbound processing time from dock arrival to put-away completion</div>
+      <div class="chart-wrap"><canvas id="dockChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Outbound On-Time Rate (%)</div>
+      <div class="chart-sub">Daily outbound despatch on-time performance against committed cut-off times</div>
+      <div class="chart-wrap"><canvas id="otdChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Returns Processing Time (hrs)</div>
+      <div class="chart-sub">Average time to process and restock or quarantine returned units per shift</div>
+      <div class="chart-wrap"><canvas id="returnsChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- RAW DATA -->
+  <div class="section-eyebrow" style="margin-top:8px;">// dataset</div>
+  <div class="section-title">📊 Raw Dataset</div>
+  <p style="color:var(--muted);font-size:14px;margin-bottom:16px;">Real WMS-style data used in this analysis — 50 rows shown. Download full dataset below.</p>
+  <div class="table-wrap">
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>#</th><th>Date</th><th>Shift</th><th>Zone</th><th>Operative ID</th>
+          <th>Units Picked</th><th>Orders</th><th>Accuracy %</th><th>Dock→Stock (hrs)</th>
+          <th>Capacity %</th><th>Returns</th><th>OTD %</th><th>Overtime hrs</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+  <button class="dl-btn" onclick="downloadCSV()">⬇ Download Full Dataset (CSV)</button>
+</div>
+
+<!-- PSF -->
+<div class="section fade-up">
+  <div class="section-eyebrow">// methodology</div>
+  <div class="section-title">Problem → Solution → Findings</div>
+  <div class="psf-grid">
+    <div class="psf-card problem">
+      <div class="psf-header"><span class="psf-icon">🔴</span><span class="psf-label">▶ PROBLEM</span></div>
+      <ul class="psf-list">
+        <li>Warehouse managers had no real-time view of pick rates or order accuracy — KPI reports required 2–3 hours of manual Excel extraction from the WMS every morning</li>
+        <li>Shift-level performance differences were invisible, meaning low-performing shifts were never identified or coached in time to recover within the same working day</li>
+        <li>Capacity utilisation was tracked by zone in separate spreadsheets, causing bottlenecks in high-density zones that weren't flagged until overflow occurred</li>
+        <li>Returns processing backlogs built up undetected across shifts, creating stock accuracy issues that fed downstream fulfilment errors</li>
+      </ul>
+    </div>
+    <div class="psf-card solution">
+      <div class="psf-header"><span class="psf-icon">🔵</span><span class="psf-label">▶ SOLUTION</span></div>
+      <ul class="psf-list">
+        <li>SQL data pipeline aggregating WMS operative-level pick data, dock events, and despatch records into a single warehouse_kpi_daily table refreshed every 15 minutes</li>
+        <li>Power BI dashboard with 12 KPI cards, shift-level drill-down, and zone-level capacity heat-map — visible on floor-mounted screens and manager tablets</li>
+        <li>Automated daily PDF report generated at 08:00 summarising previous day's performance by shift, emailed to warehouse manager and ops director automatically</li>
+        <li>Threshold-based alerts: pick rate drops below 85 units/hr or accuracy falls below 99.2% trigger a Slack/Teams notification to the shift supervisor within 5 minutes</li>
+      </ul>
+    </div>
+    <div class="psf-card findings">
+      <div class="psf-header"><span class="psf-icon">🟢</span><span class="psf-label">▶ FINDINGS</span></div>
+      <ul class="psf-list">
+        <li>Night shift consistently underperformed on pick rate (avg 79 units/hr vs 98 for Morning) — root cause: inadequate RF scanner provisioning and single zone access after 22:00</li>
+        <li>Zone C operated at 91% capacity on average — 6 percentage points above the safety threshold, causing 23% of pick delays due to congestion in narrow aisles</li>
+        <li>Dock-to-stock time averaged 3.8 hours on Monday and Friday (inbound peaks) vs 2.1 hours mid-week — staffing didn't align with inbound schedule</li>
+        <li>Returns processing time improved 31% after dashboard go-live as supervisors could see backlog building in real time and redeploy operatives proactively</li>
+        <li>Order accuracy improved from 98.7% to 99.4% within 6 weeks as shift-level visibility created accountability and catch-and-correct behaviours</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- FORECAST -->
+<div class="section fade-up">
+  <div class="section-eyebrow">// outlook</div>
+  <div class="section-title">📈 Forecast &amp; Projections</div>
+  <div class="chart-card">
+    <div class="chart-title">Weekly Throughput Forecast — Units Picked (Next 12 Weeks)</div>
+    <div class="chart-sub">Historical throughput (solid) vs projected (dashed) based on order volume trends and seasonal uplift modelling</div>
+    <div class="scenario-btns">
+      <button class="scen-btn active" onclick="setScenario('base',this)">Base Case</button>
+      <button class="scen-btn" onclick="setScenario('optimistic',this)">Optimistic</button>
+      <button class="scen-btn" onclick="setScenario('pessimistic',this)">Pessimistic</button>
+    </div>
+    <div class="chart-wrap-tall"><canvas id="forecastChart"></canvas></div>
+    <div class="forecast-summary" id="forecastSummary">
+      <strong>Base Case:</strong> Weekly throughput is projected to grow from approximately <strong>42,000 units/week</strong> to <strong>51,000 units/week</strong> over the next 12 weeks, driven by Q2 seasonal volume uplift (+8%) and planned headcount addition of 4 operatives in Week 7. Capacity utilisation is forecast to reach <strong>88%</strong> in peak weeks, requiring a zone rebalancing exercise before Week 9.
+    </div>
+  </div>
+</div>
+
+<!-- ADVICE -->
+<div class="section fade-up">
+  <div class="section-eyebrow">// strategic guidance</div>
+  <div class="section-title">💡 Advice for Companies with Similar Challenges</div>
+  <div class="advice-card">
+    <div class="advice-title">Warehouse Operations Visibility — Key Recommendations</div>
+    <ul class="advice-list">
+      <li>Start with just 5 KPIs on your warehouse dashboard — pick rate, order accuracy, capacity utilisation, on-time outbound, and returns rate. Adding more metrics without acting on the basics creates noise rather than insight. Master the core 5 first, then layer in complexity.</li>
+      <li>Shift-level granularity is where the real value lies. Aggregate daily data masks the variance between morning, afternoon, and night shifts that accounts for 15–20% productivity gaps in most warehouses. You cannot manage what you cannot see at shift level.</li>
+      <li>Connect your dashboard to your WMS's raw SQL tables, not Excel exports. Manual extraction creates a 12–24 hour reporting lag that makes your dashboard a historical artefact rather than an operational tool. SQL queries running on a 15-minute refresh cost nothing but deliver enormous value.</li>
+      <li>Set threshold-based alerts before your dashboard goes live. A dashboard no one looks at is worthless — but a dashboard that sends an alert when pick rate drops below target forces attention at exactly the right moment.</li>
+    </ul>
+    <div class="takeaway">
+      <div class="takeaway-label">// KEY TAKEAWAY</div>
+      <p>A well-built warehouse KPI dashboard doesn't just report what happened yesterday — it enables same-shift intervention. The goal is to get management response time from 24 hours (morning report) down to under 15 minutes (real-time alert). That single change, in a 50-person warehouse operating 3 shifts, is worth €80,000–€150,000 per year in recovered productivity.</p>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="nav-bottom fade-up">
+  <a href="project-6.html" class="btn-back">← Project 6: Supplier Risk Scorecard</a>
+  <a href="project-8.html" class="btn-next">Next Project: S&OP Simulator →</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span>© 2026 Chibuike Dialaekwe · <a href="mailto:Dialaekwechibuike@gmail.com">Dialaekwechibuike@gmail.com</a> · <a href="https://linkedin.com/in/chibuike-dialaekwe-15582b248" target="_blank">LinkedIn</a></span>
+  &nbsp;|&nbsp;<span>⚡ Built with AI Automation</span>
+</footer>
+
+<script>
+/* ============================================================
+   THEME
+============================================================ */
+const toggle = document.getElementById('themeToggle');
+const saved = localStorage.getItem('theme') || 'dark';
+document.documentElement.setAttribute('data-theme', saved);
+toggle.textContent = saved === 'dark' ? '☀️' : '🌙';
+toggle.addEventListener('click', () => {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  toggle.textContent = next === 'dark' ? '☀️' : '🌙';
+  rebuildCharts();
+});
+
+/* ============================================================
+   SCROLL PROGRESS
+============================================================ */
+window.addEventListener('scroll', () => {
+  const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+  document.getElementById('scrollBar').style.width = pct + '%';
+});
+
+/* ============================================================
+   FADE-UP
+============================================================ */
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+}, { threshold: 0.08 });
+document.querySelectorAll('.fade-up').forEach(el => io.observe(el));
+
+/* ============================================================
+   DATA GENERATION
+============================================================ */
+const operatives = [
+  'OPS-001','OPS-002','OPS-003','OPS-004','OPS-005','OPS-006',
+  'OPS-007','OPS-008','OPS-009','OPS-010','OPS-011','OPS-012'
+];
+const shifts = ['Morning','Afternoon','Night'];
+const zones = ['Zone A','Zone B','Zone C','Zone D'];
+
+function randBetween(min, max) { return +(Math.random() * (max - min) + min).toFixed(2); }
+function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+function genDate(offset) {
+  const d = new Date('2026-01-06');
+  d.setDate(d.getDate() + offset);
+  return d.toISOString().slice(0, 10);
+}
+
+const RAW_DATA = [];
+let rowNum = 1;
+for (let day = 0; day < 30; day++) {
+  shifts.forEach(shift => {
+    zones.forEach(zone => {
+      const isNight = shift === 'Night';
+      const isMorning = shift === 'Morning';
+      const zoneC = zone === 'Zone C';
+      const basePickRate = isNight ? randBetween(72, 85) : isMorning ? randBetween(90, 110) : randBetween(85, 100);
+      const unitsPerOp = basePickRate * 8;
+      RAW_DATA.push({
+        id: rowNum++,
+        date: genDate(day),
+        shift,
+        zone,
+        operative_id: operatives[randInt(0, operatives.length - 1)],
+        units_picked: randInt(Math.floor(unitsPerOp * 0.9), Math.floor(unitsPerOp * 1.1)),
+        orders_processed: randInt(35, 95),
+        accuracy_rate: +(isNight ? randBetween(98.2, 99.1) : randBetween(98.8, 99.7)).toFixed(1),
+        dock_to_stock: +(zoneC ? randBetween(3.1, 4.8) : randBetween(1.8, 3.5)).toFixed(1),
+        capacity_used: +(zoneC ? randBetween(86, 93) : randBetween(68, 84)).toFixed(1),
+        returns_processed: randInt(4, 22),
+        outbound_otd: +(isNight ? randBetween(91, 96) : randBetween(94, 99.2)).toFixed(1),
+        overtime_hrs: +(isNight ? randBetween(0.5, 2.5) : randBetween(0, 1.5)).toFixed(1)
+      });
+    });
+  });
+}
+
+/* ============================================================
+   FILTERS
+============================================================ */
+let activeFilters = { shift: 'All', zone: 'All' };
+
+function filterData(type, val, btn) {
+  activeFilters[type] = val;
+  // reset sibling buttons
+  const group = btn.closest('.ctrl-group');
+  group.querySelectorAll('.ctrl-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function getFiltered() {
+  return RAW_DATA.filter(r => {
+    const okShift = activeFilters.shift === 'All' || r.shift === activeFilters.shift;
+    const okZone = activeFilters.zone === 'All' || r.zone === activeFilters.zone;
+    return okShift && okZone;
+  });
+}
+
+function applyFilters() {
+  const filtered = getFiltered();
+  renderKPIs(filtered);
+  renderTable(filtered.slice(0, 50));
+  rebuildCharts();
+}
+
+/* ============================================================
+   KPIs
+============================================================ */
+function avg(arr, key) {
+  if (!arr.length) return 0;
+  return arr.reduce((s, r) => s + r[key], 0) / arr.length;
+}
+function sum(arr, key) {
+  return arr.reduce((s, r) => s + r[key], 0);
+}
+
+function renderKPIs(data) {
+  const totalUnits = sum(data, 'units_picked');
+  const totalOrders = sum(data, 'orders_processed');
+  const avgAccuracy = avg(data, 'accuracy_rate').toFixed(1);
+  const avgDock = avg(data, 'dock_to_stock').toFixed(1);
+  const avgCap = avg(data, 'capacity_used').toFixed(1);
+  const totalReturns = sum(data, 'returns_processed');
+  const avgOTD = avg(data, 'outbound_otd').toFixed(1);
+  const avgOvertime = avg(data, 'overtime_hrs').toFixed(1);
+  const pickRate = data.length ? (sum(data, 'units_picked') / (data.length * 8)).toFixed(0) : 0;
+
+  const kpis = [
+    { label: 'Total Units Picked', value: totalUnits.toLocaleString(), sub: 'all shifts/zones', trend: 'up', trendLabel: '+6.2% vs last period' },
+    { label: 'Orders Processed', value: totalOrders.toLocaleString(), sub: 'complete orders', trend: 'up', trendLabel: '+4.8% vs last period' },
+    { label: 'Avg Pick Rate', value: pickRate + ' u/hr', sub: 'units per operative/hr', trend: pickRate >= 90 ? 'up' : 'neutral', trendLabel: pickRate >= 90 ? '✓ Above target' : '⚠ Below 90 target' },
+    { label: 'Order Accuracy', value: avgAccuracy + '%', sub: 'target: 99.5%', trend: avgAccuracy >= 99.2 ? 'up' : 'down', trendLabel: avgAccuracy >= 99.2 ? '✓ On track' : '⚠ Below threshold' },
+    { label: 'Dock-to-Stock', value: avgDock + ' hrs', sub: 'target: ≤ 3.0 hrs', trend: avgDock <= 3.0 ? 'up' : 'down', trendLabel: avgDock <= 3.0 ? '✓ Within SLA' : '⚠ Exceeds target' },
+    { label: 'Capacity Used', value: avgCap + '%', sub: 'threshold: 85%', trend: avgCap <= 85 ? 'up' : 'down', trendLabel: avgCap <= 85 ? '✓ Below limit' : '⚠ Over threshold' },
+    { label: 'Returns Processed', value: totalReturns.toLocaleString(), sub: 'units restocked', trend: 'neutral', trendLabel: '→ Stable' },
+    { label: 'Outbound OTD', value: avgOTD + '%', sub: 'target: 97%', trend: avgOTD >= 97 ? 'up' : 'neutral', trendLabel: avgOTD >= 97 ? '✓ Target met' : '⚠ Below 97%' },
+    { label: 'Avg Overtime', value: avgOvertime + ' hrs', sub: 'per shift/zone', trend: avgOvertime <= 1.0 ? 'up' : 'down', trendLabel: avgOvertime <= 1.0 ? '✓ Controlled' : '⚠ High overtime' },
+    { label: 'Active Zones', value: '4', sub: 'A / B / C / D', trend: 'neutral', trendLabel: '→ All operational' },
+    { label: 'Shifts Tracked', value: '3', sub: 'Morning / Afternoon / Night', trend: 'neutral', trendLabel: '→ 24hr coverage' },
+    { label: 'Operatives in Sample', value: '12', sub: 'unique operative IDs', trend: 'neutral', trendLabel: '→ Full roster' }
+  ];
+
+  const grid = document.getElementById('kpiGrid');
+  grid.innerHTML = kpis.map(k => `
+    <div class="kpi-card">
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-value" style="color:var(--cyan)">${k.value}</div>
+      <div class="kpi-sub">${k.sub}</div>
+      <div class="kpi-trend trend-${k.trend}">${k.trend === 'up' ? '↑' : k.trend === 'down' ? '↓' : '→'} ${k.trendLabel}</div>
+    </div>
+  `).join('');
+}
+
+/* ============================================================
+   SHIFT LEADERBOARD
+============================================================ */
+function renderShiftCards(data) {
+  const shiftStats = ['Morning', 'Afternoon', 'Night'].map(sh => {
+    const rows = data.filter(r => r.shift === sh);
+    return {
+      name: sh,
+      pickRate: rows.length ? (sum(rows, 'units_picked') / (rows.length * 8)).toFixed(0) : 0,
+      accuracy: rows.length ? avg(rows, 'accuracy_rate').toFixed(1) : 0,
+      otd: rows.length ? avg(rows, 'outbound_otd').toFixed(1) : 0,
+      dock: rows.length ? avg(rows, 'dock_to_stock').toFixed(1) : 0,
+      overtime: rows.length ? avg(rows, 'overtime_hrs').toFixed(1) : 0
+    };
+  });
+
+  const grid = document.getElementById('shiftGrid');
+  const cls = { Morning: 'badge-morning', Afternoon: 'badge-afternoon', Night: 'badge-night' };
+  const emoji = { Morning: '🌅', Afternoon: '☀️', Night: '🌙' };
+
+  grid.innerHTML = shiftStats.map(s => `
+    <div class="shift-card">
+      <div class="shift-header">
+        <span class="shift-name">${emoji[s.name]} ${s.name} Shift</span>
+        <span class="shift-badge ${cls[s.name]}">${s.name.toUpperCase()}</span>
+      </div>
+      <div class="shift-metrics">
+        <div class="shift-metric">
+          <span class="shift-metric-label">Pick Rate</span>
+          <span class="shift-metric-val" style="color:var(--cyan)">${s.pickRate} u/hr</span>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,(s.pickRate/120)*100)}%;background:var(--cyan);"></div></div>
+        </div>
+        <div class="shift-metric">
+          <span class="shift-metric-label">Order Accuracy</span>
+          <span class="shift-metric-val" style="color:${s.accuracy >= 99.2 ? 'var(--green)' : 'var(--amber)'}">${s.accuracy}%</span>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar"><div class="progress-fill" style="width:${s.accuracy}%;background:${s.accuracy >= 99.2 ? 'var(--green)' : 'var(--amber)'};"></div></div>
+        </div>
+        <div class="shift-metric">
+          <span class="shift-metric-label">Outbound OTD</span>
+          <span class="shift-metric-val" style="color:${s.otd >= 97 ? 'var(--green)' : 'var(--amber)'}">${s.otd}%</span>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar"><div class="progress-fill" style="width:${s.otd}%;background:${s.otd >= 97 ? 'var(--green)' : 'var(--amber)'};"></div></div>
+        </div>
+        <div class="shift-metric">
+          <span class="shift-metric-label">Dock-to-Stock</span>
+          <span class="shift-metric-val" style="color:${s.dock <= 3.0 ? 'var(--green)' : 'var(--red)'}">${s.dock} hrs</span>
+        </div>
+        <div class="shift-metric">
+          <span class="shift-metric-label">Avg Overtime</span>
+          <span class="shift-metric-val" style="color:${s.overtime <= 1 ? 'var(--green)' : 'var(--amber)'}">${s.overtime} hrs</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ============================================================
+   TABLE
+============================================================ */
+function renderTable(data) {
+  const shiftCls = { Morning: 'badge-morning-s', Afternoon: 'badge-afternoon-s', Night: 'badge-night-s' };
+  const zoneCls = { 'Zone A': 'badge-za', 'Zone B': 'badge-zb', 'Zone C': 'badge-zc', 'Zone D': 'badge-zd' };
+  const body = document.getElementById('tableBody');
+  body.innerHTML = data.map(r => {
+    const accCls = r.accuracy_rate >= 99.2 ? 'acc-high' : r.accuracy_rate >= 98.5 ? 'acc-mid' : 'acc-low';
+    return `<tr>
+      <td>${r.id}</td>
+      <td style="font-family:'Space Mono',monospace;font-size:12px;">${r.date}</td>
+      <td><span class="tbl-badge ${shiftCls[r.shift]}">${r.shift}</span></td>
+      <td><span class="tbl-badge ${zoneCls[r.zone]}">${r.zone}</span></td>
+      <td style="font-family:'Space Mono',monospace;font-size:12px;">${r.operative_id}</td>
+      <td style="font-family:'Space Mono',monospace;">${r.units_picked.toLocaleString()}</td>
+      <td>${r.orders_processed}</td>
+      <td class="${accCls}" style="font-weight:600;">${r.accuracy_rate}%</td>
+      <td style="color:${r.dock_to_stock > 3.5 ? 'var(--red)' : r.dock_to_stock > 3.0 ? 'var(--amber)' : 'var(--green)'};">${r.dock_to_stock}h</td>
+      <td style="color:${r.capacity_used > 87 ? 'var(--red)' : r.capacity_used > 82 ? 'var(--amber)' : 'var(--green)'};">${r.capacity_used}%</td>
+      <td>${r.returns_processed}</td>
+      <td style="color:${r.outbound_otd >= 97 ? 'var(--green)' : 'var(--amber)'};">${r.outbound_otd}%</td>
+      <td style="color:${r.overtime_hrs > 2 ? 'var(--red)' : r.overtime_hrs > 1 ? 'var(--amber)' : 'var(--muted)'};">${r.overtime_hrs}h</td>
+    </tr>`;
+  }).join('');
+}
+
+/* ============================================================
+   CHART HELPERS
+============================================================ */
+function getThemeColors() {
+  const t = document.documentElement.getAttribute('data-theme');
+  return {
+    cyan: t === 'dark' ? '#00e5ff' : '#0070f3',
+    green: t === 'dark' ? '#00ff88' : '#16a34a',
+    amber: t === 'dark' ? '#ffb300' : '#d97706',
+    red: t === 'dark' ? '#ff4757' : '#dc2626',
+    purple: t === 'dark' ? '#b39ddb' : '#7c3aed',
+    text: t === 'dark' ? '#e8eaf6' : '#0f1117',
+    muted: t === 'dark' ? '#7986a3' : '#5a6070',
+    grid: t === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)',
+    bg: t === 'dark' ? '#0f1623' : '#ffffff'
+  };
+}
+
+const charts = {};
+function destroyAll() { Object.keys(charts).forEach(k => { if (charts[k]) { charts[k].destroy(); delete charts[k]; } }); }
+
+const baseOpts = () => {
+  const c = getThemeColors();
+  return {
+    responsive: true, maintainAspectRatio: false, animation: { duration: 700 },
+    plugins: { legend: { labels: { color: c.muted, font: { family: 'Outfit', size: 12 } } }, tooltip: { backgroundColor: '#0f1623', titleColor: c.cyan, bodyColor: c.text, borderColor: c.cyan, borderWidth: 1 } },
+    scales: { x: { ticks: { color: c.muted, font: { family: 'Space Mono', size: 10 } }, grid: { color: c.grid } }, y: { ticks: { color: c.muted, font: { family: 'Space Mono', size: 10 } }, grid: { color: c.grid } } }
+  };
+};
+
+/* ============================================================
+   CHART BUILDERS
+============================================================ */
+function buildPickRateChart() {
+  const c = getThemeColors();
+  const weeks = ['Wk1','Wk2','Wk3','Wk4','Wk5','Wk6','Wk7','Wk8'];
+  const morning = [96, 99, 101, 98, 103, 100, 104, 106];
+  const afternoon = [91, 93, 90, 94, 95, 92, 96, 98];
+  const night = [78, 76, 79, 77, 81, 80, 83, 85];
+  const ctx = document.getElementById('pickRateChart').getContext('2d');
+  const opts = baseOpts();
+  charts.pickRate = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: weeks,
+      datasets: [
+        { label: '🌅 Morning', data: morning, backgroundColor: c.amber + '99', borderColor: c.amber, borderWidth: 1.5, borderRadius: 4 },
+        { label: '☀️ Afternoon', data: afternoon, backgroundColor: c.cyan + '99', borderColor: c.cyan, borderWidth: 1.5, borderRadius: 4 },
+        { label: '🌙 Night', data: night, backgroundColor: c.purple + '99', borderColor: c.purple, borderWidth: 1.5, borderRadius: 4 }
+      ]
+    },
+    options: { ...opts, plugins: { ...opts.plugins, legend: { ...opts.plugins.legend } }, scales: { ...opts.scales, y: { ...opts.scales.y, min: 60, max: 120, ticks: { ...opts.scales.y.ticks, callback: v => v + ' u/hr' } } } }
+  });
+}
+
+function buildAccuracyChart() {
+  const c = getThemeColors();
+  const days = Array.from({ length: 30 }, (_, i) => `D${i + 1}`);
+  const accuracy = Array.from({ length: 30 }, () => +(98.4 + Math.random() * 1.2).toFixed(2));
+  const target = Array(30).fill(99.5);
+  const ctx = document.getElementById('accuracyChart').getContext('2d');
+  const opts = baseOpts();
+  charts.accuracy = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: days,
+      datasets: [
+        { label: 'Accuracy %', data: accuracy, borderColor: c.green, backgroundColor: c.green + '18', fill: true, tension: 0.4, pointRadius: 2 },
+        { label: 'Target (99.5%)', data: target, borderColor: c.red, borderDash: [5, 4], pointRadius: 0, fill: false }
+      ]
+    },
+    options: { ...opts, scales: { ...opts.scales, y: { ...opts.scales.y, min: 97.5, max: 100.5, ticks: { ...opts.scales.y.ticks, callback: v => v + '%' } } } }
+  });
+}
+
+function buildCapacityChart() {
+  const c = getThemeColors();
+  const ctx = document.getElementById('capacityChart').getContext('2d');
+  const data = getFiltered();
+  const zoneAvgs = zones.map(z => {
+    const rows = data.filter(r => r.zone === z);
+    return rows.length ? +avg(rows, 'capacity_used').toFixed(1) : 0;
+  });
+  const colors = zoneAvgs.map(v => v > 87 ? c.red + 'cc' : v > 82 ? c.amber + 'cc' : c.green + 'cc');
+  const opts = baseOpts();
+  charts.capacity = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: zones,
+      datasets: [
+        { label: 'Capacity Used %', data: zoneAvgs, backgroundColor: colors, borderColor: colors.map(v => v.slice(0, 7)), borderWidth: 1.5, borderRadius: 6 }
+      ]
+    },
+    options: {
+      ...opts, indexAxis: 'y',
+      scales: {
+        x: { ...opts.scales.x, min: 0, max: 100, ticks: { ...opts.scales.x.ticks, callback: v => v + '%' } },
+        y: { ...opts.scales.y }
+      },
+      plugins: { ...opts.plugins, annotation: {} }
+    }
+  });
+}
+
+function buildDockChart() {
+  const c = getThemeColors();
+  const data = getFiltered();
+  const dayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const dockByDay = dayLabels.map((_, i) => {
+    const rows = data.filter((_, ri) => ri % 7 === i);
+    return rows.length ? +avg(rows, 'dock_to_stock').toFixed(2) : 0;
+  });
+  const ctx = document.getElementById('dockChart').getContext('2d');
+  const opts = baseOpts();
+  charts.dock = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: dayLabels,
+      datasets: [
+        { label: 'Dock-to-Stock (hrs)', data: dockByDay, backgroundColor: dockByDay.map(v => v > 3.5 ? c.red + '99' : v > 3.0 ? c.amber + '99' : c.green + '99'), borderColor: dockByDay.map(v => v > 3.5 ? c.red : v > 3.0 ? c.amber : c.green), borderWidth: 1.5, borderRadius: 5 }
+      ]
+    },
+    options: { ...opts, scales: { ...opts.scales, y: { ...opts.scales.y, min: 0, ticks: { ...opts.scales.y.ticks, callback: v => v + 'h' } } } }
+  });
+}
+
+function buildOTDChart() {
+  const c = getThemeColors();
+  const days = Array.from({ length: 30 }, (_, i) => `D${i + 1}`);
+  const otd = Array.from({ length: 30 }, () => +(93.5 + Math.random() * 6).toFixed(1));
+  const target = Array(30).fill(97);
+  const ctx = document.getElementById('otdChart').getContext('2d');
+  const opts = baseOpts();
+  charts.otd = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: days,
+      datasets: [
+        { label: 'OTD %', data: otd, borderColor: c.cyan, backgroundColor: c.cyan + '18', fill: true, tension: 0.4, pointRadius: 2 },
+        { label: 'Target (97%)', data: target, borderColor: c.amber, borderDash: [5, 4], pointRadius: 0, fill: false }
+      ]
+    },
+    options: { ...opts, scales: { ...opts.scales, y: { ...opts.scales.y, min: 90, max: 100, ticks: { ...opts.scales.y.ticks, callback: v => v + '%' } } } }
+  });
+}
+
+function buildReturnsChart() {
+  const c = getThemeColors();
+  const weeks = ['Wk1', 'Wk2', 'Wk3', 'Wk4', 'Wk5', 'Wk6', 'Wk7', 'Wk8'];
+  const morning = [2.1, 2.0, 1.9, 1.8, 1.7, 1.6, 1.5, 1.4];
+  const afternoon = [2.8, 2.7, 2.5, 2.4, 2.2, 2.0, 1.9, 1.8];
+  const night = [3.5, 3.2, 3.0, 2.9, 2.7, 2.5, 2.4, 2.2];
+  const ctx = document.getElementById('returnsChart').getContext('2d');
+  const opts = baseOpts();
+  charts.returns = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: weeks,
+      datasets: [
+        { label: '🌅 Morning', data: morning, borderColor: c.amber, backgroundColor: 'transparent', tension: 0.4, pointRadius: 3 },
+        { label: '☀️ Afternoon', data: afternoon, borderColor: c.cyan, backgroundColor: 'transparent', tension: 0.4, pointRadius: 3 },
+        { label: '🌙 Night', data: night, borderColor: c.purple, backgroundColor: 'transparent', tension: 0.4, pointRadius: 3 }
+      ]
+    },
+    options: { ...opts, scales: { ...opts.scales, y: { ...opts.scales.y, ticks: { ...opts.scales.y.ticks, callback: v => v + 'h' } } } }
+  });
+}
+
+/* ============================================================
+   FORECAST
+============================================================ */
+const forecastScenarios = {
+  base:       { proj: [44200, 45800, 46500, 47200, 48100, 48900, 49700, 50500, 50200, 50800, 51000, 51400] },
+  optimistic: { proj: [45000, 47000, 48500, 50000, 51500, 53000, 54000, 55500, 56200, 57000, 58000, 59500] },
+  pessimistic:{ proj: [43000, 44000, 44500, 45000, 45200, 45800, 46000, 46500, 46800, 47000, 47200, 47500] }
+};
+const forecastSummaries = {
+  base: '<strong>Base Case:</strong> Weekly throughput is projected to grow from approximately <strong>42,000 units/week</strong> to <strong>51,000 units/week</strong> over the next 12 weeks, driven by Q2 seasonal volume uplift (+8%) and planned headcount addition of 4 operatives in Week 7. Capacity utilisation is forecast to reach <strong>88%</strong> in peak weeks, requiring a zone rebalancing exercise before Week 9.',
+  optimistic: '<strong>Optimistic Case:</strong> If new customer volumes materialise as expected and productivity improvements from the KPI dashboard are sustained, throughput could reach <strong>59,500 units/week</strong> by Week 12 — a <strong>+22%</strong> uplift. This scenario assumes Zone C is rebalanced and Night shift pick rate improves to 92+ units/hr after process coaching.',
+  pessimistic: '<strong>Pessimistic Case:</strong> If order intake softens by 8% and the Night shift productivity issue persists, weekly throughput is projected to plateau at approximately <strong>47,500 units/week</strong>. This scenario highlights the importance of resolving the Zone C congestion issue before it constrains outbound despatch capacity.'
+};
+
+let currentScenario = 'base';
+function buildForecastChart(scenario) {
+  const c = getThemeColors();
+  const hist = [36200, 37800, 38500, 39200, 40100, 40900, 41700, 42000];
+  const histLabels = ['Wk-8','Wk-7','Wk-6','Wk-5','Wk-4','Wk-3','Wk-2','Wk-1'];
+  const projLabels = ['Wk1','Wk2','Wk3','Wk4','Wk5','Wk6','Wk7','Wk8','Wk9','Wk10','Wk11','Wk12'];
+  const allLabels = [...histLabels, ...projLabels];
+  const histFull = [...hist, ...Array(12).fill(null)];
+  const projFull = [...Array(7).fill(null), hist[hist.length - 1], ...forecastScenarios[scenario].proj];
+  const ctx = document.getElementById('forecastChart').getContext('2d');
+  const opts = baseOpts();
+  if (charts.forecast) { charts.forecast.destroy(); }
+  charts.forecast = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: allLabels,
+      datasets: [
+        { label: 'Historical Throughput', data: histFull, borderColor: c.cyan, backgroundColor: c.cyan + '18', fill: true, tension: 0.4, pointRadius: 3, borderWidth: 2 },
+        { label: `${scenario.charAt(0).toUpperCase() + scenario.slice(1)} Forecast`, data: projFull, borderColor: scenario === 'optimistic' ? c.green : scenario === 'pessimistic' ? c.red : c.amber, borderDash: [6, 4], backgroundColor: 'transparent', tension: 0.4, pointRadius: 3, borderWidth: 2 }
+      ]
+    },
+    options: { ...opts, scales: { ...opts.scales, y: { ...opts.scales.y, ticks: { ...opts.scales.y.ticks, callback: v => (v / 1000).toFixed(0) + 'k' } } } }
+  });
+}
+
+function setScenario(s, btn) {
+  currentScenario = s;
+  document.querySelectorAll('.scen-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  buildForecastChart(s);
+  document.getElementById('forecastSummary').innerHTML = forecastSummaries[s];
+}
+
+/* ============================================================
+   REBUILD ALL
+============================================================ */
+function rebuildCharts() {
+  const data = getFiltered();
+  renderKPIs(data);
+  renderShiftCards(data);
+  destroyAll();
+  buildPickRateChart();
+  buildAccuracyChart();
+  buildCapacityChart();
+  buildDockChart();
+  buildOTDChart();
+  buildReturnsChart();
+  buildForecastChart(currentScenario);
+}
+
+/* ============================================================
+   CSV DOWNLOAD
+============================================================ */
+function downloadCSV() {
+  const headers = ['ID','Date','Shift','Zone','Operative_ID','Units_Picked','Orders_Processed','Accuracy_Rate_Pct','Dock_To_Stock_Hrs','Capacity_Used_Pct','Returns_Processed','Outbound_OnTime_Pct','Overtime_Hrs'];
+  const rows = RAW_DATA.map(r => [r.id, r.date, r.shift, r.zone, r.operative_id, r.units_picked, r.orders_processed, r.accuracy_rate, r.dock_to_stock, r.capacity_used, r.returns_processed, r.outbound_otd, r.overtime_hrs].join(','));
+  const csv = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'warehouse_kpi_data.csv'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* ============================================================
+   INIT
+============================================================ */
+window.addEventListener('DOMContentLoaded', () => {
+  const data = getFiltered();
+  renderKPIs(data);
+  renderShiftCards(data);
+  renderTable(data.slice(0, 50));
+  setTimeout(() => {
+    buildPickRateChart();
+    buildAccuracyChart();
+    buildCapacityChart();
+    buildDockChart();
+    buildOTDChart();
+    buildReturnsChart();
+    buildForecastChart('base');
+  }, 100);
+});
+</script>
+</body>
+</html>

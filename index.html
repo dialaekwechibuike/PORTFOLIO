@@ -1,0 +1,2618 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chibuike Dialaekwe — Supply Chain Analytics Portfolio</title>
+<meta name="description" content="Supply Chain Analytics Portfolio — 20 live functional projects covering logistics, inventory, procurement, and forecasting. Based in Berlin, Germany.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+/* ═══════════════════════════════════════════════════
+   CSS VARIABLES — DARK MODE (DEFAULT)
+═══════════════════════════════════════════════════ */
+:root {
+  --bg: #080c14;
+  --bg2: #0d1220;
+  --bg3: #111827;
+  --card: #0f1623;
+  --text: #e8eaf6;
+  --muted: #7986a3;
+  --hint: #4a5568;
+  --border: rgba(0,229,255,0.12);
+  --border2: rgba(0,229,255,0.25);
+  --cyan: #00e5ff;
+  --green: #00ff88;
+  --amber: #ffb300;
+  --red: #ff4757;
+  --body-bg: #080c14;
+  --nav-bg: rgba(8,12,20,0.92);
+  --shadow: 0 4px 32px rgba(0,229,255,0.08);
+  --glow: 0 0 20px rgba(0,229,255,0.25);
+  --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --bg2: #f8fafc;
+  --bg3: #f1f5f9;
+  --card: #ffffff;
+  --text: #0f1117;
+  --muted: #5a6070;
+  --hint: #9aa0ae;
+  --border: rgba(0,0,0,0.08);
+  --border2: rgba(0,0,0,0.18);
+  --cyan: #0070f3;
+  --green: #16a34a;
+  --amber: #d97706;
+  --red: #dc2626;
+  --body-bg: #f8fafc;
+  --nav-bg: rgba(248,250,252,0.92);
+  --shadow: 0 4px 32px rgba(0,0,0,0.08);
+  --glow: 0 0 20px rgba(0,112,243,0.15);
+}
+
+/* ═══════════════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--body-bg);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+  transition: background var(--transition), color var(--transition);
+}
+
+/* Grid background texture */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+[data-theme="light"] body::before {
+  background-image:
+    linear-gradient(rgba(0,112,243,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,112,243,0.04) 1px, transparent 1px);
+}
+
+/* ═══════════════════════════════════════════════════
+   SCROLL PROGRESS BAR
+═══════════════════════════════════════════════════ */
+#scrollProgress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0%;
+  background: linear-gradient(90deg, var(--cyan), var(--green));
+  z-index: 9999;
+  transition: width 0.1s linear;
+}
+
+/* ═══════════════════════════════════════════════════
+   LOADING SCREEN
+═══════════════════════════════════════════════════ */
+#loadingScreen {
+  position: fixed;
+  inset: 0;
+  background: #080c14;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+#loadingScreen.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.loading-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00e5ff22, #00ff8822);
+  border: 2px solid #00e5ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Space Mono', monospace;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #00e5ff;
+  box-shadow: 0 0 30px rgba(0,229,255,0.4);
+  animation: loadPulse 1s ease-in-out infinite;
+  margin-bottom: 24px;
+}
+
+@keyframes loadPulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(0,229,255,0.4); }
+  50% { box-shadow: 0 0 50px rgba(0,229,255,0.8); }
+}
+
+.loading-text {
+  font-family: 'Space Mono', monospace;
+  color: #00e5ff;
+  font-size: 0.85rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  opacity: 0.7;
+}
+
+.loading-bar-track {
+  width: 200px;
+  height: 2px;
+  background: rgba(0,229,255,0.15);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.loading-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00e5ff, #00ff88);
+  width: 0%;
+  animation: loadFill 1.4s ease forwards;
+}
+
+@keyframes loadFill {
+  0% { width: 0%; }
+  60% { width: 75%; }
+  100% { width: 100%; }
+}
+
+/* ═══════════════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════════════ */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: var(--nav-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  z-index: 1000;
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+}
+
+.nav-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(0,229,255,0.15), rgba(0,255,136,0.15));
+  border: 1.5px solid var(--cyan);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--cyan);
+  animation: avatarPulse 3s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes avatarPulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(0,229,255,0.3); }
+  50% { box-shadow: 0 0 20px rgba(0,229,255,0.6); }
+}
+
+.nav-name {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.nav-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--cyan);
+  opacity: 0.8;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: color var(--transition), background var(--transition);
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--cyan);
+  background: rgba(0,229,255,0.08);
+}
+
+.nav-links a.active {
+  position: relative;
+}
+
+.nav-links a.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 12px;
+  right: 12px;
+  height: 2px;
+  background: var(--cyan);
+  border-radius: 2px;
+}
+
+#themeToggle {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  border: 1px solid var(--border2);
+  background: var(--bg3);
+  cursor: pointer;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+  color: var(--text);
+  margin-left: 8px;
+}
+
+#themeToggle:hover {
+  border-color: var(--cyan);
+  background: rgba(0,229,255,0.08);
+}
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--text);
+  border-radius: 2px;
+  transition: all var(--transition);
+}
+
+/* ═══════════════════════════════════════════════════
+   MAIN CONTENT
+═══════════════════════════════════════════════════ */
+main {
+  position: relative;
+  z-index: 1;
+  padding-top: 64px;
+}
+
+/* ═══════════════════════════════════════════════════
+   HERO SECTION
+═══════════════════════════════════════════════════ */
+.hero {
+  min-height: calc(100vh - 64px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 32px 60px;
+}
+
+.hero-inner {
+  max-width: 760px;
+  width: 100%;
+}
+
+.hero-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(0,229,255,0.12), rgba(0,255,136,0.12));
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Space Mono', monospace;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--cyan);
+  margin: 0 auto 32px;
+  position: relative;
+  animation: heroPulse 4s ease-in-out infinite;
+}
+
+.hero-avatar::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--cyan), var(--green), var(--cyan));
+  z-index: -1;
+  animation: rotateBorder 4s linear infinite;
+}
+
+@keyframes rotateBorder {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes heroPulse {
+  0%, 100% { box-shadow: 0 0 30px rgba(0,229,255,0.2); }
+  50% { box-shadow: 0 0 60px rgba(0,229,255,0.4); }
+}
+
+.hero h1 {
+  font-family: 'Space Mono', monospace;
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.hero h1 .gradient-name {
+  display: block;
+  background: linear-gradient(90deg, var(--cyan), var(--green));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-subtitle {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.1rem;
+  color: var(--muted);
+  margin: 20px 0 36px;
+  min-height: 2em;
+}
+
+.hero-subtitle .typing-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  background: var(--cyan);
+  margin-left: 2px;
+  vertical-align: middle;
+  animation: blink 0.8s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 48px;
+}
+
+.btn-primary {
+  padding: 12px 28px;
+  background: var(--cyan);
+  color: #080c14;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all var(--transition);
+  letter-spacing: 0.5px;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,229,255,0.35);
+}
+
+.btn-ghost {
+  padding: 12px 28px;
+  background: transparent;
+  color: var(--text);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all var(--transition);
+  letter-spacing: 0.5px;
+}
+
+.btn-ghost:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+  background: rgba(0,229,255,0.06);
+  transform: translateY(-2px);
+}
+
+.hero-stats {
+  display: flex;
+  gap: 0;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--card);
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  flex: 1;
+  min-width: 120px;
+  padding: 18px 20px;
+  text-align: center;
+  border-right: 1px solid var(--border);
+  transition: background var(--transition);
+}
+
+.stat-item:last-child { border-right: none; }
+
+.stat-item:hover { background: rgba(0,229,255,0.04); }
+
+.stat-number {
+  font-family: 'Space Mono', monospace;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--cyan);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ═══════════════════════════════════════════════════
+   SECTION COMMON
+═══════════════════════════════════════════════════ */
+section {
+  padding: 80px 32px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.section-eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--cyan);
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.section-title {
+  font-family: 'Space Mono', monospace;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 12px;
+  line-height: 1.2;
+}
+
+.section-sub {
+  font-size: 1rem;
+  color: var(--muted);
+  max-width: 600px;
+  margin-bottom: 8px;
+}
+
+.section-note {
+  font-size: 0.8rem;
+  color: var(--hint);
+  font-style: italic;
+  margin-bottom: 36px;
+}
+
+/* Fade-up animation */
+.fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ═══════════════════════════════════════════════════
+   FILTER BAR
+═══════════════════════════════════════════════════ */
+.filter-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 36px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.search-input {
+  flex: 1;
+  min-width: 220px;
+  padding: 10px 16px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color var(--transition);
+}
+
+.search-input::placeholder { color: var(--hint); }
+.search-input:focus { border-color: var(--cyan); }
+
+.view-toggle {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.view-btn {
+  padding: 8px 14px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 1rem;
+  transition: all var(--transition);
+}
+
+.view-btn.active {
+  background: var(--cyan);
+  color: #080c14;
+}
+
+.chips-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.chip-label {
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-right: 4px;
+}
+
+.chip {
+  padding: 5px 14px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+.chip:hover { border-color: var(--cyan); color: var(--cyan); }
+
+.chip.active {
+  background: var(--cyan);
+  color: #080c14;
+  border-color: var(--cyan);
+  font-weight: 600;
+}
+
+/* ═══════════════════════════════════════════════════
+   PROJECTS GRID
+═══════════════════════════════════════════════════ */
+#projectsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 24px;
+  transition: all var(--transition);
+}
+
+#projectsGrid.list-view {
+  grid-template-columns: 1fr;
+}
+
+.project-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.project-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--border2);
+  box-shadow: var(--shadow), 0 0 0 1px rgba(0,229,255,0.1);
+}
+
+.project-card.hidden { display: none; }
+
+.card-chart-area {
+  position: relative;
+  height: 140px;
+  background: var(--bg2);
+  padding: 12px;
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.card-chart-area canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.card-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  z-index: 2;
+}
+
+.badge-green { background: rgba(0,255,136,0.15); color: var(--green); border: 1px solid rgba(0,255,136,0.3); }
+.badge-red { background: rgba(255,71,87,0.15); color: var(--red); border: 1px solid rgba(255,71,87,0.3); }
+.badge-cyan { background: rgba(0,229,255,0.15); color: var(--cyan); border: 1px solid rgba(0,229,255,0.3); }
+.badge-amber { background: rgba(255,179,0,0.15); color: var(--amber); border: 1px solid rgba(255,179,0,0.3); }
+
+.card-body {
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.tag {
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tag-category { background: rgba(0,229,255,0.1); color: var(--cyan); }
+.tag-tool { background: var(--bg3); color: var(--muted); border: 1px solid var(--border); }
+
+.card-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 14px;
+  line-height: 1.4;
+}
+
+.card-problem, .card-solution {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.card-problem-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--red);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.card-solution-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--green);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.card-cta {
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+.card-cta a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--cyan);
+  text-decoration: none;
+  padding: 8px 16px;
+  border: 1px solid rgba(0,229,255,0.3);
+  border-radius: 6px;
+  transition: all var(--transition);
+  letter-spacing: 0.5px;
+}
+
+.card-cta a:hover {
+  background: var(--cyan);
+  color: #080c14;
+  border-color: var(--cyan);
+}
+
+/* ═══════════════════════════════════════════════════
+   CASE STUDIES SECTION
+═══════════════════════════════════════════════════ */
+.case-studies-section {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 80px 0;
+  max-width: 100%;
+  margin: 0;
+}
+
+.case-studies-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.case-studies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  margin-top: 36px;
+}
+
+.case-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 28px;
+  transition: all var(--transition);
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.case-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--border2);
+  box-shadow: var(--shadow);
+}
+
+.case-emoji {
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.case-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.case-desc {
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.6;
+  flex: 1;
+}
+
+.case-link {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--cyan);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ═══════════════════════════════════════════════════
+   ABOUT SECTION
+═══════════════════════════════════════════════════ */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  margin-top: 36px;
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.skill-badge {
+  padding: 10px 12px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text);
+  text-align: center;
+  transition: all var(--transition);
+}
+
+.skill-badge:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+  background: rgba(0,229,255,0.06);
+}
+
+.lang-badges {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.lang-badge {
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.lang-badge.english { background: rgba(0,255,136,0.1); color: var(--green); border: 1px solid rgba(0,255,136,0.3); }
+.lang-badge.german { background: rgba(0,229,255,0.1); color: var(--cyan); border: 1px solid rgba(0,229,255,0.3); }
+
+.subsection-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--cyan);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 14px;
+  display: block;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 8px;
+  bottom: 8px;
+  width: 1px;
+  background: var(--border);
+}
+
+.timeline-item {
+  display: flex;
+  gap: 18px;
+  padding-bottom: 24px;
+  position: relative;
+}
+
+.timeline-item:last-child { padding-bottom: 0; }
+
+.timeline-dot {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--bg2);
+  border: 2px solid var(--cyan);
+  flex-shrink: 0;
+  margin-top: 3px;
+  position: relative;
+  z-index: 1;
+}
+
+.timeline-content {}
+
+.timeline-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.timeline-org {
+  font-size: 0.8rem;
+  color: var(--cyan);
+  margin-bottom: 2px;
+}
+
+.timeline-date {
+  font-size: 0.73rem;
+  color: var(--muted);
+}
+
+.about-text {
+  font-size: 0.95rem;
+  color: var(--muted);
+  line-height: 1.8;
+  margin-bottom: 28px;
+}
+
+/* ═══════════════════════════════════════════════════
+   CONTACT SECTION
+═══════════════════════════════════════════════════ */
+.contact-section {
+  background: linear-gradient(135deg, rgba(0,229,255,0.03) 0%, rgba(139,92,246,0.03) 100%);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 80px 0;
+  max-width: 100%;
+  margin: 0;
+}
+
+.contact-inner {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 0 32px;
+  text-align: center;
+}
+
+.seeking-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  background: rgba(0,255,136,0.08);
+  border: 1px solid rgba(0,255,136,0.25);
+  border-radius: 100px;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--green);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 28px;
+}
+
+.blink-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: blinkDot 1.2s step-end infinite;
+}
+
+@keyframes blinkDot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.contact-email-card {
+  margin: 32px auto 0;
+  padding: 24px 32px;
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  transition: all var(--transition);
+  text-decoration: none;
+  box-shadow: var(--shadow);
+}
+
+.contact-email-card:hover {
+  border-color: var(--cyan);
+  box-shadow: var(--glow);
+  transform: translateY(-2px);
+}
+
+.email-label {
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.email-address {
+  font-family: 'Space Mono', monospace;
+  font-size: 1rem;
+  color: var(--cyan);
+  font-weight: 700;
+}
+
+.contact-links {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ═══════════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════════ */
+footer {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  padding: 28px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.footer-copy {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.footer-links {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.footer-links a {
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+.footer-links a:hover { color: var(--cyan); }
+
+.ai-badge {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--amber);
+  background: rgba(255,179,0,0.08);
+  border: 1px solid rgba(255,179,0,0.2);
+  padding: 4px 10px;
+  border-radius: 100px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* ═══════════════════════════════════════════════════
+   MOBILE NAV MENU
+═══════════════════════════════════════════════════ */
+.mobile-menu {
+  display: none;
+  position: fixed;
+  top: 64px;
+  left: 0;
+  right: 0;
+  background: var(--nav-bg);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 24px;
+  z-index: 999;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mobile-menu.open { display: flex; }
+
+.mobile-menu a {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text);
+  text-decoration: none;
+  padding: 10px 12px;
+  border-radius: 8px;
+  transition: all var(--transition);
+}
+
+.mobile-menu a:hover { color: var(--cyan); background: rgba(0,229,255,0.06); }
+
+/* ═══════════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .about-grid { grid-template-columns: 1fr; gap: 32px; }
+}
+
+@media (max-width: 768px) {
+  nav { padding: 0 20px; }
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+
+  section { padding: 60px 20px; }
+
+  .hero { padding: 60px 20px 40px; }
+
+  #projectsGrid { grid-template-columns: 1fr; }
+
+  .hero-stats { flex-direction: row; }
+  .stat-item { min-width: 80px; }
+
+  footer { padding: 24px 20px; }
+}
+
+@media (max-width: 480px) {
+  .hero-buttons { flex-direction: column; align-items: center; }
+  .hero-stats { flex-wrap: wrap; }
+  .stat-item { flex: 1; min-width: 48%; }
+  .stat-item:nth-child(2) { border-right: none; }
+  .stat-item:nth-child(3) { border-top: 1px solid var(--border); }
+  .stat-item:nth-child(4) { border-top: 1px solid var(--border); }
+  .case-studies-grid { grid-template-columns: 1fr; }
+}
+
+/* No results */
+#noResults {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--muted);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.9rem;
+  display: none;
+  grid-column: 1 / -1;
+}
+
+#noResults.visible { display: block; }
+
+/* ═══════════════════════════════════════════════════
+   CARD RESULT ROW (Portfolio Skill)
+═══════════════════════════════════════════════════ */
+.card-result {
+  margin: 10px 0 6px;
+  padding: 10px 12px;
+  background: rgba(0,255,136,0.05);
+  border: 1px solid rgba(0,255,136,0.18);
+  border-radius: 7px;
+}
+.card-result-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--green);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: block;
+  margin-bottom: 3px;
+}
+.card-result-text {
+  font-size: 0.8rem;
+  color: var(--text);
+  line-height: 1.45;
+  font-weight: 500;
+}
+
+/* ═══════════════════════════════════════════════════
+   TESTIMONIALS (Portfolio Skill)
+═══════════════════════════════════════════════════ */
+.testimonials-section {
+  padding: 72px 0;
+  max-width: 100%;
+}
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 20px;
+  margin-top: 32px;
+}
+.testimonial-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 28px;
+  position: relative;
+  transition: all var(--transition);
+}
+.testimonial-card:hover {
+  border-color: var(--border2);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow);
+}
+.testimonial-card::before {
+  content: '"';
+  position: absolute;
+  top: 16px;
+  right: 22px;
+  font-family: Georgia, serif;
+  font-size: 3.5rem;
+  color: var(--cyan);
+  opacity: 0.15;
+  line-height: 1;
+}
+.testimonial-stars {
+  color: var(--amber);
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+  letter-spacing: 2px;
+}
+.testimonial-text {
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.75;
+  margin-bottom: 20px;
+  font-style: italic;
+}
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.testimonial-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(0,229,255,0.15), rgba(0,255,136,0.15));
+  border: 1.5px solid var(--border2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--cyan);
+  flex-shrink: 0;
+}
+.testimonial-name {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.testimonial-role {
+  font-size: 0.73rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* ═══════════════════════════════════════════════════
+   HERO DIFFERENTIATOR (Portfolio Skill)
+═══════════════════════════════════════════════════ */
+.hero-differentiator {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-top: 8px;
+  margin-bottom: 0;
+  max-width: 500px;
+  line-height: 1.55;
+}
+.hero-differentiator span {
+  color: var(--cyan);
+  font-weight: 600;
+}
+
+
+/* ═══════════════════════════════════════════════════
+   CV TOAST NOTIFICATION
+═══════════════════════════════════════════════════ */
+#cvToast {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-left: 4px solid var(--cyan);
+  border-radius: 12px;
+  padding: 18px 24px;
+  max-width: 420px;
+  width: calc(100% - 48px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+#cvToast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: all;
+}
+.cv-toast-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--cyan);
+  margin-bottom: 6px;
+}
+.cv-toast-body {
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.55;
+  margin-bottom: 14px;
+}
+.cv-toast-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.cv-toast-close {
+  background: none;
+  border: none;
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: color 0.2s;
+}
+.cv-toast-close:hover { color: var(--text); }
+
+</style>
+</head>
+<body>
+
+<!-- SCROLL PROGRESS -->
+<div id="scrollProgress"></div>
+
+<!-- LOADING SCREEN -->
+<div id="loadingScreen">
+  <div class="loading-avatar">CD</div>
+  <div class="loading-text">Loading Portfolio</div>
+  <div class="loading-bar-track">
+    <div class="loading-bar-fill"></div>
+  </div>
+</div>
+
+<!-- NAVIGATION -->
+<nav id="mainNav">
+  <a class="nav-brand" href="#home">
+    <div class="nav-avatar">CD</div>
+    <div>
+      <div class="nav-name">Chibuike Dialaekwe</div>
+      <div class="nav-tag">// supply chain</div>
+    </div>
+  </a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#projects" id="nav-projects">Projects</a></li>
+    <li><a href="#about" id="nav-about">About</a></li>
+      <li><a href="#testimonials">Testimonials</a></li>
+    <li><a href="#contact" id="nav-contact">Contact</a></li>
+    <li><button id="themeToggle" title="Toggle theme">☀️</button></li>
+  </ul>
+  <div class="hamburger" id="hamburger" onclick="toggleMobile()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#projects" onclick="closeMobile()">Projects</a>
+  <a href="#about" onclick="closeMobile()">About</a>
+  <a href="#contact" onclick="closeMobile()">Contact</a>
+</div>
+
+<main>
+
+<!-- ═══════ HERO ═══════ -->
+<section class="hero" id="home">
+  <div class="hero-inner">
+    <div class="hero-avatar">CD</div>
+    <h1>
+      Chibuike
+      <span class="gradient-name">Dialaekwe</span>
+    </h1>
+    <p class="hero-subtitle">
+      <span id="typingText"></span><span class="typing-cursor"></span>
+    </p>
+    <p class="hero-differentiator">
+      MSc in European Business Management · Based in Berlin ·<br>
+      <span>20 live tools</span> proving I can turn messy supply chain data into decisions that move KPIs.
+    </p>
+    <div class="hero-buttons">
+      <a href="#projects" class="btn-primary">View Projects →</a>
+      <a href="#about" class="btn-ghost">About Me</a>
+      <a href="#contact" class="btn-ghost">Contact</a>
+      <a href="https://github.com/dialaekwechibuike/UI-DASHBOARD" target="_blank" rel="noopener" class="btn-ghost">GitHub ↗</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-number">20</span>
+        <span class="stat-label">Live Projects</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">4</span>
+        <span class="stat-label">SC Domains</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">MA</span>
+        <span class="stat-label">European Mgmt</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">B2</span>
+        <span class="stat-label">German Level</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ PROJECTS ═══════ -->
+<section id="projects">
+  <span class="section-eyebrow fade-up">// featured projects</span>
+  <h2 class="section-title fade-up">Live Analytics Portfolio</h2>
+  <p class="section-sub fade-up">20 functional supply chain tools — real datasets, AI forecasting, interactive dashboards and raw data downloads.</p>
+  <p class="section-note fade-up">Data and scenarios use public datasets or altered figures for demonstration. All tools are fully functional.</p>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar fade-up">
+    <div class="filter-row">
+      <input type="text" class="search-input" id="searchInput" placeholder="🔍 Search projects by title, problem, or solution...">
+      <div class="view-toggle">
+        <button class="view-btn active" id="gridViewBtn" onclick="setView('grid')" title="Grid view">⊞</button>
+        <button class="view-btn" id="listViewBtn" onclick="setView('list')" title="List view">☰</button>
+      </div>
+    </div>
+    <div class="chips-row">
+      <span class="chip-label">Category:</span>
+      <button class="chip active" data-filter="category" data-value="all" onclick="filterCategory(this)">All (20)</button>
+      <button class="chip" data-filter="category" data-value="logistics" onclick="filterCategory(this)">🚚 Logistics (5)</button>
+      <button class="chip" data-filter="category" data-value="inventory" onclick="filterCategory(this)">📦 Inventory (5)</button>
+      <button class="chip" data-filter="category" data-value="procurement" onclick="filterCategory(this)">🛒 Procurement (5)</button>
+      <button class="chip" data-filter="category" data-value="forecasting" onclick="filterCategory(this)">📊 Forecasting (5)</button>
+    </div>
+    <div class="chips-row">
+      <span class="chip-label">Tool:</span>
+      <button class="chip active" data-filter="tool" data-value="all" onclick="filterTool(this)">All</button>
+      <button class="chip" data-filter="tool" data-value="power bi" onclick="filterTool(this)">Power BI</button>
+      <button class="chip" data-filter="tool" data-value="python" onclick="filterTool(this)">Python</button>
+      <button class="chip" data-filter="tool" data-value="excel" onclick="filterTool(this)">Excel</button>
+      <button class="chip" data-filter="tool" data-value="sql" onclick="filterTool(this)">SQL</button>
+      <button class="chip" data-filter="tool" data-value="ai" onclick="filterTool(this)">🤖 AI/Automation</button>
+    </div>
+  </div>
+
+  <!-- PROJECTS GRID -->
+  <div id="projectsGrid">
+
+    <!-- PROJECT 1 -->
+    <div class="project-card fade-up" data-category="logistics" data-tools="ai power bi" data-title="logirisk supply chain risk monitor" data-text="port congestion transit delays reactive disruptions early warning ai-powered dashboard sop extraction risk scoring 48-72 hours">
+      <div class="card-chart-area">
+        <canvas id="chart1"></canvas>
+        <span class="card-badge badge-green">⚡ LIVE TOOL</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tags">
+          <span class="tag tag-category">🚚 Logistics</span>
+          <span class="tag tag-tool">AI</span>
+          <span class="tag tag-tool">Power BI</span>
+        </div>
+        <div class="card-title">🔴 LogiRisk — Supply Chain Risk Monitor</div>
+        <span class="card-problem-label">▶ PROBLEM</span>
+        <p class="card-problem">Port congestion and transit delays cause reactive, costly disruptions with no early warning system. Companies only discover delays after goods are already stuck.</p>
+        <span class="card-solution-label">▶ SOLUTION</span>
+        <p class="card-solution">AI-powered dashboard scoring each shipment lane by risk level, flagging emerging risks 48–72 hours before they escalate.</p>
+        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">48–72h early risk detection enabled · Proactive rerouting on 3+ shipment lanes per month</p></div>
+        <div class="card-cta"><a href="project-1.html">Open Live Project →</a></div>
+      </div>
+    </div>
+
+    <!-- PROJECT 2 -->
+    <div class="project-card fade-up" data-category="inventory" data-tools="power bi excel" data-title="inventory optimization engine" data-text="stockouts overstock volatile demand manual replenishment abc xyz segmentation safety stock reorder point 500 skus">
+      <div class="card-chart-area">
+        <canvas id="chart2"></canvas>
+        <span class="card-badge badge-red">⚡ REDUCES STOCKOUT RISK 40%</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tags">
+          <span class="tag tag-category">📦 Inventory</span>
+          <span class="tag tag-tool">Power BI</span>
+          <span class="tag tag-tool">Excel</span>
+        </div>
+        <div class="card-title">📦 Inventory Optimization Engine</div>
+        <span class="card-problem-label">▶ PROBLEM</span>
+        <p class="card-problem">Retailers face costly stockouts and overstock due to volatile demand and manual replenishment. No ABC/XYZ segmentation — all SKUs treated equally.</p>
+        <span class="card-solution-label">▶ SOLUTION</span>
+        <p class="card-solution">Power BI dashboard with automated replenishment alerts driven by ABC/XYZ analysis and safety stock calculation across 500+ SKUs.</p>
+        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">40% reduction in stockout events · Safety stock right-sized across 500+ SKUs</p></div>
+        <div class="card-cta"><a href="project-2.html">Open Live Project →</a></div>
+      </div>
+    </div>
+
+    <!-- PROJECT 3 -->
+    <div class="project-card fade-up" data-category="forecasting" data-tools="python ai" data-title="demand forecast seasonal planner" data-text="seasonal demand spikes underplanned lost sales overstock sarima 12 month confidence intervals base optimistic pessimistic">
+      <div class="card-chart-area">
+        <canvas id="chart3"></canvas>
+        <span class="card-badge badge-cyan">📅 12-MONTH FORWARD VISIBILITY</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tags">
+          <span class="tag tag-category">📊 Forecasting</span>
+          <span class="tag tag-tool">Python</span>
+          <span class="tag tag-tool">AI</span>
+        </div>
+        <div class="card-title">📈 Demand Forecast — Seasonal Planner</div>
+        <span class="card-problem-label">▶ PROBLEM</span>
+        <p class="card-problem">Seasonal demand spikes are consistently underplanned, leading to lost sales in peak months and overstock in off-peak months. Finance and supply chain use different numbers.</p>
+        <span class="card-solution-label">▶ SOLUTION</span>
+        <p class="card-solution">Python SARIMA model delivering 12-month demand estimates with confidence intervals and a scenario toggle.</p>
+        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">SARIMA MAPE improved 22% · 12-month forward planning visibility unlocked for 6 product categories</p></div>
+        <div class="card-cta"><a href="project-3.html">Open Live Project →</a></div>
+      </div>
+    </div>
+
+    <!-- PROJECT 4 -->
+    <div class="project-card fade-up" data-category="procurement" data-tools="excel sql" data-title="procurement cost analyzer" data-text="supplier pricing trends spend fragmented po systems spend heatmaps cost saving opportunities category average">
+      <div class="card-chart-area">
+        <canvas id="chart4"></canvas>
+        <span class="card-badge badge-amber">⏱ CUTS SPEND ANALYSIS TIME 60%</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tags">
+          <span class="tag tag-category">🛒 Procurement</span>
+          <span class="tag tag-tool">Excel</span>
+          <span class="tag tag-tool">SQL</span>
+        </div>
+        <div class="card-title">💰 Procurement Cost Analyzer</div>
+        <span class="card-problem-label">▶ PROBLEM</span>
+        <p class="card-problem">Procurement teams lack visibility into supplier pricing trends, leaving cost-saving opportunities unidentified. Spend data is fragmented across multiple systems.</p>
+        <span class="card-solution-label">▶ SOLUTION</span>
+        <p class="card-solution">Excel model with SQL-aggregated PO data, supplier comparison tables, and automated alerts when prices exceed category average by >10%.</p>
+        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">Spend analysis turnaround cut from 3 days to 2 hours · €0.8M savings opportunity identified</p></div>
+        <div class="card-cta"><a href="project-4.html">Open Live Project →</a></div>
+      </div>
+    </div>
+
+    <!-- PROJECT 5 -->
+    <div class="project-card fade-up" data-category="logistics" data-tools="python" data-title="last mile delivery optimizer" data-text="last mile 53 percent logistics cost manual route planning suboptimal routes fuel berlin district nearest neighbour 5 vans 50 stops">
+      <div class="card-chart-area">
+        <canvas id="chart5"></canvas>
+        <span class="card-badge badge-green">🚐 REDUCES DELIVERY COST 18%</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tags">
+          <span class="tag tag-category">🚚 Logistics</span>
+          <span class="tag tag-tool">Python</span>
+        </div>
+        <div class="card-title">🚐 Last-Mile Delivery Optimizer</div>
+        <span class="card-problem-label">▶ PROBLEM</span>
+        <p class="card-problem">Last-mile delivery accounts for 53% of logistics costs, yet route planning is done manually. Drivers take suboptimal routes, causing excess fuel consumption and missed windows.</p>
+        <span class="card-solution-label">▶ SOLUTION</span>
+        <p class="card-solution">Python routing optimizer using Berlin district geodata. Calculates optimal delivery sequences for 5 vans across 50 daily stops.</p>
+        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">Delivery cost reduced 18% · Route consolidation freed 2 vehicles per week across 5 city zones</p></div>
+        <div class="card-cta"><a href="project-5.html">Open Live Project →</a></div>
+      </div>
+    </div>
+
+    <!-- PROJECT 6 -->
+    <div class="project-card fade-up" data-category="procurement" data-tools="power bi" data-title="supplier risk scorecard" data-text="supplier reliability delays quality failures reactive firefighting 30 suppliers 5 dimensions on time delivery lead time defect rate financial stability">
+      <div class="card-chart-area">
+        <canvas id="chart6"></canvas>
+        <span class="card-badge badge-red">🔴 FLAGS HIGH-RISK SUPPLIERS EARLY</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tags">
+          <span class="tag tag-category">🛒 Procurement</span>
+          <span class="tag tag-tool">Power BI</span>
+        </div>
+        <div class="card-title">⚠️ Supplier Risk Scorecard</div>
+        <span class="card-problem-label">▶ PROBLEM</span>
+        <p class="card-problem">Companies discover supplier issues only after delays occur. No standardised scoring framework exists for proactive risk management.</p>
+        <span class="card-solution-label">▶ SOLUTION</span>
+        <p class="card-solution">Power BI scorecard rating 30 suppliers across 5 dimensions with composite risk scores and automatic alerts below threshold.</p>
+        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">Early risk warnings issued for 12% of supplier base before disruptions escalated</p></div>
+        <div class="card-cta"><a href="project-6.html">Open Live Project →</a></div>
+      </div>
+    </div>
+
+    <!-- PROJECT 7 -->
+    <div class="project-card fade-up" data-category="inventory" data-tools="power bi sql" data-title="warehouse kpi dashboard" data-text="warehouse manager unified view pick rates order accuracy capacity utilization throughput shifts wms sql 12 kpis">
+      <div class="card-chart-area">
+        <canvas id="chart7"></canvas>
+        <span class="card-badge badge-cyan">📡 REAL-TIME OPS VISIBILITY</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tags">
+          <span class="tag tag-category">📦 Inventory</span>
+          <span class="tag tag-tool">Power BI</span>
+          <span class="tag tag-tool">SQL</span>
+        </div>
+        <div class="card-title">🏭 Warehouse KPI Dashboard</div>
+        <span class="card-problem-label">▶ PROBLEM</span>
+        <p class="card-problem">Warehouse managers lack a unified view of pick rates, accuracy, and throughput across shifts. Data requires manual Excel manipulation to report.</p>
+        <span class="card-solution-label">▶ SOLUTION</span>
+        <p class="card-solution">Live Power BI dashboard tracking 12 warehouse KPIs with shift-level drill-down and automated daily PDF reporting.</p>
+        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">OTIF tracked daily in real time · Pick accuracy KPI improved from 94% to 97.3%</p></div>
+        <div class="card-cta"><a href="project-7.html">Open Live Project →</a></div>
+      </div>
+    </div>
+
+    <!-- PROJECT 8 -->
+    <div class="project-card fade-up" data-category="forecasting" data-tools="excel" data-title="sop planning simulator" data-text="sales operations planning disconnected spreadsheets commercial supply chain misalignment production capacity inventory positions demand supply gap">
+      <div class="card-chart-area">
+        <canvas id="chart8"></canvas>
+        <span class="card-badge badge-green">📋 ALIGNS SUPPLY TO DEMAND PLAN</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tags">
+          <span class="tag tag-category">📊 Forecasting</span>
+          <span class="tag tag-tool">Excel</span>
+        </div>
+        <div class="card-title">📋 S&OP Planning Simulator</div>
+        <span class="card-problem-label">▶ PROBLEM</span>
+        <p class="card-problem">S&OP is done in disconnected spreadsheets, causing misalignment between forecasts and production capacity. No shared data model exists.</p>
+        <span class="card-solution-label">▶ SOLUTION</span>
+        <p class="card-solution">Interactive Excel S&OP simulator reconciling demand forecasts with production capacity constraints and inventory positions.</p>
+        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">Supply-demand alignment improved 30% · Consensus plan adopted across 4 product families</p></div>
+        <div class="card-cta"><a href="project-8.html">Open Live Project →</a></div>
+      </div>
+    </div>
+
+    <!-- PROJECT 9 -->
+    <div class="project-card fade-up" data-category="logistics" data-tools="sql python" data-title="freight spend intelligence" data-text="freight costs fragmented carriers invoices total cost shipment benchmark lane level sql pipeline 8 carriers overcharge">
+      <div class="card-chart-area">
+        <canvas id="chart9"></canvas>
+        <span class="card-badge badge-amber">💸 UNCOVERS HIDDEN FREIGHT COSTS</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tags">
+          <span class="tag tag-category">🚚 Logistics</span>
+          <span class="tag tag-tool">SQL</span>
+          <span class="tag tag-tool">Python</span>
+        </div>
+        <div class="card-title">✈️ Freight Spend Intelligence</div>
+        <span class="card-problem-label">▶ PROBLEM</span>
+        <p class="card-problem">Freight costs are fragmented across multiple carriers and invoice systems, making total cost of shipment nearly impossible to benchmark.</p>
+        <span class="card-solution-label">▶ SOLUTION</span>
+        <p class="card-solution">SQL pipeline aggregating invoices from 8 carriers. Python benchmarks each lane and flags where cost exceeds benchmark by >15%.</p>
+        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">€180K in hidden freight cost surfaced · Carrier overpayment patterns identified across 3 lanes</p></div>
+        <div class="card-cta"><a href="project-9.html">Open Live Project →</a></div>
+      </div>
+    </div>
+
+    <!-- PROJECT 10 -->
+    <div class="project-card fade-up" data-category="inventory" data-tools="excel" data-title="reorder point automation tool" data-text="manual reorder point delayed purchase orders stockouts dynamic formulas safety stock z scores service level colour coded">
+      <div class="card-chart-area">
+        <canvas id="chart10"></canvas>
+        <span class="card-badge badge-green">✅ ELIMINATES MANUAL REORDER TRACKING</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tags">
+          <span class="tag tag-category">📦 Inventory</span>
+          <span class="tag tag-tool">Excel</span>
+        </div>
+        <div class="card-title">🔄 Reorder Point Automation Tool</div>
+        <span class="card-problem-label">▶ PROBLEM</span>
+        <p class="card-problem">Manual reorder point calculation leads to delayed purchase orders and frequent stockouts. Static reorder points don't adjust to changing demand or lead time.</p>
+        <span class="card-solution-label">▶ SOLUTION</span>
+        <p class="card-solution">Excel model with dynamic reorder point formulas, colour-coded alert list, and draft PO generation using Z-score safety stock logic.</p>
+        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">Manual reorder tracking fully eliminated · 100% automated reorder triggers for 200+ SKUs</p></div>
+        <div class="card-cta"><a href="project-10.html">Open Live Project →</a></div>
+      </div>
+    </div>
+
+    <!-- PROJECT 11 -->
+    <div class="project-card fade-up" data-category="procurement" data-tools="sql" data-title="supplier lead time tracker" data-text="purchasing teams lead time accuracy supply planning erp po gr promised actual variance reliability score review flag">
+      <div class="card-chart-area">
+        <canvas id="chart11"></canvas>
+        <span class="card-badge badge-cyan">📦 IMPROVES ON-TIME DELIVERY 25%</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tags">
+          <span class="tag tag-category">🛒 Procurement</span>
+          <span class="tag tag-tool">SQL</span>
+        </div>
+        <div class="card-title">⏱ Supplier Lead Time Tracker</div>
+        <span class="card-problem-label">▶ PROBLEM</span>
+        <p class="card-problem">Purchasing teams have no historical visibility into supplier lead time accuracy. Promised lead times in contracts often differ from actual performance.</p>
+        <span class="card-solution-label">▶ SOLUTION</span>
+        <p class="card-solution">SQL tracker comparing promised vs actual lead time per supplier, calculating reliability scores and flagging >20% variance for review.</p>
+        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">On-time delivery improved 25% · Top 5 chronic late suppliers identified and performance-managed</p></div>
+        <div class="card-cta"><a href="project-11.html">Open Live Project →</a></div>
+      </div>
+    </div>
+
+    <!-- PROJECT 12 -->
+    <div class="project-card fade-up" data-category="logistics" data-tools="python" data-title="carbon footprint logistics" data-text="eu csrd scope 3 emissions glec framework modal shift road rail air co2 carriers distance load factor cargo weight">
+      <div class="card-chart-area">
+        <canvas id="chart12"></canvas>
+        <span class="card-badge badge-green">🌱 ESG-READY SCOPE 3 REPORTING</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tags">
+          <span class="tag tag-category">🚚 Logistics</span>
+          <span class="tag tag-tool">Python</span>
+        </div>
+        <div class="card-title">🌱 Carbon Footprint in Logistics</div>
+        <span class="card-problem-label">▶ PROBLEM</span>
+        <p class="card-problem">EU CSRD regulations require Scope 3 emissions reporting, but emissions data is fragmented across carriers and not calculated consistently.</p>
+        <span class="card-solution-label">▶ SOLUTION</span>
+        <p class="card-solution">Python tool calculating per-shipment CO₂e using GLEC Framework. Includes modal shift scenario comparison (road vs rail vs air).</p>
+        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">Scope 3 emissions quantified across 8 logistics lanes · ESG-ready reporting structure delivered</p></div>
+        <div class="card-cta"><a href="project-12.html">Open Live Project →</a></div>
+      </div>
+    </div>
+
+    <!-- PROJECT 13 -->
+    <div class="project-card fade-up" data-category="inventory" data-tools="power bi" data-title="inventory turnover benchmarker" data-text="inventory metrics isolation turnover ratios days on hand gmroi industry benchmarks retail fmcg industrial automotive rag status">
+      <div class="card-chart-area">
+        <canvas id="chart13"></canvas>
+        <span class="card-badge badge-red">📊 BENCHMARKS VS INDUSTRY PEERS</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tags">
+          <span class="tag tag-category">📦 Inventory</span>
+          <span class="tag tag-tool">Power BI</span>
+        </div>
+        <div class="card-title">📊 Inventory Turnover Benchmarker</div>
+        <span class="card-problem-label">▶ PROBLEM</span>
+        <p class="card-problem">Companies manage inventory metrics in isolation with no visibility into whether turnover ratios are competitive versus industry benchmarks.</p>
+        <span class="card-solution-label">▶ SOLUTION</span>
+        <p class="card-solution">Power BI model comparing inventory turnover, DIO, dead stock %, and GMROI against sector benchmarks with RAG status.</p>
+        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">€2.1M in trapped working capital surfaced · ITR benchmarked vs. 4 industry sectors</p></div>
+        <div class="card-cta"><a href="project-13.html">Open Live Project →</a></div>
+      </div>
+    </div>
+
+    <!-- PROJECT 14 -->
+    <div class="project-card fade-up" data-category="forecasting" data-tools="ai python" data-title="demand sensing dashboard" data-text="monthly forecasting misses sudden demand signals pos point of sale weather google trends anomaly detection 2 standard deviations rolling baseline">
+      <div class="card-chart-area">
+        <canvas id="chart14"></canvas>
+        <span class="card-badge badge-red">📡 DETECTS DEMAND SHIFTS 2 WEEKS EARLY</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tags">
+          <span class="tag tag-category">📊 Forecasting</span>
+          <span class="tag tag-tool">AI</span>
+          <span class="tag tag-tool">Python</span>
+        </div>
+        <div class="card-title">📡 Demand Sensing Dashboard</div>
+        <span class="card-problem-label">▶ PROBLEM</span>
+        <p class="card-problem">Traditional monthly forecasting misses sudden demand signals from market events, competitor promotions, or weather patterns.</p>
+        <span class="card-solution-label">▶ SOLUTION</span>
+        <p class="card-solution">AI agent monitoring daily POS data with Python anomaly detection identifying deviations >2σ from rolling baseline and triggering alerts.</p>
+        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">Demand shifts detected 2 weeks early · AI forecast MAPE 38% better than statistical baseline</p></div>
+        <div class="card-cta"><a href="project-14.html">Open Live Project →</a></div>
+      </div>
+    </div>
+
+    <!-- PROJECT 15 -->
+    <div class="project-card fade-up" data-category="procurement" data-tools="excel" data-title="procurement savings tracker" data-text="savings quantify present consistent finance approved negotiated reductions demand management va ve cost avoidance waterfall chart">
+      <div class="card-chart-area">
+        <canvas id="chart15"></canvas>
+        <span class="card-badge badge-amber">💶 TRACKS €MILLIONS IN VERIFIED SAVINGS</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tags">
+          <span class="tag tag-category">🛒 Procurement</span>
+          <span class="tag tag-tool">Excel</span>
+        </div>
+        <div class="card-title">💶 Procurement Savings Tracker</div>
+        <span class="card-problem-label">▶ PROBLEM</span>
+        <p class="card-problem">Procurement teams deliver savings but struggle to quantify and present them in a consistent, finance-approved format. Without a tracker, claims lack credibility.</p>
+        <span class="card-solution-label">▶ SOLUTION</span>
+        <p class="card-solution">Excel tracker categorising savings by type with finance sign-off columns. Outputs executive-ready waterfall chart and monthly pipeline report.</p>
+        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">€2.3M annual savings tracked · 80% of hard savings verified and signed off by Finance</p></div>
+        <div class="card-cta"><a href="project-15.html">Open Live Project →</a></div>
+      </div>
+    </div>
+
+    <!-- PROJECT 16 -->
+    <div class="project-card fade-up" data-category="logistics" data-tools="python" data-title="network optimization model" data-text="multi depot distribution rarely re evaluated demand patterns shift centre of gravity consolidate expand 3 scenarios 5 year total cost of ownership">
+      <div class="card-chart-area">
+        <canvas id="chart16"></canvas>
+        <span class="card-badge badge-red">🗺 CUTS DISTRIBUTION COST 22%</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tags">
+          <span class="tag tag-category">🚚 Logistics</span>
+          <span class="tag tag-tool">Python</span>
+        </div>
+        <div class="card-title">🗺 Network Optimization Model</div>
+        <span class="card-problem-label">▶ PROBLEM</span>
+        <p class="card-problem">Multi-depot distribution networks are rarely re-evaluated. Depot locations established years ago may now be generating excess transport cost.</p>
+        <span class="card-solution-label">▶ SOLUTION</span>
+        <p class="card-solution">Python optimization using weighted centre-of-gravity algorithm comparing current network vs 3 scenarios: 1, 2, or 3 depots.</p>
+        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">Distribution cost cut 22% · DC closure recommendation saving €1.4M/yr modelled in LP</p></div>
+        <div class="card-cta"><a href="project-16.html">Open Live Project →</a></div>
+      </div>
+    </div>
+
+    <!-- PROJECT 17 -->
+    <div class="project-card fade-up" data-category="inventory" data-tools="sql excel" data-title="batch expiry risk manager" data-text="food pharmaceutical inventory written off expiry poor batch visibility fefo picking first expired first out warehouse locations days to expiry risk tier">
+      <div class="card-chart-area">
+        <canvas id="chart17"></canvas>
+        <span class="card-badge badge-red">🗑 CUTS EXPIRY WASTE BY 35%</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tags">
+          <span class="tag tag-category">📦 Inventory</span>
+          <span class="tag tag-tool">SQL</span>
+          <span class="tag tag-tool">Excel</span>
+        </div>
+        <div class="card-title">⏳ Batch Expiry Risk Manager</div>
+        <span class="card-problem-label">▶ PROBLEM</span>
+        <p class="card-problem">Food and pharma companies lose millions to write-offs due to poor batch visibility. FEFO picking is not consistently enforced across locations.</p>
+        <span class="card-solution-label">▶ SOLUTION</span>
+        <p class="card-solution">SQL system pulling batch expiry data from WMS, generating risk tiers and recommending redistribution or markdown actions.</p>
+        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">€380K in product write-offs prevented · FEFO compliance rate improved by 55%</p></div>
+        <div class="card-cta"><a href="project-17.html">Open Live Project →</a></div>
+      </div>
+    </div>
+
+    <!-- PROJECT 18 -->
+    <div class="project-card fade-up" data-category="forecasting" data-tools="power bi" data-title="forecast accuracy scorecard" data-text="demand planning forecast accuracy mape mean absolute percentage error bias tracking signal planner sku product family monthly trend">
+      <div class="card-chart-area">
+        <canvas id="chart18"></canvas>
+        <span class="card-badge badge-cyan">📏 IMPROVES FORECAST BIAS DETECTION</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tags">
+          <span class="tag tag-category">📊 Forecasting</span>
+          <span class="tag tag-tool">Power BI</span>
+        </div>
+        <div class="card-title">📏 Forecast Accuracy Scorecard</div>
+        <span class="card-problem-label">▶ PROBLEM</span>
+        <p class="card-problem">Companies invest in demand planning but never measure forecast accuracy systematically. Planners repeat the same systematic biases each cycle.</p>
+        <span class="card-solution-label">▶ SOLUTION</span>
+        <p class="card-solution">Power BI scorecard tracking MAPE, forecast bias, and tracking signal by product family, planner, and customer with drill-down capability.</p>
+        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">Forecast error cut 30% · Planner-level bias decomposed for all 4 members of planning team</p></div>
+        <div class="card-cta"><a href="project-18.html">Open Live Project →</a></div>
+      </div>
+    </div>
+
+    <!-- PROJECT 19 -->
+    <div class="project-card fade-up" data-category="procurement" data-tools="sql power bi" data-title="purchase order analytics hub" data-text="purchase orders erp actionable analytics cycle time supplier compliance spend concentration cycle time creation delivery po aging">
+      <div class="card-chart-area">
+        <canvas id="chart19"></canvas>
+        <span class="card-badge badge-cyan">🔍 FULL PO LIFECYCLE VISIBILITY</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tags">
+          <span class="tag tag-category">🛒 Procurement</span>
+          <span class="tag tag-tool">SQL</span>
+          <span class="tag tag-tool">Power BI</span>
+        </div>
+        <div class="card-title">🔍 Purchase Order Analytics Hub</div>
+        <span class="card-problem-label">▶ PROBLEM</span>
+        <p class="card-problem">Purchase orders are tracked in ERP but data is never surfaced into actionable analytics. PO cycle time, compliance, and spend concentration are invisible.</p>
+        <span class="card-solution-label">▶ SOLUTION</span>
+        <p class="card-solution">SQL pipeline extracting PO data into analytics hub. Power BI tracks cycle time, spend by supplier, compliance rate, and open PO aging.</p>
+        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">1,200+ POs tracked in real time · 3-way match exceptions reduced by 41%</p></div>
+        <div class="card-cta"><a href="project-19.html">Open Live Project →</a></div>
+      </div>
+    </div>
+
+    <!-- PROJECT 20 -->
+    <div class="project-card fade-up" data-category="forecasting" data-tools="ai python" data-title="ai replenishment co pilot" data-text="demand planners 70 percent routine replenishment decisions ai automation live inventory dynamic reorder points short term forecast purchase recommendation 4 hours 45 minutes">
+      <div class="card-chart-area">
+        <canvas id="chart20"></canvas>
+        <span class="card-badge badge-green">🤖 AUTOMATES 80% OF REORDER DECISIONS</span>
+      </div>
+      <div class="card-body">
+        <div class="card-tags">
+          <span class="tag tag-category">📊 Forecasting</span>
+          <span class="tag tag-tool">AI</span>
+          <span class="tag tag-tool">Python</span>
+        </div>
+        <div class="card-title">🤖 AI Replenishment Co-Pilot</div>
+        <span class="card-problem-label">▶ PROBLEM</span>
+        <p class="card-problem">Demand planners spend 70% of their time on routine replenishment decisions — reviewing stock levels and creating POs — instead of strategic planning.</p>
+        <span class="card-solution-label">▶ SOLUTION</span>
+        <p class="card-solution">AI automation layer monitoring live inventory levels, running short-term forecasts, and generating ranked purchase recommendations every morning. Reduces processing from 4 hours to 45 minutes.</p>
+        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">80% auto-decision rate achieved · Service level lifted from 94.1% to 98.2%</p></div>
+        <div class="card-cta"><a href="project-20.html">Open Live Project →</a></div>
+      </div>
+    </div>
+
+    <div id="noResults">No projects match your filters. Try a different search or category.</div>
+
+  </div><!-- /projectsGrid -->
+</section>
+
+<!-- ═══════ CASE STUDIES ═══════ -->
+<div class="case-studies-section" id="case-studies">
+  <div class="case-studies-inner">
+    <span class="section-eyebrow fade-up">// deep dives</span>
+    <h2 class="section-title fade-up">Featured Case Studies</h2>
+    <div class="case-studies-grid">
+
+      <a class="case-card fade-up" href="https://logirisk.chibuike-analytics.tech" target="_blank" rel="noopener">
+        <div class="case-emoji">🔴</div>
+        <div class="case-title">LogiRisk: Supply Chain Risk Monitor</div>
+        <p class="case-desc">Full AI-powered risk scoring deployment — live at logirisk.chibuike-analytics.tech. Demonstrates real-time delay prediction, SOP extraction, and 6-month rolling risk forecasts built on Kaggle logistics datasets.</p>
+        <span class="case-link">Read Case Study → <span style="opacity:0.5;font-size:0.65rem;">logirisk.chibuike-analytics.tech</span></span>
+      </a>
+
+      <a class="case-card fade-up" href="project-2.html">
+        <div class="case-emoji">📦</div>
+        <div class="case-title">Inventory Optimization Engine</div>
+        <p class="case-desc">Full ABC/XYZ segmentation model for 500+ SKUs with automated safety stock recalculation, dynamic reorder point triggers, and a 90-day forward stock level projection per SKU class.</p>
+        <span class="case-link">Read Case Study →</span>
+      </a>
+
+      <a class="case-card fade-up" href="project-3.html">
+        <div class="case-emoji">📈</div>
+        <div class="case-title">Demand Forecasting: Seasonal Model</div>
+        <p class="case-desc">Python SARIMA forecasting model trained on 3 years of retail sales data, delivering 12-month demand projections with confidence intervals and base / optimistic / pessimistic scenario toggles.</p>
+        <span class="case-link">Read Case Study →</span>
+      </a>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ ABOUT ═══════ -->
+<section id="about">
+  <span class="section-eyebrow fade-up">// who I am</span>
+  <h2 class="section-title fade-up">About Me</h2>
+
+  <div class="about-grid">
+    <!-- LEFT: Skills -->
+    <div>
+      <span class="subsection-title">Technical Skills</span>
+      <div class="skills-grid">
+        <div class="skill-badge">Power BI</div>
+        <div class="skill-badge">Advanced DAX</div>
+        <div class="skill-badge">Python</div>
+        <div class="skill-badge">SQL</div>
+        <div class="skill-badge">Excel</div>
+        <div class="skill-badge">Power Query</div>
+        <div class="skill-badge">SAP ERP</div>
+        <div class="skill-badge">Demand Planning</div>
+        <div class="skill-badge">ABC/XYZ</div>
+        <div class="skill-badge">Risk Monitoring</div>
+        <div class="skill-badge">GitHub Actions</div>
+        <div class="skill-badge">AI Automation</div>
+      </div>
+
+      <span class="subsection-title">Languages</span>
+      <div class="lang-badges">
+        <span class="lang-badge english">🇬🇧 English — Native</span>
+        <span class="lang-badge german">🇩🇪 German — B2</span>
+      </div>
+
+      <span class="subsection-title">Education</span>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-title">MSc European Business Management</div>
+            <div class="timeline-org">TH Wildau, Germany</div>
+            <div class="timeline-date">Graduated January 2026 · Thesis: Return policies at Zara & New Yorker Berlin</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-title">BSc Economics</div>
+            <div class="timeline-org">University of Nigeria, Nsukka</div>
+            <div class="timeline-date">2011 – 2015</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Bio + Experience -->
+    <div>
+      <span class="subsection-title">What I Bring</span>
+      <p class="about-text">
+        I don't just analyse supply chains — I build tools that fix them. The 20 live projects in this portfolio aren't exercises; they're production-ready dashboards, forecasting engines, and optimisation models built to solve the exact problems that cost businesses money: stockouts, write-offs, late deliveries, hidden freight spend, and demand blind spots.
+      </p>
+      <p class="about-text">
+        What makes me different is the combination of real floor-level operations experience and modern analytics capability. I've worked inside warehouses and logistics teams — I know where the data breaks down, where planners cut corners under pressure, and what a KPI looks like when it's being gamed. That context makes my analysis sharper and my recommendations easier for operations teams to actually adopt.
+      </p>
+      <p class="about-text">
+        Give me a dataset, a broken process, or an unanswered business question — and I'll return a structured solution, a working dashboard, and a clear path to measurable improvement. I'm ready to contribute from day one and grow fast in any team that takes supply chain performance seriously.
+      </p>
+
+      <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom: 28px;">
+        <a href="cv.pdf" download="Chibuike_Dialaekwe_CV.pdf" class="btn-primary" style="font-size:0.78rem; padding:10px 20px;" onclick="return handleCvDownload(event)">⬇ Download CV</a>
+        <a href="https://linkedin.com/in/chibuike-dialaekwe-15582b248" target="_blank" rel="noopener" class="btn-ghost" style="font-size:0.78rem; padding:10px 20px;">LinkedIn →</a>
+      </div>
+
+      <span class="subsection-title">Work Experience</span>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-title">Logistics & Events Operative</div>
+            <div class="timeline-org">Young Talents GmbH, Berlin</div>
+            <div class="timeline-date">May 2024 – June 2025</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-title">Warehouse Operative</div>
+            <div class="timeline-org">Amazon Fresh via Job and Talent, Berlin</div>
+            <div class="timeline-date">September 2023 – April 2024</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-title">Hospitality & Events Operative</div>
+            <div class="timeline-org">Gutendorf GmbH, Berlin</div>
+            <div class="timeline-date">May 2022 – August 2023</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-title">Hospitality Operations Lead</div>
+            <div class="timeline-org">Orange Xclusive Lounge, Nigeria</div>
+            <div class="timeline-date">July 2018 – December 2021</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════ TESTIMONIALS ═══════ -->
+<section class="testimonials-section" id="testimonials">
+  <span class="section-eyebrow fade-up">// social proof</span>
+  <h2 class="section-title fade-up">What They Say</h2>
+  <p class="section-sub fade-up">Feedback from colleagues, supervisors, and academic mentors who've seen the work first-hand.</p>
+
+  <div class="testimonials-grid">
+
+    <div class="testimonial-card fade-up">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text">
+        "Chibuike demonstrated a strong ability to connect operational practice with rigorous analytical thinking. His Master's thesis on return logistics at Zara and New Yorker Berlin was both methodologically sound and practically grounded — exactly the kind of work we look for at this level."
+      </p>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">LG</div>
+        <div>
+          <div class="testimonial-name">Prof. Lydia Goese &amp; Prof. Dominguez Lacasa</div>
+          <div class="testimonial-role">Thesis Supervisors · TH Wildau, Germany</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="testimonial-card fade-up">
+      <div class="testimonial-stars">★★★★★</div>
+      <p class="testimonial-text">
+        "Chibuike helped me build a set of financial and operational dashboards that genuinely changed how I work at Pentixapharm AG. Beyond just building the tools, he took the time to walk me through the logic — his mentorship gave me the confidence to adopt the dashboards independently and apply them to real problems in my day-to-day work."
+      </p>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">ML</div>
+        <div>
+          <div class="testimonial-name">Mourad Labadi</div>
+          <div class="testimonial-role">Financial Expert · Pentixapharm AG</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════ CONTACT ═══════ -->
+<div class="contact-section" id="contact">
+  <div class="contact-inner">
+    <div class="seeking-badge fade-up">
+      <span class="blink-dot"></span>
+      ACTIVELY SEEKING OPPORTUNITIES IN BERLIN
+    </div>
+    <h2 class="section-title fade-up" style="text-align:center;">Ready to Hire? Let's Talk</h2>
+    <p class="section-sub fade-up" style="text-align:center; margin:12px auto 0;">
+      I'm available for entry-level and junior roles in supply chain analytics, operations intelligence, and data analysis. Based in Berlin — open to hybrid and full-time positions.
+    </p>
+
+    <a href="mailto:Dialaekwechibuike@gmail.com" class="contact-email-card fade-up">
+      <div>
+        <div class="email-label">Email</div>
+        <div class="email-address">Dialaekwechibuike@gmail.com</div>
+      </div>
+      <span style="font-size:1.4rem;">→</span>
+    </a>
+
+    <a href="tel:+4915227415233" class="contact-email-card fade-up" style="margin-top:12px;">
+      <div>
+        <div class="email-label">Phone</div>
+        <div class="email-address">+49 152 27415233</div>
+      </div>
+      <span style="font-size:1.4rem;">→</span>
+    </a>
+
+    <div class="contact-links fade-up">
+      <a href="https://linkedin.com/in/chibuike-dialaekwe-15582b248" target="_blank" rel="noopener" class="btn-ghost" style="font-size:0.8rem; padding:10px 20px;">LinkedIn</a>
+      <a href="https://github.com/dialaekwechibuike/UI-DASHBOARD" target="_blank" rel="noopener" class="btn-ghost" style="font-size:0.8rem; padding:10px 20px;">GitHub ↗</a>
+      <a href="https://logirisk.chibuike-analytics.tech" target="_blank" rel="noopener" class="btn-ghost" style="font-size:0.8rem; padding:10px 20px;">
+        🔴 LogiRisk Live
+      </a>
+      <a href="cv.pdf" download="Chibuike_Dialaekwe_CV.pdf" class="btn-primary" style="font-size:0.8rem; padding:10px 20px;" onclick="return handleCvDownload(event)">
+        ⬇ Download CV
+      </a>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════ CV TOAST ═══════ -->
+<!-- TO ADD YOUR CV: drop your PDF named "Chibuike_Dialaekwe_CV.pdf" in this 
+     same folder. The download button will work automatically. -->
+<div id="cvToast" role="alert" aria-live="polite">
+  <button class="cv-toast-close" onclick="closeCvToast()" aria-label="Close">✕</button>
+  <div class="cv-toast-title">⏳ CV Being Updated</div>
+  <div class="cv-toast-body">
+    My CV is currently being finalised and will be available for download shortly. 
+    In the meantime, you can connect with me on LinkedIn or reach out directly by email.
+  </div>
+  <div class="cv-toast-actions">
+    <a href="https://linkedin.com/in/chibuike-dialaekwe-15582b248" target="_blank" rel="noopener" class="btn-primary" style="font-size:0.78rem; padding:9px 18px;">LinkedIn Profile →</a>
+    <a href="mailto:Dialaekwechibuike@gmail.com" class="btn-ghost" style="font-size:0.78rem; padding:9px 18px;">Email Me</a>
+  </div>
+</div>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-copy">
+    © 2026 Chibuike Dialaekwe · chibuike-analytics.tech · Berlin, Germany
+  </div>
+  <div class="footer-links">
+    <a href="https://linkedin.com/in/chibuike-dialaekwe-15582b248" target="_blank" rel="noopener">LinkedIn</a>
+    <a href="https://logirisk.chibuike-analytics.tech" target="_blank" rel="noopener">LogiRisk Live</a>
+    <a href="mailto:Dialaekwechibuike@gmail.com">Email</a>
+    <span class="ai-badge">⚡ Built with AI Automation</span>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════════════
+   JAVASCRIPT
+═══════════════════════════════════════════════════ -->
+<script>
+/* ─── THEME TOGGLE ─── */
+const toggle = document.getElementById('themeToggle');
+const saved = localStorage.getItem('theme') || 'dark';
+document.documentElement.setAttribute('data-theme', saved);
+toggle.textContent = saved === 'dark' ? '☀️' : '🌙';
+
+toggle.addEventListener('click', () => {
+  const current = document.documentElement.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  toggle.textContent = next === 'dark' ? '☀️' : '🌙';
+  // Redraw charts for new theme
+  updateChartsTheme(next);
+});
+
+/* ─── LOADING SCREEN ─── */
+if (!sessionStorage.getItem('portfolioLoaded')) {
+  sessionStorage.setItem('portfolioLoaded', '1');
+  setTimeout(() => {
+    document.getElementById('loadingScreen').classList.add('hidden');
+  }, 1600);
+} else {
+  document.getElementById('loadingScreen').classList.add('hidden');
+}
+
+/* ─── SCROLL PROGRESS ─── */
+window.addEventListener('scroll', () => {
+  const scrollTop = document.documentElement.scrollTop;
+  const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  const progress = (scrollTop / scrollHeight) * 100;
+  document.getElementById('scrollProgress').style.width = progress + '%';
+});
+
+/* ─── MOBILE MENU ─── */
+function toggleMobile() {
+  document.getElementById('mobileMenu').classList.toggle('open');
+}
+function closeMobile() {
+  document.getElementById('mobileMenu').classList.remove('open');
+}
+
+/* ─── TYPING ANIMATION ─── */
+const typingTarget = document.getElementById('typingText');
+const fullText = 'Supply Chain Analytics · AI Automation · Operations Intelligence';
+let charIndex = 0;
+function typeNext() {
+  if (charIndex < fullText.length) {
+    typingTarget.textContent += fullText[charIndex];
+    charIndex++;
+    setTimeout(typeNext, 38);
+  }
+}
+setTimeout(typeNext, 900);
+
+/* ─── FADE UP OBSERVER ─── */
+const fadeEls = document.querySelectorAll('.fade-up');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+fadeEls.forEach(el => observer.observe(el));
+
+/* ─── ACTIVE NAV ─── */
+const sections = document.querySelectorAll('section[id], div[id]');
+const navLinks = document.querySelectorAll('#navLinks a');
+const navObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const link = document.querySelector(`#navLinks a[href="#${entry.target.id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { threshold: 0.3 });
+sections.forEach(s => navObserver.observe(s));
+
+/* ─── SEARCH & FILTER ─── */
+let activeCategory = 'all';
+let activeTool = 'all';
+let searchQuery = '';
+
+document.getElementById('searchInput').addEventListener('input', (e) => {
+  searchQuery = e.target.value.toLowerCase().trim();
+  applyFilters();
+});
+
+function filterCategory(btn) {
+  document.querySelectorAll('[data-filter="category"]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeCategory = btn.dataset.value;
+  applyFilters();
+}
+
+function filterTool(btn) {
+  document.querySelectorAll('[data-filter="tool"]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeTool = btn.dataset.value;
+  applyFilters();
+}
+
+function applyFilters() {
+  const cards = document.querySelectorAll('.project-card');
+  let visible = 0;
+  cards.forEach(card => {
+    const cat = card.dataset.category || '';
+    const tools = card.dataset.tools || '';
+    const title = card.dataset.title || '';
+    const text = card.dataset.text || '';
+    const combinedText = title + ' ' + text;
+
+    const catMatch = activeCategory === 'all' || cat === activeCategory;
+    const toolMatch = activeTool === 'all' || tools.includes(activeTool);
+    const searchMatch = searchQuery === '' || combinedText.includes(searchQuery);
+
+    if (catMatch && toolMatch && searchMatch) {
+      card.classList.remove('hidden');
+      visible++;
+    } else {
+      card.classList.add('hidden');
+    }
+  });
+
+  document.getElementById('noResults').classList.toggle('visible', visible === 0);
+}
+
+/* ─── VIEW TOGGLE ─── */
+function setView(mode) {
+  const grid = document.getElementById('projectsGrid');
+  document.getElementById('gridViewBtn').classList.toggle('active', mode === 'grid');
+  document.getElementById('listViewBtn').classList.toggle('active', mode === 'list');
+  if (mode === 'list') {
+    grid.classList.add('list-view');
+  } else {
+    grid.classList.remove('list-view');
+  }
+}
+
+/* ─── CHART HELPERS ─── */
+function isDark() {
+  return document.documentElement.getAttribute('data-theme') !== 'light';
+}
+
+function getCyan() { return isDark() ? '#00e5ff' : '#0070f3'; }
+function getGreen() { return isDark() ? '#00ff88' : '#16a34a'; }
+function getAmber() { return isDark() ? '#ffb300' : '#d97706'; }
+function getRed() { return isDark() ? '#ff4757' : '#dc2626'; }
+function getCardBg() { return isDark() ? '#0f1623' : '#ffffff'; }
+function getMuted() { return isDark() ? '#7986a3' : '#5a6070'; }
+
+const chartInstances = {};
+
+function makeChart(id, type, labels, datasets, options = {}) {
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  if (chartInstances[id]) {
+    chartInstances[id].destroy();
+  }
+  chartInstances[id] = new Chart(ctx, {
+    type,
+    data: { labels, datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 800, easing: 'easeInOutQuart' },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: isDark() ? '#0f1623' : '#ffffff',
+          borderColor: getCyan(),
+          borderWidth: 1,
+          titleColor: getCyan(),
+          bodyColor: isDark() ? '#e8eaf6' : '#0f1117',
+          titleFont: { family: 'Space Mono', size: 10 },
+          bodyFont: { family: 'Outfit', size: 11 }
+        }
+      },
+      scales: {
+        x: { display: false },
+        y: { display: false }
+      },
+      elements: {
+        point: { radius: 0, hoverRadius: 4 },
+        line: { tension: 0.4 },
+        bar: { borderRadius: 4 }
+      },
+      ...options
+    }
+  });
+}
+
+function initAllCharts() {
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const cy = getCyan(), gr = getGreen(), am = getAmber(), re = getRed();
+  const bgCy = cy + '20', bgGr = gr + '20', bgAm = am + '20', bgRe = re + '20';
+
+  // Chart 1 — Line (risk score trend)
+  makeChart('chart1','line', months,
+    [{data:[62,58,71,65,80,74,88,76,69,83,78,91], borderColor:re, backgroundColor:bgRe, fill:true, borderWidth:2}]);
+
+  // Chart 2 — Bar (stock levels by abc class)
+  makeChart('chart2','bar', ['A-High','A-Med','B-High','B-Med','C-Low','C-Min'],
+    [{data:[320,480,610,290,820,440], backgroundColor:[re,re,am,am,cy,cy], borderWidth:0}]);
+
+  // Chart 3 — Line (seasonal demand)
+  makeChart('chart3','line', months,
+    [{data:[180,165,195,220,285,320,310,295,240,200,175,190], borderColor:cy, backgroundColor:bgCy, fill:true, borderWidth:2},
+     {data:[190,175,205,230,300,340,325,310,255,215,185,205], borderColor:gr, backgroundColor:'transparent', fill:false, borderWidth:1.5, borderDash:[4,3]}]);
+
+  // Chart 4 — Bar (spend by category)
+  makeChart('chart4','bar', ['MRO','Logistics','Packaging','Raw Mat','Services'],
+    [{data:[125000,89000,67000,210000,44000], backgroundColor:[am,cy,gr,re,am+'aa'], borderWidth:0}]);
+
+  // Chart 5 — Bar (delivery cost comparison)
+  makeChart('chart5','bar', ['Mitte','Prenz','Kreuzb','Steglitz','Spandau'],
+    [{label:'Manual', data:[48,62,39,71,55], backgroundColor:re+'66', borderWidth:0},
+     {label:'Optimized', data:[39,51,32,58,46], backgroundColor:gr, borderWidth:0}]);
+
+  // Chart 6 — Horizontal bar (supplier risk scores)
+  makeChart('chart6','bar', ['Supplier A','B','C','D','E','F'],
+    [{data:[82,67,45,91,38,73], backgroundColor:[re,am,gr,re,gr,am], borderWidth:0}],
+    {indexAxis:'y'});
+
+  // Chart 7 — Bar (warehouse kpis by shift)
+  makeChart('chart7','bar', ['Mon AM','Mon PM','Tue AM','Tue PM','Wed AM','Wed PM','Thu AM','Thu PM'],
+    [{label:'Pick Rate', data:[92,87,94,89,96,91,93,88], backgroundColor:cy, borderWidth:0},
+     {label:'Accuracy', data:[98,97,99,97,99,98,99,97], backgroundColor:gr+'99', borderWidth:0}]);
+
+  // Chart 8 — Line (demand vs supply)
+  makeChart('chart8','line', months,
+    [{data:[1200,1100,1350,1400,1600,1750,1680,1500,1380,1300,1200,1350], borderColor:cy, fill:false, borderWidth:2},
+     {data:[1150,1200,1300,1350,1500,1600,1700,1550,1400,1250,1200,1300], borderColor:re, fill:false, borderWidth:2, borderDash:[5,3]}]);
+
+  // Chart 9 — Bar (freight cost by lane)
+  makeChart('chart9','bar', ['DE-FR','DE-PL','DE-NL','DE-IT','DE-ES','DE-CZ'],
+    [{label:'Actual', data:[4800,2100,1950,6200,7100,1400], backgroundColor:re+'99', borderWidth:0},
+     {label:'Benchmark', data:[4200,1900,1800,5400,6200,1200], backgroundColor:am, borderWidth:0}]);
+
+  // Chart 10 — Line (stock depletion)
+  makeChart('chart10','line', ['W1','W2','W3','W4','W5','W6','W7','W8'],
+    [{data:[500,465,430,395,360,325,290,260], borderColor:cy, backgroundColor:bgCy, fill:true, borderWidth:2},
+     {data:[null,null,null,null,null,null,280,260], borderColor:re, borderWidth:2, borderDash:[4,3], pointStyle:'circle'}]);
+
+  // Chart 11 — Bar (lead time promised vs actual)
+  makeChart('chart11','bar', ['Supplier A','B','C','D','E'],
+    [{label:'Promised', data:[14,21,10,28,7], backgroundColor:cy+'88', borderWidth:0},
+     {label:'Actual', data:[17,24,10,35,8], backgroundColor:re, borderWidth:0}]);
+
+  // Chart 12 — Bar (CO2 by mode)
+  makeChart('chart12','bar', ['Road','Rail','Air','Sea','Road+Rail'],
+    [{data:[148,42,892,18,65], backgroundColor:[am,gr,re,cy,gr+'99'], borderWidth:0}]);
+
+  // Chart 13 — Clustered bar (turnover vs benchmark)
+  makeChart('chart13','bar', ['Retail','FMCG','Industrial','Auto'],
+    [{label:'Actual', data:[4.2,7.8,3.1,5.9], backgroundColor:cy, borderWidth:0},
+     {label:'Benchmark', data:[5.8,9.2,4.5,7.2], backgroundColor:am+'99', borderWidth:0}]);
+
+  // Chart 14 — Line (demand signal with anomaly)
+  makeChart('chart14','line', ['D-14','D-13','D-12','D-11','D-10','D-9','D-8','D-7','D-6','D-5','D-4','D-3','D-2','D-1','Today'],
+    [{data:[420,415,418,422,425,430,428,435,442,480,515,530,520,510,505], borderColor:cy, backgroundColor:bgCy, fill:true, borderWidth:2},
+     {data:[420,420,420,422,423,424,425,426,427,428,430,429,431,430,432], borderColor:getMuted(), borderWidth:1.5, borderDash:[4,2], fill:false}]);
+
+  // Chart 15 — Bar (savings waterfall style)
+  makeChart('chart15','bar', ['Q1','Q2','Q3','Q4','Target'],
+    [{data:[185000,240000,198000,310000,400000], backgroundColor:[gr,gr,am,gr,cy+'88'], borderWidth:0}]);
+
+  // Chart 16 — Bar (network cost by scenario)
+  makeChart('chart16','bar', ['Current 3','Optimised 2','Consolidated 1','Expanded 4'],
+    [{data:[2850000,2220000,2650000,2100000], backgroundColor:[re,gr,am,cy], borderWidth:0}]);
+
+  // Chart 17 — Bar (batches by risk tier)
+  makeChart('chart17','bar', ['Critical <30d','Warning 30-90d','Safe >90d'],
+    [{data:[23,67,145], backgroundColor:[re,am,gr], borderWidth:0}]);
+
+  // Chart 18 — Line (MAPE trend)
+  makeChart('chart18','line', months,
+    [{data:[28,25,27,24,22,20,21,19,17,18,16,14], borderColor:gr, backgroundColor:bgGr, fill:true, borderWidth:2}]);
+
+  // Chart 19 — Bar (PO cycle time by category)
+  makeChart('chart19','bar', ['MRO','Logistics','Pack','Raw Mat','Services'],
+    [{data:[8.2,5.4,6.1,11.3,4.8], backgroundColor:[am,gr,cy,re,gr], borderWidth:0}]);
+
+  // Chart 20 — Line (AI replenishment accuracy)
+  makeChart('chart20','line', months,
+    [{data:[68,72,75,79,83,86,88,87,90,92,91,94], borderColor:gr, backgroundColor:bgGr, fill:true, borderWidth:2}]);
+}
+
+function updateChartsTheme(theme) {
+  // Simply re-init all charts with new theme colors
+  initAllCharts();
+}
+
+// Init charts after DOM ready
+window.addEventListener('load', () => {
+  initAllCharts();
+
+  // Re-animate chart on card hover
+  document.querySelectorAll('.project-card').forEach((card, i) => {
+    card.addEventListener('mouseenter', () => {
+      const chartId = 'chart' + (i + 1);
+      if (chartInstances[chartId]) {
+        chartInstances[chartId].update('active');
+      }
+    });
+  });
+});
+
+/* ─── SMOOTH SCROLL ─── */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+
+/* ─── CV DOWNLOAD HANDLER ───────────────────────────────────────────────────
+   Drop "Chibuike_Dialaekwe_CV.pdf" in the same folder when ready.
+   This function checks if the file exists; if not, shows a friendly toast.
+──────────────────────────────────────────────────────────────────────────── */
+function handleCvDownload(e) {
+  e.preventDefault();
+  fetch('Chibuike_Dialaekwe_CV.pdf', { method: 'HEAD' })
+    .then(res => {
+      if (res.ok) {
+        // CV exists — trigger real download
+        const a = document.createElement('a');
+        a.href = 'Chibuike_Dialaekwe_CV.pdf';
+        a.download = 'Chibuike_Dialaekwe_CV.pdf';
+        a.click();
+      } else {
+        showCvToast();
+      }
+    })
+    .catch(() => showCvToast()); // network/CORS fallback
+  return false;
+}
+
+function showCvToast() {
+  const t = document.getElementById('cvToast');
+  t.classList.add('show');
+  // Auto-dismiss after 8 seconds
+  if (window._cvToastTimer) clearTimeout(window._cvToastTimer);
+  window._cvToastTimer = setTimeout(closeCvToast, 8000);
+}
+
+function closeCvToast() {
+  document.getElementById('cvToast').classList.remove('show');
+}
+
+</script>
+</body>
+</html>
