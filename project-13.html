@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -422,7 +422,7 @@ function applyTheme(t) {
   themeBtn.textContent = t === 'dark' ? '☀️' : '🌙';
   localStorage.setItem('theme', t);
 }
-applyTheme(localStorage.getItem('theme') || 'dark');
+applyTheme(localStorage.getItem('theme') || 'light');
 themeBtn.addEventListener('click', () => applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
 
 // ─── SCROLL PROGRESS ─────────────────────────────────────────────────

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -429,7 +429,7 @@ footer a{color:var(--green);text-decoration:none;}
 <script>
 /* THEME */
 const toggle = document.getElementById('themeToggle');
-const saved = localStorage.getItem('theme') || 'dark';
+const saved = localStorage.getItem('theme') || 'light';
 document.documentElement.setAttribute('data-theme', saved);
 toggle.textContent = saved === 'dark' ? '☀️' : '🌙';
 toggle.addEventListener('click', () => {
