@@ -1657,17 +1657,18 @@ footer {
   animation-play-state: paused;
 }
 .ns-slider-track img {
-  height: 24px;
+  height: 36px;
   width: auto;
-  opacity: 0.6;
-  transition: opacity 0.3s;
-  filter: invert(1) brightness(2);
+  opacity: 0.5;
+  transition: all 0.3s;
+  filter: brightness(0) invert(1);
 }
 [data-theme="light"] .ns-slider-track img {
-  filter: none;
+  filter: brightness(0);
 }
 .ns-slider-track img:hover {
   opacity: 1;
+  filter: none;
 }
 @keyframes scroll {
   0% { transform: translateX(0); }
@@ -1678,11 +1679,11 @@ footer {
 <section class="ns-hero-container fade-up">
   <div class="ns-hero-top">
     <div class="ns-hero-text">
-      <h2>Build 10x Faster with NS</h2>
-      <p>Highly customizable components for building modern websites and applications you mean it.</p>
+      <h2>Powering Data-Driven Supply Chains</h2>
+      <p>Building robust, scalable analytics and automation solutions that reduce costs, improve visibility, and streamline your operations.</p>
       <div class="ns-hero-buttons">
-        <a href="#projects" class="btn-primary" style="border-radius: 100px; padding: 14px 32px;">Start Building <span style="margin-left:8px;">→</span></a>
-        <a href="#contact" class="btn-ghost" style="border-radius: 100px; border:none; padding: 14px 32px; background: rgba(255,255,255,0.05); border: 1px solid var(--border2);">Request a demo</a>
+        <a href="#projects" class="btn-primary" style="border-radius: 100px; padding: 14px 32px;">Explore Projects <span style="margin-left:8px;">→</span></a>
+        <a href="#contact" class="btn-ghost" style="border-radius: 100px; border:none; padding: 14px 32px; background: rgba(255,255,255,0.05); border: 1px solid var(--border2);">Get in Touch</a>
       </div>
     </div>
     <div class="ns-hero-video-wrapper">
@@ -1691,27 +1692,27 @@ footer {
   </div>
 
   <div class="ns-slider-section">
-    <div class="ns-slider-title">Powering the best teams</div>
+    <div class="ns-slider-title">Built with industry leading tools</div>
     <div class="ns-slider-container">
       <div class="ns-slider-track">
         <!-- Original set -->
-        <img src="https://html.tailus.io/blocks/customers/nvidia.svg" alt="Nvidia" />
-        <img src="https://html.tailus.io/blocks/customers/column.svg" alt="Column" />
-        <img src="https://html.tailus.io/blocks/customers/github.svg" alt="GitHub" />
-        <img src="https://html.tailus.io/blocks/customers/nike.svg" alt="Nike" />
-        <img src="https://html.tailus.io/blocks/customers/lemonsqueezy.svg" alt="Lemon Squeezy" />
-        <img src="https://html.tailus.io/blocks/customers/laravel.svg" alt="Laravel" />
-        <img src="https://html.tailus.io/blocks/customers/lilly.svg" alt="Lilly" style="height:32px" />
-        <img src="https://html.tailus.io/blocks/customers/openai.svg" alt="OpenAI" style="height:28px" />
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" alt="Python" />
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/pandas/pandas-original-wordmark.svg" alt="Pandas" />
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/jupyter/jupyter-original-wordmark.svg" alt="Jupyter" />
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postgresql/postgresql-original-wordmark.svg" alt="PostgreSQL" />
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-plain-wordmark.svg" alt="AWS" />
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original-wordmark.svg" alt="Docker" />
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original-wordmark.svg" alt="GitHub" />
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/go/go-original-wordmark.svg" alt="Golang" />
         <!-- Duplicate set for infinite scroll effect (50% translation) -->
-        <img src="https://html.tailus.io/blocks/customers/nvidia.svg" alt="Nvidia" />
-        <img src="https://html.tailus.io/blocks/customers/column.svg" alt="Column" />
-        <img src="https://html.tailus.io/blocks/customers/github.svg" alt="GitHub" />
-        <img src="https://html.tailus.io/blocks/customers/nike.svg" alt="Nike" />
-        <img src="https://html.tailus.io/blocks/customers/lemonsqueezy.svg" alt="Lemon Squeezy" />
-        <img src="https://html.tailus.io/blocks/customers/laravel.svg" alt="Laravel" />
-        <img src="https://html.tailus.io/blocks/customers/lilly.svg" alt="Lilly" style="height:32px" />
-        <img src="https://html.tailus.io/blocks/customers/openai.svg" alt="OpenAI" style="height:28px" />
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" alt="Python" />
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/pandas/pandas-original-wordmark.svg" alt="Pandas" />
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/jupyter/jupyter-original-wordmark.svg" alt="Jupyter" />
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postgresql/postgresql-original-wordmark.svg" alt="PostgreSQL" />
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-plain-wordmark.svg" alt="AWS" />
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original-wordmark.svg" alt="Docker" />
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original-wordmark.svg" alt="GitHub" />
+        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/go/go-original-wordmark.svg" alt="Golang" />
       </div>
     </div>
   </div>
