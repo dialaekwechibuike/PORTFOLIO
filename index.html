@@ -1372,65 +1372,6 @@ footer {
 }
 
 
-/* ═══════════════════════════════════════════════════
-   CV TOAST NOTIFICATION
-═══════════════════════════════════════════════════ */
-#cvToast {
-  position: fixed;
-  bottom: 32px;
-  left: 50%;
-  transform: translateX(-50%) translateY(20px);
-  background: var(--card);
-  border: 1px solid var(--border2);
-  border-left: 4px solid var(--cyan);
-  border-radius: 12px;
-  padding: 18px 24px;
-  max-width: 420px;
-  width: calc(100% - 48px);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-  z-index: 9999;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-#cvToast.show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-  pointer-events: all;
-}
-.cv-toast-title {
-  font-family: 'Space Mono', monospace;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--cyan);
-  margin-bottom: 6px;
-}
-.cv-toast-body {
-  font-size: 0.85rem;
-  color: var(--muted);
-  line-height: 1.55;
-  margin-bottom: 14px;
-}
-.cv-toast-actions {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-.cv-toast-close {
-  background: none;
-  border: none;
-  position: absolute;
-  top: 12px;
-  right: 14px;
-  cursor: pointer;
-  color: var(--muted);
-  font-size: 1rem;
-  line-height: 1;
-  padding: 2px 6px;
-  border-radius: 4px;
-  transition: color 0.2s;
-}
-.cv-toast-close:hover { color: var(--text); }
 
 </style>
 </head>
@@ -1785,7 +1726,7 @@ footer {
         <p class="card-problem">Port congestion and transit delays cause reactive, costly disruptions with no early warning system. Companies only discover delays after goods are already stuck.</p>
         <span class="card-solution-label">▶ SOLUTION</span>
         <p class="card-solution">AI-powered dashboard scoring each shipment lane by risk level, flagging emerging risks 48–72 hours before they escalate.</p>
-        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">48–72h early risk detection enabled · Proactive rerouting on 3+ shipment lanes per month</p></div>
+        <div class="card-result"><span class="card-result-label">▶ Capability</span><p class="card-result-text">48–72h early risk detection · Supports proactive rerouting across multiple shipment lanes</p></div>
         <div class="card-cta"><a href="project-1.html">Open Live Project →</a></div>
       </div>
     </div>
@@ -1807,7 +1748,7 @@ footer {
         <p class="card-problem">Retailers face costly stockouts and overstock due to volatile demand and manual replenishment. No ABC/XYZ segmentation — all SKUs treated equally.</p>
         <span class="card-solution-label">▶ SOLUTION</span>
         <p class="card-solution">Power BI dashboard with automated replenishment alerts driven by ABC/XYZ analysis and safety stock calculation across 500+ SKUs.</p>
-        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">40% reduction in stockout events · Safety stock right-sized across 500+ SKUs</p></div>
+        <div class="card-result"><span class="card-result-label">▶ Capability</span><p class="card-result-text">up to 40% reduction in stockout events (on sample data) · Handles safety stock sizing for 500+ SKUs</p></div>
         <div class="card-cta"><a href="project-2.html">Open Live Project →</a></div>
       </div>
     </div>
@@ -1829,7 +1770,7 @@ footer {
         <p class="card-problem">Seasonal demand spikes are consistently underplanned, leading to lost sales in peak months and overstock in off-peak months. Finance and supply chain use different numbers.</p>
         <span class="card-solution-label">▶ SOLUTION</span>
         <p class="card-solution">Python SARIMA model delivering 12-month demand estimates with confidence intervals and a scenario toggle.</p>
-        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">SARIMA MAPE improved 22% · 12-month forward planning visibility unlocked for 6 product categories</p></div>
+        <div class="card-result"><span class="card-result-label">▶ Capability</span><p class="card-result-text">SARIMA model with 22% MAPE improvement on sample data · 12-month forward planning across simulated product categories</p></div>
         <div class="card-cta"><a href="project-3.html">Open Live Project →</a></div>
       </div>
     </div>
@@ -1851,7 +1792,7 @@ footer {
         <p class="card-problem">Procurement teams lack visibility into supplier pricing trends, leaving cost-saving opportunities unidentified. Spend data is fragmented across multiple systems.</p>
         <span class="card-solution-label">▶ SOLUTION</span>
         <p class="card-solution">Excel model with SQL-aggregated PO data, supplier comparison tables, and automated alerts when prices exceed category average by &gt;10%.</p>
-        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">Spend analysis turnaround cut from 3 days to 2 hours · €0.8M savings opportunity identified</p></div>
+        <div class="card-result"><span class="card-result-label">▶ Capability</span><p class="card-result-text">spend analysis turnaround from 3 days to 2 hours · Surfaces savings opportunities (~€0.8M on sample data)</p></div>
         <div class="card-cta"><a href="project-4.html">Open Live Project →</a></div>
       </div>
     </div>
@@ -1872,7 +1813,7 @@ footer {
         <p class="card-problem">Last-mile delivery accounts for 53% of logistics costs, yet route planning is done manually. Drivers take suboptimal routes, causing excess fuel consumption and missed windows.</p>
         <span class="card-solution-label">▶ SOLUTION</span>
         <p class="card-solution">Python routing optimizer using Berlin district geodata. Calculates optimal delivery sequences for 5 vans across 50 daily stops.</p>
-        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">Delivery cost reduced 18% · Route consolidation freed 2 vehicles per week across 5 city zones</p></div>
+        <div class="card-result"><span class="card-result-label">▶ Capability</span><p class="card-result-text">18% delivery cost reduction on demo data · Route consolidation potential across 5 city zones</p></div>
         <div class="card-cta"><a href="project-5.html">Open Live Project →</a></div>
       </div>
     </div>
@@ -1893,7 +1834,7 @@ footer {
         <p class="card-problem">Companies discover supplier issues only after delays occur. No standardised scoring framework exists for proactive risk management.</p>
         <span class="card-solution-label">▶ SOLUTION</span>
         <p class="card-solution">Power BI scorecard rating 30 suppliers across 5 dimensions with composite risk scores and automatic alerts below threshold.</p>
-        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">Early risk warnings issued for 12% of supplier base before disruptions escalated</p></div>
+        <div class="card-result"><span class="card-result-label">▶ Capability</span><p class="card-result-text">early risk warnings for ~12% of a supplier base before disruptions escalate</p></div>
         <div class="card-cta"><a href="project-6.html">Open Live Project →</a></div>
       </div>
     </div>
@@ -1915,7 +1856,7 @@ footer {
         <p class="card-problem">Warehouse managers lack a unified view of pick rates, accuracy, and throughput across shifts. Data requires manual Excel manipulation to report.</p>
         <span class="card-solution-label">▶ SOLUTION</span>
         <p class="card-solution">Live Power BI dashboard tracking 12 warehouse KPIs with shift-level drill-down and automated daily PDF reporting.</p>
-        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">OTIF tracked daily in real time · Pick accuracy KPI improved from 94% to 97.3%</p></div>
+        <div class="card-result"><span class="card-result-label">▶ Capability</span><p class="card-result-text">daily real-time OTIF tracking · Pick accuracy improvements from 94% to 97.3% modeled on sample data</p></div>
         <div class="card-cta"><a href="project-7.html">Open Live Project →</a></div>
       </div>
     </div>
@@ -1936,7 +1877,7 @@ footer {
         <p class="card-problem">S&OP is done in disconnected spreadsheets, causing misalignment between forecasts and production capacity. No shared data model exists.</p>
         <span class="card-solution-label">▶ SOLUTION</span>
         <p class="card-solution">Interactive Excel S&OP simulator reconciling demand forecasts with production capacity constraints and inventory positions.</p>
-        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">Supply-demand alignment improved 30% · Consensus plan adopted across 4 product families</p></div>
+        <div class="card-result"><span class="card-result-label">▶ Capability</span><p class="card-result-text">up to 30% improvement in supply-demand alignment · Consensus planning structure across product families</p></div>
         <div class="card-cta"><a href="project-8.html">Open Live Project →</a></div>
       </div>
     </div>
@@ -1958,7 +1899,7 @@ footer {
         <p class="card-problem">Freight costs are fragmented across multiple carriers and invoice systems, making total cost of shipment nearly impossible to benchmark.</p>
         <span class="card-solution-label">▶ SOLUTION</span>
         <p class="card-solution">SQL pipeline aggregating invoices from 8 carriers. Python benchmarks each lane and flags where cost exceeds benchmark by &gt;15%.</p>
-        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">€180K in hidden freight cost surfaced · Carrier overpayment patterns identified across 3 lanes</p></div>
+        <div class="card-result"><span class="card-result-label">▶ Capability</span><p class="card-result-text">surfaces hidden freight cost (~€180K on sample data) · Detects carrier overpayment patterns across multiple lanes</p></div>
         <div class="card-cta"><a href="project-9.html">Open Live Project →</a></div>
       </div>
     </div>
@@ -1979,7 +1920,7 @@ footer {
         <p class="card-problem">Manual reorder point calculation leads to delayed purchase orders and frequent stockouts. Static reorder points don't adjust to changing demand or lead time.</p>
         <span class="card-solution-label">▶ SOLUTION</span>
         <p class="card-solution">Excel model with dynamic reorder point formulas, colour-coded alert list, and draft PO generation using Z-score safety stock logic.</p>
-        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">Manual reorder tracking fully eliminated · 100% automated reorder triggers for 200+ SKUs</p></div>
+        <div class="card-result"><span class="card-result-label">▶ Capability</span><p class="card-result-text">full elimination of manual reorder tracking · 100% automated reorder triggers for 200+ SKUs</p></div>
         <div class="card-cta"><a href="project-10.html">Open Live Project →</a></div>
       </div>
     </div>
@@ -2000,7 +1941,7 @@ footer {
         <p class="card-problem">Purchasing teams have no historical visibility into supplier lead time accuracy. Promised lead times in contracts often differ from actual performance.</p>
         <span class="card-solution-label">▶ SOLUTION</span>
         <p class="card-solution">SQL tracker comparing promised vs actual lead time per supplier, calculating reliability scores and flagging &gt;20% variance for review.</p>
-        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">On-time delivery improved 25% · Top 5 chronic late suppliers identified and performance-managed</p></div>
+        <div class="card-result"><span class="card-result-label">▶ Capability</span><p class="card-result-text">up to 25% on-time delivery improvement · Identifies top chronic late suppliers for performance management</p></div>
         <div class="card-cta"><a href="project-11.html">Open Live Project →</a></div>
       </div>
     </div>
@@ -2021,7 +1962,7 @@ footer {
         <p class="card-problem">EU CSRD regulations require Scope 3 emissions reporting, but emissions data is fragmented across carriers and not calculated consistently.</p>
         <span class="card-solution-label">▶ SOLUTION</span>
         <p class="card-solution">Python tool calculating per-shipment CO₂e using GLEC Framework. Includes modal shift scenario comparison (road vs rail vs air).</p>
-        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">Scope 3 emissions quantified across 8 logistics lanes · ESG-ready reporting structure delivered</p></div>
+        <div class="card-result"><span class="card-result-label">▶ Capability</span><p class="card-result-text">Scope 3 emissions quantification across 8 logistics lanes · ESG-ready reporting structure</p></div>
         <div class="card-cta"><a href="project-12.html">Open Live Project →</a></div>
       </div>
     </div>
@@ -2042,7 +1983,7 @@ footer {
         <p class="card-problem">Companies manage inventory metrics in isolation with no visibility into whether turnover ratios are competitive versus industry benchmarks.</p>
         <span class="card-solution-label">▶ SOLUTION</span>
         <p class="card-solution">Power BI model comparing inventory turnover, DIO, dead stock %, and GMROI against sector benchmarks with RAG status.</p>
-        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">€2.1M in trapped working capital surfaced · ITR benchmarked vs. 4 industry sectors</p></div>
+        <div class="card-result"><span class="card-result-label">▶ Capability</span><p class="card-result-text">surfaces trapped working capital (~€2.1M on sample data) · ITR benchmarking across 4 industry sectors</p></div>
         <div class="card-cta"><a href="project-13.html">Open Live Project →</a></div>
       </div>
     </div>
@@ -2064,7 +2005,7 @@ footer {
         <p class="card-problem">Traditional monthly forecasting misses sudden demand signals from market events, competitor promotions, or weather patterns.</p>
         <span class="card-solution-label">▶ SOLUTION</span>
         <p class="card-solution">AI agent monitoring daily POS data with Python anomaly detection identifying deviations &gt;2&sigma; from rolling baseline and triggering alerts.</p>
-        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">Demand shifts detected 2 weeks early · AI forecast MAPE 38% better than statistical baseline</p></div>
+        <div class="card-result"><span class="card-result-label">▶ Capability</span><p class="card-result-text">detects demand shifts 2 weeks early · 38% MAPE improvement over statistical baseline on sample data</p></div>
         <div class="card-cta"><a href="project-14.html">Open Live Project →</a></div>
       </div>
     </div>
@@ -2085,7 +2026,7 @@ footer {
         <p class="card-problem">Procurement teams deliver savings but struggle to quantify and present them in a consistent, finance-approved format. Without a tracker, claims lack credibility.</p>
         <span class="card-solution-label">▶ SOLUTION</span>
         <p class="card-solution">Excel tracker categorising savings by type with finance sign-off columns. Outputs executive-ready waterfall chart and monthly pipeline report.</p>
-        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">€2.3M annual savings tracked · 80% of hard savings verified and signed off by Finance</p></div>
+        <div class="card-result"><span class="card-result-label">▶ Capability</span><p class="card-result-text">annual savings tracking (~€2.3M on sample data) · 80% hard-savings verification logic with Finance sign-off workflow</p></div>
         <div class="card-cta"><a href="project-15.html">Open Live Project →</a></div>
       </div>
     </div>
@@ -2106,7 +2047,7 @@ footer {
         <p class="card-problem">Multi-depot distribution networks are rarely re-evaluated. Depot locations established years ago may now be generating excess transport cost.</p>
         <span class="card-solution-label">▶ SOLUTION</span>
         <p class="card-solution">Python optimization using weighted centre-of-gravity algorithm comparing current network vs 3 scenarios: 1, 2, or 3 depots.</p>
-        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">Distribution cost cut 22% · DC closure recommendation saving €1.4M/yr modelled in LP</p></div>
+        <div class="card-result"><span class="card-result-label">▶ Capability</span><p class="card-result-text">up to 22% distribution cost reduction · DC-closure scenario with €1.4M/yr savings modeled via LP</p></div>
         <div class="card-cta"><a href="project-16.html">Open Live Project →</a></div>
       </div>
     </div>
@@ -2128,7 +2069,7 @@ footer {
         <p class="card-problem">Food and pharma companies lose millions to write-offs due to poor batch visibility. FEFO picking is not consistently enforced across locations.</p>
         <span class="card-solution-label">▶ SOLUTION</span>
         <p class="card-solution">SQL system pulling batch expiry data from WMS, generating risk tiers and recommending redistribution or markdown actions.</p>
-        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">€380K in product write-offs prevented · FEFO compliance rate improved by 55%</p></div>
+        <div class="card-result"><span class="card-result-label">▶ Capability</span><p class="card-result-text">prevents product write-offs (~€380K on sample data) · FEFO compliance improvement up to 55%</p></div>
         <div class="card-cta"><a href="project-17.html">Open Live Project →</a></div>
       </div>
     </div>
@@ -2149,7 +2090,7 @@ footer {
         <p class="card-problem">Companies invest in demand planning but never measure forecast accuracy systematically. Planners repeat the same systematic biases each cycle.</p>
         <span class="card-solution-label">▶ SOLUTION</span>
         <p class="card-solution">Power BI scorecard tracking MAPE, forecast bias, and tracking signal by product family, planner, and customer with drill-down capability.</p>
-        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">Forecast error cut 30% · Planner-level bias decomposed for all 4 members of planning team</p></div>
+        <div class="card-result"><span class="card-result-label">▶ Capability</span><p class="card-result-text">up to 30% forecast error reduction · Planner-level bias decomposition across planning teams</p></div>
         <div class="card-cta"><a href="project-18.html">Open Live Project →</a></div>
       </div>
     </div>
@@ -2171,7 +2112,7 @@ footer {
         <p class="card-problem">Purchase orders are tracked in ERP but data is never surfaced into actionable analytics. PO cycle time, compliance, and spend concentration are invisible.</p>
         <span class="card-solution-label">▶ SOLUTION</span>
         <p class="card-solution">SQL pipeline extracting PO data into analytics hub. Power BI tracks cycle time, spend by supplier, compliance rate, and open PO aging.</p>
-        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">1,200+ POs tracked in real time · 3-way match exceptions reduced by 41%</p></div>
+        <div class="card-result"><span class="card-result-label">▶ Capability</span><p class="card-result-text">real-time tracking of 1,200+ POs · 41% reduction in 3-way match exceptions on sample data</p></div>
         <div class="card-cta"><a href="project-19.html">Open Live Project →</a></div>
       </div>
     </div>
@@ -2193,7 +2134,7 @@ footer {
         <p class="card-problem">Demand planners spend 70% of their time on routine replenishment decisions — reviewing stock levels and creating POs — instead of strategic planning.</p>
         <span class="card-solution-label">▶ SOLUTION</span>
         <p class="card-solution">AI automation layer monitoring live inventory levels, running short-term forecasts, and generating ranked purchase recommendations every morning. Reduces processing from 4 hours to 45 minutes.</p>
-        <div class="card-result"><span class="card-result-label">▶ Result</span><p class="card-result-text">80% auto-decision rate achieved · Service level lifted from 94.1% to 98.2%</p></div>
+        <div class="card-result"><span class="card-result-label">▶ Capability</span><p class="card-result-text">80% auto-decision rate · Service level lift from 94.1% to 98.2% on simulated inventory</p></div>
         <div class="card-cta"><a href="project-20.html">Open Live Project →</a></div>
       </div>
     </div>
@@ -2300,7 +2241,7 @@ footer {
       </p>
 
       <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom: 28px;">
-        <a href="cv.pdf" download="Chibuike_Dialaekwe_CV.pdf" class="btn-primary" style="font-size:0.78rem; padding:10px 20px;" onclick="return handleCvDownload(event)">⬇ Download CV</a>
+        <a href="mailto:Dialaekwechibuike@gmail.com?subject=CV%20Request%20-%20Portfolio&body=Hi%20Chibuike%2C%20I%27d%20like%20to%20see%20your%20CV." class="btn-primary" style="font-size:0.78rem; padding:10px 20px;">✉ Request CV</a>
         <a href="https://linkedin.com/in/chibuike-dialaekwe-15582b248" target="_blank" rel="noopener" class="btn-ghost" style="font-size:0.78rem; padding:10px 20px;">LinkedIn →</a>
       </div>
 
@@ -2428,29 +2369,13 @@ footer {
       <a href="https://linkedin.com/in/chibuike-dialaekwe-15582b248" target="_blank" rel="noopener" class="btn-ghost" style="font-size:0.8rem; padding:10px 20px;">LinkedIn</a>
       <a href="https://github.com/dialaekwechibuike" target="_blank" rel="noopener" class="btn-ghost" style="font-size:0.8rem; padding:10px 20px;">GitHub ↗</a>
 
-      <a href="cv.pdf" download="Chibuike_Dialaekwe_CV.pdf" class="btn-primary" style="font-size:0.8rem; padding:10px 20px;" onclick="return handleCvDownload(event)">
-        ⬇ Download CV
-      </a>
+      <a href="mailto:Dialaekwechibuike@gmail.com?subject=CV%20Request%20-%20Portfolio&body=Hi%20Chibuike%2C%20I%27d%20like%20to%20see%20your%20CV." class="btn-primary" style="font-size:0.78rem; padding:10px 20px;">✉ Request CV</a>
     </div>
   </div>
 </div>
 
 
-<!-- ═══════ CV TOAST ═══════ -->
-<!-- TO ADD YOUR CV: drop your PDF named "Chibuike_Dialaekwe_CV.pdf" in this 
-     same folder. The download button will work automatically. -->
-<div id="cvToast" role="alert" aria-live="polite">
-  <button class="cv-toast-close" onclick="closeCvToast()" aria-label="Close">✕</button>
-  <div class="cv-toast-title">⏳ CV Being Updated</div>
-  <div class="cv-toast-body">
-    My CV is currently being finalised and will be available for download shortly. 
-    In the meantime, you can connect with me on LinkedIn or reach out directly by email.
-  </div>
-  <div class="cv-toast-actions">
-    <a href="https://linkedin.com/in/chibuike-dialaekwe-15582b248" target="_blank" rel="noopener" class="btn-primary" style="font-size:0.78rem; padding:9px 18px;">LinkedIn Profile →</a>
-    <a href="mailto:Dialaekwechibuike@gmail.com" class="btn-ghost" style="font-size:0.78rem; padding:9px 18px;">Email Me</a>
-  </div>
-</div>
+
 
 </main>
 
@@ -2790,40 +2715,6 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   });
 });
 
-
-/* ─── CV DOWNLOAD HANDLER ───────────────────────────────────────────────────
-   Drop "Chibuike_Dialaekwe_CV.pdf" in the same folder when ready.
-   This function checks if the file exists; if not, shows a friendly toast.
-──────────────────────────────────────────────────────────────────────────── */
-function handleCvDownload(e) {
-  e.preventDefault();
-  fetch('Chibuike_Dialaekwe_CV.pdf', { method: 'HEAD' })
-    .then(res => {
-      if (res.ok) {
-        // CV exists — trigger real download
-        const a = document.createElement('a');
-        a.href = 'Chibuike_Dialaekwe_CV.pdf';
-        a.download = 'Chibuike_Dialaekwe_CV.pdf';
-        a.click();
-      } else {
-        showCvToast();
-      }
-    })
-    .catch(() => showCvToast()); // network/CORS fallback
-  return false;
-}
-
-function showCvToast() {
-  const t = document.getElementById('cvToast');
-  t.classList.add('show');
-  // Auto-dismiss after 8 seconds
-  if (window._cvToastTimer) clearTimeout(window._cvToastTimer);
-  window._cvToastTimer = setTimeout(closeCvToast, 8000);
-}
-
-function closeCvToast() {
-  document.getElementById('cvToast').classList.remove('show');
-}
 
 </script>
 </body>
