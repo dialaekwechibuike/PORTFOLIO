@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Carbon Footprint in Logistics — Chibuike Dialaekwe</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Carbon Footprint in Logistics   Chibuike Dialaekwe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root{--bg:#080c14;--bg2:#0d1220;--bg3:#111827;--card:#0f1623;--text:#e8eaf6;--muted:#7986a3;--hint:#4a5568;--border:rgba(0,229,255,.12);--border2:rgba(0,229,255,.25);--cyan:#00e5ff;--green:#00ff88;--amber:#ffb300;--red:#ff4757;}
@@ -211,13 +211,13 @@ footer a{color:var(--green);text-decoration:none;}
 
 <!-- HERO -->
 <div class="hero fade-up">
-  <div class="hero-badge"><span class="badge-dot"></span>🌱 ESG-READY SCOPE 3 REPORTING</div>
-  <h1>Carbon Footprint<br/>in <span>Logistics</span></h1>
+  <div class="hero-badge"><span class="badge-dot"></span>🌱 ESG READY SCOPE 3 REPORTING</div>
+  <h1>Carbon Footprint<br />in <span>Logistics</span></h1>
   <div class="hero-meta">
     <span class="tag tag-cat">🚚 Logistics</span>
     <span class="tag tag-tool">Python</span>
   </div>
-  <p class="hero-problem">EU CSRD and supply chain due diligence regulations increasingly require logistics operators to report Scope 3 emissions — but emissions data is fragmented across carriers, calculated inconsistently, and never aggregated into an auditable dataset. By 2027, mid-market firms face mandatory disclosure. The companies building their data infrastructure now will avoid the compliance scramble coming for everyone else.</p>
+  <p class="hero-problem">EU CSRD and supply chain due diligence regulations increasingly require logistics operators to report Scope 3 emissions   but emissions data is fragmented across carriers, calculated inconsistently, and never aggregated into an auditable dataset. By 2027, mid market firms face mandatory disclosure. The companies building their data infrastructure now will avoid the compliance scramble coming for everyone else.</p>
 </div>
 
 <!-- CSRD COMPLIANCE PANEL -->
@@ -231,8 +231,8 @@ footer a{color:var(--green);text-decoration:none;}
 
 <!-- CO2 CALCULATOR -->
 <div class="calc-panel fade-up">
-  <div class="calc-title">🌿 Live CO₂e Emissions Calculator — GLEC Framework</div>
-  <div class="calc-sub">Enter shipment parameters to calculate per-shipment emissions using the Global Logistics Emissions Council (GLEC) Framework methodology</div>
+  <div class="calc-title">🌿 Live CO₂e Emissions Calculator   GLEC Framework</div>
+  <div class="calc-sub">Enter shipment parameters to calculate per shipment emissions using the Global Logistics Emissions Council (GLEC) Framework methodology</div>
   <div class="calc-grid">
     <div class="calc-field">
       <label class="calc-label">TRANSPORT MODE</label>
@@ -245,15 +245,15 @@ footer a{color:var(--green);text-decoration:none;}
     </div>
     <div class="calc-field">
       <label class="calc-label">CARGO WEIGHT (kg)</label>
-      <input class="calc-input" type="number" id="cWeight" value="2000" min="1" oninput="calcCO2()"/>
+      <input class="calc-input" type="number" id="cWeight" value="2000" min="1" oninput="calcCO2()" />
     </div>
     <div class="calc-field">
       <label class="calc-label">DISTANCE (km)</label>
-      <input class="calc-input" type="number" id="cDist" value="850" min="1" oninput="calcCO2()"/>
+      <input class="calc-input" type="number" id="cDist" value="850" min="1" oninput="calcCO2()" />
     </div>
     <div class="calc-field">
       <label class="calc-label">LOAD FACTOR (%)</label>
-      <input class="calc-input" type="number" id="cLoad" value="75" min="1" max="100" oninput="calcCO2()"/>
+      <input class="calc-input" type="number" id="cLoad" value="75" min="1" max="100" oninput="calcCO2()" />
     </div>
   </div>
   <div class="calc-result" id="calcResult"></div>
@@ -289,7 +289,7 @@ footer a{color:var(--green);text-decoration:none;}
 
 <div class="modal-panel fade-up">
   <div class="modal-title">🔄 Modal Shift Savings Calculator</div>
-  <div class="modal-sub">Click any mode to see CO₂e and cost for a 2,000kg shipment over 850km — and the saving vs current Air freight baseline</div>
+  <div class="modal-sub">Click any mode to see CO₂e and cost for a 2,000kg shipment over 850km   and the saving vs current Air freight baseline</div>
   <div class="modal-grid" id="modalGrid"></div>
 </div>
 
@@ -299,28 +299,28 @@ footer a{color:var(--green);text-decoration:none;}
   <div class="section-title">Emissions Analysis</div>
   <div class="charts-grid">
     <div class="chart-card full-width">
-      <div class="chart-title">Monthly CO₂e Emissions — 12-Month Trend by Mode (tonnes)</div>
+      <div class="chart-title">Monthly CO₂e Emissions   12 Month Trend by Mode (tonnes)</div>
       <div class="chart-sub">Stacked view showing each transport mode's monthly contribution to total Scope 3 logistics emissions</div>
       <div class="chart-wrap-lg"><canvas id="monthlyChart"></canvas></div>
     </div>
     <div class="chart-card">
       <div class="chart-title">CO₂e by Transport Mode (Total, tonnes)</div>
-      <div class="chart-sub">Modal split of total annual emissions — air freight typically accounts for disproportionate share despite low volume</div>
+      <div class="chart-sub">Modal split of total annual emissions   air freight typically accounts for disproportionate share despite low volume</div>
       <div class="chart-wrap"><canvas id="modeChart"></canvas></div>
     </div>
     <div class="chart-card">
-      <div class="chart-title">Emissions Intensity by Lane (kg CO₂e per tonne-km)</div>
-      <div class="chart-sub">Top 10 highest-intensity lanes — priority targets for modal shift or load factor improvement</div>
+      <div class="chart-title">Emissions Intensity by Lane (kg CO₂e per tonne km)</div>
+      <div class="chart-sub">Top 10 highest intensity lanes   priority targets for modal shift or load factor improvement</div>
       <div class="chart-wrap"><canvas id="laneChart"></canvas></div>
     </div>
     <div class="chart-card">
-      <div class="chart-title">Modal Shift Saving Potential — CO₂e Reduction (tonnes)</div>
+      <div class="chart-title">Modal Shift Saving Potential   CO₂e Reduction (tonnes)</div>
       <div class="chart-sub">Estimated annual CO₂e reduction achievable by switching air freight shipments to road or rail where feasible</div>
       <div class="chart-wrap"><canvas id="savingChart"></canvas></div>
     </div>
     <div class="chart-card">
       <div class="chart-title">CO₂e per Shipment Distribution</div>
-      <div class="chart-sub">Histogram of per-shipment emissions — long tail of high-emission shipments drives disproportionate impact</div>
+      <div class="chart-sub">Histogram of per shipment emissions   long tail of high emission shipments drives disproportionate impact</div>
       <div class="chart-wrap"><canvas id="distChart"></canvas></div>
     </div>
   </div>
@@ -328,7 +328,7 @@ footer a{color:var(--green);text-decoration:none;}
   <!-- TABLE -->
   <div class="section-eyebrow">// raw data</div>
   <div class="section-title">📊 Raw Emissions Dataset</div>
-  <p style="color:var(--muted);font-size:14px;margin-bottom:16px;">Per-shipment CO₂e data calculated using GLEC Framework emission factors — 50 rows shown. Download full dataset below.</p>
+  <p style="color:var(--muted);font-size:14px;margin-bottom:16px;">Per shipment CO₂e data calculated using GLEC Framework emission factors   50 rows shown. Download full dataset below.</p>
   <div class="tbl-wrap">
     <table>
       <thead>
@@ -353,29 +353,29 @@ footer a{color:var(--green);text-decoration:none;}
     <div class="psf-card problem">
       <div class="psf-header"><span class="psf-icon">🔴</span><span class="psf-label">▶ PROBLEM</span></div>
       <ul class="psf-list">
-        <li>No unified CO₂e dataset existed across the logistics network — each carrier provided emissions in different units with inconsistent methodology, making totals non-comparable and non-auditable for CSRD disclosure</li>
-        <li>Air freight emissions were systematically underreported by carrier-supplied figures that excluded radiative forcing multipliers required by GLEC Framework — understating the true climate impact by 2–3×</li>
-        <li>No modal shift analysis had ever been conducted — procurement teams had no visibility into how much CO₂e could be avoided by switching specific lanes from air to road or sea freight</li>
+        <li>No unified CO₂e dataset existed across the logistics network   each carrier provided emissions in different units with inconsistent methodology, making totals non comparable and non auditable for CSRD disclosure</li>
+        <li>Air freight emissions were systematically underreported by carrier supplied figures that excluded radiative forcing multipliers required by GLEC Framework   understating the true climate impact by 2 3×</li>
+        <li>No modal shift analysis had ever been conducted   procurement teams had no visibility into how much CO₂e could be avoided by switching specific lanes from air to road or sea freight</li>
         <li>Finance teams were unable to quantify carbon costs in total cost of shipment calculations, making it impossible to include emissions in supplier or mode selection decisions</li>
       </ul>
     </div>
     <div class="psf-card solution">
       <div class="psf-header"><span class="psf-icon">🔵</span><span class="psf-label">▶ SOLUTION</span></div>
       <ul class="psf-list">
-        <li>Python pipeline applying GLEC Framework emission factors per transport mode: Road HGV 62g CO₂e/tkm, Sea Container 8g, Air Freight 500g, Rail Electrified 28g — all adjusted for load factor using the formula: <code style="font-family:'Space Mono',monospace;font-size:12px;background:var(--bg3);padding:1px 5px;border-radius:3px;">CO₂e = weight × distance × EF × (1 / load_factor)</code></li>
-        <li>Modal shift analyser: for every air shipment, calculates the CO₂e under the next-best modal alternative (road or sea) and flags shipments where modal shift saves &gt;50% emissions without sacrificing delivery lead time</li>
-        <li>Monthly Scope 3 emissions report auto-generated in line with CSRD Category 4 (Upstream Transportation) disclosure requirements — ready for sustainability audit submission</li>
+        <li>Python pipeline applying GLEC Framework emission factors per transport mode: Road HGV 62g CO₂e/tkm, Sea Container 8g, Air Freight 500g, Rail Electrified 28g   all adjusted for load factor using the formula: <code style="font-family:'Space Mono',monospace;font-size:12px;background:var(--bg3);padding:1px 5px;border-radius:3px;">CO₂e = weight × distance × EF × (1 / load_factor)</code></li>
+        <li>Modal shift analyser: for every air shipment, calculates the CO₂e under the next best modal alternative (road or sea) and flags shipments where modal shift saves &gt;50% emissions without sacrificing delivery lead time</li>
+        <li>Monthly Scope 3 emissions report auto generated in line with CSRD Category 4 (Upstream Transportation) disclosure requirements   ready for sustainability audit submission</li>
         <li>Carbon cost monetisation: applies EU ETS carbon price (€65/tonne CO₂e) to every shipment, making emissions visible as a financial line item in logistics cost reporting</li>
       </ul>
     </div>
     <div class="psf-card findings">
       <div class="psf-header"><span class="psf-icon">🟢</span><span class="psf-label">▶ FINDINGS</span></div>
       <ul class="psf-list">
-        <li>Air freight accounted for just <strong>22% of shipment volume</strong> but <strong>71% of total logistics CO₂e</strong> — confirming that modal shift from air is the single highest-impact lever available for Scope 3 reduction</li>
-        <li><strong>38% of air shipments</strong> were eligible for modal shift to express road or sea freight without impacting delivery windows — representing 142 tonnes CO₂e/year in avoidable emissions</li>
-        <li>Applying GLEC radiative forcing multipliers to air freight (factor ×2.7) revealed actual air emissions were <strong>63% higher</strong> than carrier-supplied figures — a material difference for regulatory disclosure</li>
-        <li>Total annual logistics emissions: <strong>287 tonnes CO₂e</strong> — of which <strong>104 tonnes are fully avoidable</strong> through modal shift alone, equivalent to planting 5,200 trees</li>
-        <li>Carbon cost of current freight network: <strong>€18,655/year</strong> at EU ETS prices — rising to €37,000+ under 2030 carbon price projections, creating a strong financial case for decarbonisation now</li>
+        <li>Air freight accounted for just <strong>22% of shipment volume</strong> but <strong>71% of total logistics CO₂e</strong>   confirming that modal shift from air is the single highest impact lever available for Scope 3 reduction</li>
+        <li><strong>38% of air shipments</strong> were eligible for modal shift to express road or sea freight without impacting delivery windows   representing 142 tonnes CO₂e/year in avoidable emissions</li>
+        <li>Applying GLEC radiative forcing multipliers to air freight (factor ×2.7) revealed actual air emissions were <strong>63% higher</strong> than carrier supplied figures   a material difference for regulatory disclosure</li>
+        <li>Total annual logistics emissions: <strong>287 tonnes CO₂e</strong>   of which <strong>104 tonnes are fully avoidable</strong> through modal shift alone, equivalent to planting 5,200 trees</li>
+        <li>Carbon cost of current freight network: <strong>€18,655/year</strong> at EU ETS prices   rising to €37,000+ under 2030 carbon price projections, creating a strong financial case for decarbonisation now</li>
       </ul>
     </div>
   </div>
@@ -386,7 +386,7 @@ footer a{color:var(--green);text-decoration:none;}
   <div class="section-eyebrow">// outlook</div>
   <div class="section-title">📈 Annual CO₂e Forecast &amp; Reduction Pathway</div>
   <div class="chart-card">
-    <div class="chart-title">Scope 3 Logistics Emissions — 12-Month Projection (tonnes CO₂e)</div>
+    <div class="chart-title">Scope 3 Logistics Emissions   12 Month Projection (tonnes CO₂e)</div>
     <div class="chart-sub">Historical emissions (solid) vs forward projection. Reduction pathway scenarios show impact of modal shift and efficiency improvements</div>
     <div class="scenario-btns">
       <button class="scen-btn active" onclick="setScenario('base',this)">Business as Usual</button>
@@ -403,16 +403,16 @@ footer a{color:var(--green);text-decoration:none;}
   <div class="section-eyebrow">// strategic guidance</div>
   <div class="section-title">💡 Advice for Companies with Similar Challenges</div>
   <div class="advice-card">
-    <div class="advice-title">Logistics Decarbonisation — Key Recommendations</div>
+    <div class="advice-title">Logistics Decarbonisation   Key Recommendations</div>
     <ul class="advice-list">
-      <li>Start Scope 3 emissions tracking now — even with estimated data — before regulators require audited figures. Companies that build the data infrastructure early will avoid the compliance scramble coming for mid-market firms by 2027. An estimated dataset built on GLEC Framework is a credible starting point for any CSRD audit.</li>
-      <li>Air freight is almost always the dominant source of logistics emissions despite being a minority of shipment volume. Before investing in carrier sustainability programmes or green premiums, conduct a modal shift analysis first. In most supply chains, 30–50% of air shipments can move to road or sea without material service impact.</li>
-      <li>Monetise carbon in your total cost of shipment calculation. At EU ETS prices of €65–90/tonne CO₂e, a 1,000kg air shipment over 5,000km costs an additional €32–45 in carbon beyond freight rates. This makes the ROI of modal shift and load factor improvement immediately visible to finance teams who control the logistics budget.</li>
-      <li>Apply GLEC Framework emission factors consistently, not carrier-supplied figures. Carriers almost always understate emissions by excluding radiative forcing (for air) or using unrepresentative fleet averages. Using GLEC factors ensures your disclosures are defensible, comparable year-on-year, and consistent with what regulators and investors increasingly expect.</li>
+      <li>Start Scope 3 emissions tracking now   even with estimated data   before regulators require audited figures. Companies that build the data infrastructure early will avoid the compliance scramble coming for mid market firms by 2027. An estimated dataset built on GLEC Framework is a credible starting point for any CSRD audit.</li>
+      <li>Air freight is almost always the dominant source of logistics emissions despite being a minority of shipment volume. Before investing in carrier sustainability programmes or green premiums, conduct a modal shift analysis first. In most supply chains, 30 50% of air shipments can move to road or sea without material service impact.</li>
+      <li>Monetise carbon in your total cost of shipment calculation. At EU ETS prices of €65 90/tonne CO₂e, a 1,000kg air shipment over 5,000km costs an additional €32 45 in carbon beyond freight rates. This makes the ROI of modal shift and load factor improvement immediately visible to finance teams who control the logistics budget.</li>
+      <li>Apply GLEC Framework emission factors consistently, not carrier supplied figures. Carriers almost always understate emissions by excluding radiative forcing (for air) or using unrepresentative fleet averages. Using GLEC factors ensures your disclosures are defensible, comparable year on year, and consistent with what regulators and investors increasingly expect.</li>
     </ul>
     <div class="takeaway">
       <div class="takeaway-label">// KEY TAKEAWAY</div>
-      <p>Logistics decarbonisation is not primarily a technology problem — it is a data and decision-making problem. Most of the emissions reduction available to supply chain teams is achievable today, with existing modes and existing suppliers, simply by making better modal choices based on emissions data that most companies aren't yet calculating. Build the dataset first. The right decisions follow naturally from the numbers.</p>
+      <p>Logistics decarbonisation is not primarily a technology problem   it is a data and decision making problem. Most of the emissions reduction available to supply chain teams is achievable today, with existing modes and existing suppliers, simply by making better modal choices based on emissions data that most companies aren't yet calculating. Build the dataset first. The right decisions follow naturally from the numbers.</p>
     </div>
   </div>
 </div>
@@ -422,7 +422,7 @@ footer a{color:var(--green);text-decoration:none;}
   <a href="project-13.html" class="btn-next">Next: Inventory Turnover Benchmarker →</a>
 </div>
 <footer>
-  <span>© 2026 Chibuike Dialaekwe · <a href="mailto:Dialaekwechibuike@gmail.com">Dialaekwechibuike@gmail.com</a> · <a href="https://linkedin.com/in/chibuike-dialaekwe-15582b248" target="_blank">LinkedIn</a></span>
+  <span>© 2026 Chibuike Dialaekwe   <a href="mailto:Dialaekwechibuike@gmail.com">Dialaekwechibuike@gmail.com</a>   <a href="https://linkedin.com/in/chibuike-dialaekwe-15582b248" target="_blank">LinkedIn</a></span>
 </footer>
 
 <script>

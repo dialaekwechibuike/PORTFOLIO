@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Network Optimisation Model | Chibuike Dialaekwe</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root{
@@ -153,7 +153,7 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
 <body>
 <div id="progress-bar"></div>
 <nav>
-  <span class="nav-logo">CD / PROJECT-16</span>
+  <span class="nav-logo">CD / PROJECT 16</span>
   <div class="nav-links">
     <a href="index.html">← Portfolio</a>
     <button class="theme-btn" id="themeToggle">☀️</button>
@@ -169,7 +169,7 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
     <span class="badge badge-green">PYTHON</span>
   </div>
   <h1>Network <span>Optimisation Model</span></h1>
-  <p class="hero-sub">Python linear programming model (PuLP + scipy) evaluating warehouse locations, lane allocations, and transport mode assignments to minimise total distribution cost while satisfying service-level constraints across a 12-node European network.</p>
+  <p class="hero-sub">Python linear programming model (PuLP + scipy) evaluating warehouse locations, lane allocations, and transport mode assignments to minimise total distribution cost while satisfying service level constraints across a 12 node European network.</p>
 </div>
 
 <!-- PSF -->
@@ -179,17 +179,17 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
     <div class="psf-card problem">
       <div class="psf-label">⚑ Problem</div>
       <h3>Suboptimal Legacy Network</h3>
-      <p>The distribution network was designed 8 years ago for a different customer mix. Four warehouse locations were chosen based on real estate availability, not demand centroids. Demand has shifted significantly since, resulting in 23% of lanes operating well above optimal cost-per-km and 14% of SLA commitments at risk due to distance misalignment.</p>
+      <p>The distribution network was designed 8 years ago for a different customer mix. Four warehouse locations were chosen based on real estate availability, not demand centroids. Demand has shifted significantly since, resulting in 23% of lanes operating well above optimal cost per km and 14% of SLA commitments at risk due to distance misalignment.</p>
     </div>
     <div class="psf-card solution">
       <div class="psf-label">⚙ Solution</div>
       <h3>LP Network Optimisation (PuLP)</h3>
-      <p>A Python model formulates the network as a minimum-cost flow problem: minimise Σ(cost per lane × volume) subject to supply balance at each warehouse, demand satisfaction at each customer node, capacity constraints, and maximum service lead-time per SLA band. Candidate warehouse locations evaluated via p-median heuristic.</p>
+      <p>A Python model formulates the network as a minimum cost flow problem: minimise Σ(cost per lane × volume) subject to supply balance at each warehouse, demand satisfaction at each customer node, capacity constraints, and maximum service lead time per SLA band. Candidate warehouse locations evaluated via p median heuristic.</p>
     </div>
     <div class="psf-card findings">
       <div class="psf-label">✓ Findings</div>
-      <h3>18% Cost Reduction — €1.4M Saved</h3>
-      <p>The optimised network consolidates from 4 to 3 active DCs, shifts 8 road lanes to rail, and eliminates 6 suboptimal cross-docking points. Total annual distribution cost drops from €7.8M to €6.4M — an 18% saving. SLA compliance improves from 81% to 97%. Full implementation over 9 months.</p>
+      <h3>18% Cost Reduction   €1.4M Saved</h3>
+      <p>The optimised network consolidates from 4 to 3 active DCs, shifts 8 road lanes to rail, and eliminates 6 suboptimal cross docking points. Total annual distribution cost drops from €7.8M to €6.4M   an 18% saving. SLA compliance improves from 81% to 97%. Full implementation over 9 months.</p>
     </div>
   </div>
 </div>
@@ -199,7 +199,7 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
   <div class="section-title">Interactive Network Visualisation</div>
   <div class="network-container">
     <div class="network-header">
-      <h3>European Distribution Network — Current vs Optimised</h3>
+      <h3>European Distribution Network   Current vs Optimised</h3>
       <div class="network-controls">
         <button class="net-btn" onclick="setView('current',this)" id="btnCurrent" style="border-color:var(--cyan);color:var(--cyan)">Current Network</button>
         <button class="net-btn" onclick="setView('optimised',this)" id="btnOpt">Optimised Network</button>
@@ -264,11 +264,11 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
       <div class="chart-wrap-tall"><canvas id="laneChart"></canvas></div>
     </div>
     <div class="chart-card">
-      <h3>Mode Split — Current vs Optimised (Volume)</h3>
+      <h3>Mode Split   Current vs Optimised (Volume)</h3>
       <div class="chart-wrap"><canvas id="modeChart"></canvas></div>
     </div>
     <div class="chart-card">
-      <h3>Distance vs Cost/Unit — Bubble by Volume</h3>
+      <h3>Distance vs Cost/Unit   Bubble by Volume</h3>
       <div class="chart-wrap"><canvas id="scatterChart"></canvas></div>
     </div>
     <div class="chart-card">
@@ -280,7 +280,7 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
       <div class="chart-wrap-tall"><canvas id="savingsChart"></canvas></div>
     </div>
     <div class="chart-card">
-      <h3>Cost per Unit-KM by Mode</h3>
+      <h3>Cost per Unit KM by Mode</h3>
       <div class="chart-wrap"><canvas id="cpkmChart"></canvas></div>
     </div>
   </div>
@@ -313,11 +313,11 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
   <div class="section-title">Cost Reduction Roadmap</div>
   <div class="forecast-section">
     <div class="forecast-header">
-      <h3>Monthly Distribution Cost — Current to Optimised (12-Month Implementation)</h3>
+      <h3>Monthly Distribution Cost   Current to Optimised (12 Month Implementation)</h3>
       <div class="scenario-btns">
-        <button class="scenario-btn active" onclick="setScenario('base',this)">Base (9-Month Rollout)</button>
-        <button class="scenario-btn" onclick="setScenario('fast',this)">Fast-Track (6-Month)</button>
-        <button class="scenario-btn" onclick="setScenario('slow',this)">Phased (12-Month)</button>
+        <button class="scenario-btn active" onclick="setScenario('base',this)">Base (9 Month Rollout)</button>
+        <button class="scenario-btn" onclick="setScenario('fast',this)">Fast Track (6 Month)</button>
+        <button class="scenario-btn" onclick="setScenario('slow',this)">Phased (12 Month)</button>
       </div>
     </div>
     <div class="forecast-chart-wrap"><canvas id="forecastChart"></canvas></div>
@@ -331,15 +331,15 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
   <div class="advice-box">
     <h3>💡 Recommendations for Logistics Strategy Teams</h3>
     <ul>
-      <li>Network redesign typically delivers <strong>15–25% cost reduction</strong> — but only if the model constraints are realistic. Include maximum service lead-time per customer tier and warehouse capacity ceilings as hard constraints, not soft guidelines.</li>
-      <li>Run the model <strong>annually at minimum</strong>: demand pattern shifts, fuel costs, and new customer acquisitions can erode an optimised network back to suboptimal within 18 months without re-validation.</li>
-      <li>Before closing any DC, model the <strong>transition cost</strong> (inventory rebalancing, lease break penalties, customer communication) against the steady-state saving. Payback under 18 months is the typical go/no-go threshold.</li>
-      <li>Rail modal shift only pencils out above <strong>400km lane distance</strong>. Below this threshold, the handling cost premium and longer lead time erode the freight saving — validate your minimum distance before applying the model recommendation.</li>
-      <li>Build in a <strong>network resilience constraint</strong>: the LP will always consolidate to the theoretical minimum nodes, but single-node failure risk increases proportionally. Require at minimum dual-source coverage for all Tier-1 customer zones.</li>
-      <li>Involve commercial and customer service teams early — a network that cuts cost but degrades service on key accounts destroys more value than it saves. Run sensitivity analysis on SLA tightening before presenting to the CFO.</li>
+      <li>Network redesign typically delivers <strong>15 25% cost reduction</strong>   but only if the model constraints are realistic. Include maximum service lead time per customer tier and warehouse capacity ceilings as hard constraints, not soft guidelines.</li>
+      <li>Run the model <strong>annually at minimum</strong>: demand pattern shifts, fuel costs, and new customer acquisitions can erode an optimised network back to suboptimal within 18 months without re validation.</li>
+      <li>Before closing any DC, model the <strong>transition cost</strong> (inventory rebalancing, lease break penalties, customer communication) against the steady state saving. Payback under 18 months is the typical go/no go threshold.</li>
+      <li>Rail modal shift only pencils out above <strong>400km lane distance</strong>. Below this threshold, the handling cost premium and longer lead time erode the freight saving   validate your minimum distance before applying the model recommendation.</li>
+      <li>Build in a <strong>network resilience constraint</strong>: the LP will always consolidate to the theoretical minimum nodes, but single node failure risk increases proportionally. Require at minimum dual source coverage for all Tier 1 customer zones.</li>
+      <li>Involve commercial and customer service teams early   a network that cuts cost but degrades service on key accounts destroys more value than it saves. Run sensitivity analysis on SLA tightening before presenting to the CFO.</li>
     </ul>
     <div class="advice-takeaway">
-      <strong>Key Takeaway:</strong> The LP model finds the mathematical optimum, but the <em>implementable</em> optimum is always a constrained version of it. The value of the model is not the final answer — it's the structured conversation it forces between logistics, finance, and commercial about what constraints actually matter.
+      <strong>Key Takeaway:</strong> The LP model finds the mathematical optimum, but the <em>implementable</em> optimum is always a constrained version of it. The value of the model is not the final answer   it's the structured conversation it forces between logistics, finance, and commercial about what constraints actually matter.
     </div>
   </div>
 </div>

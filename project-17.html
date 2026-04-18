@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Batch Expiry Risk Manager | Chibuike Dialaekwe</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root{
@@ -153,7 +153,7 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
 <body>
 <div id="progress-bar"></div>
 <nav>
-  <span class="nav-logo">CD / PROJECT-17</span>
+  <span class="nav-logo">CD / PROJECT 17</span>
   <div class="nav-links">
     <a href="index.html">← Portfolio</a>
     <button class="theme-btn" id="themeToggle">☀️</button>
@@ -163,13 +163,13 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
 <div class="hero">
   <div class="breadcrumb"><a href="index.html">Home</a> / <a href="index.html">Projects</a> / Batch Expiry Risk Manager</div>
   <div class="hero-badges">
-    <span class="badge badge-red">PREVENTS €380K IN WRITE-OFFS</span>
+    <span class="badge badge-red">PREVENTS €380K IN WRITE OFFS</span>
     <span class="badge badge-amber">INVENTORY</span>
     <span class="badge badge-cyan">SQL</span>
     <span class="badge badge-purple">EXCEL</span>
   </div>
   <h1>Batch Expiry <span>Risk Manager</span></h1>
-  <p class="hero-sub">SQL + Excel model that extracts batch-level expiry data from ERP, calculates days-to-expiry, applies three-tier risk classification (Critical / Warning / Monitor), and generates actionable disposal, markdown, and diversion recommendations per batch — surfacing alerts before write-off becomes unavoidable.</p>
+  <p class="hero-sub">SQL + Excel model that extracts batch level expiry data from ERP, calculates days to expiry, applies three tier risk classification (Critical / Warning / Monitor), and generates actionable disposal, markdown, and diversion recommendations per batch   surfacing alerts before write off becomes unavoidable.</p>
 </div>
 
 <!-- PSF -->
@@ -179,17 +179,17 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
     <div class="psf-card problem">
       <div class="psf-label">⚑ Problem</div>
       <h3>Expiry Discovered Too Late</h3>
-      <p>Batch expiry dates exist in the ERP/WMS but are never surfaced proactively. Stock nearing expiry is typically discovered during a periodic warehouse walk — by which point markdown or diversion windows have closed and write-off is the only option. The result: recurring quarterly write-offs that hit COGS with no early warning.</p>
+      <p>Batch expiry dates exist in the ERP/WMS but are never surfaced proactively. Stock nearing expiry is typically discovered during a periodic warehouse walk   by which point markdown or diversion windows have closed and write off is the only option. The result: recurring quarterly write offs that hit COGS with no early warning.</p>
     </div>
     <div class="psf-card solution">
       <div class="psf-label">⚙ Solution</div>
       <h3>SQL + Excel Batch Risk Model</h3>
-      <p>A scheduled SQL query extracts all batch records with shelf-life &lt;90 days, computes Days-to-Expiry (DTE), and feeds into an Excel risk model that applies traffic-light tiering (Critical &lt;30d, Warning 30–60d, Monitor 60–90d). Each batch receives a recommended action (Use Now / Markdown / Divert / Write-Off Plan) with estimated recovery value.</p>
+      <p>A scheduled SQL query extracts all batch records with shelf life &lt;90 days, computes Days to Expiry (DTE), and feeds into an Excel risk model that applies traffic light tiering (Critical &lt;30d, Warning 30 60d, Monitor 60 90d). Each batch receives a recommended action (Use Now / Markdown / Divert / Write Off Plan) with estimated recovery value.</p>
     </div>
     <div class="psf-card findings">
       <div class="psf-label">✓ Findings</div>
-      <h3>€380K Write-Off Risk Identified</h3>
-      <p>52 batches at risk across 6 categories. €92K in Critical tier (≤30 days, immediate action). €188K in Warning tier (actionable with markdown/diversion). Estimated recovery through proactive action: €267K of the €380K at risk — a 70% save rate. FEFO enforcement gaps in Dairy and Pharma categories are the primary root cause.</p>
+      <h3>€380K Write Off Risk Identified</h3>
+      <p>52 batches at risk across 6 categories. €92K in Critical tier (≤30 days, immediate action). €188K in Warning tier (actionable with markdown/diversion). Estimated recovery through proactive action: €267K of the €380K at risk   a 70% save rate. FEFO enforcement gaps in Dairy and Pharma categories are the primary root cause.</p>
     </div>
   </div>
 </div>
@@ -200,18 +200,18 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
   <div class="alert-panel">
     <div class="alert-panel-header">
       <h3><span class="pulse-dot"></span>Batches Requiring Immediate Action (≤30 Days)</h3>
-      <span class="alert-count" id="alertCount">— batches</span>
+      <span class="alert-count" id="alertCount">  batches</span>
     </div>
     <div class="alert-list" id="alertList"></div>
   </div>
 
   <!-- GANTT TIMELINE -->
   <div class="gantt-box">
-    <h3>Batch Expiry Timeline — Days to Expiry (Gantt View, All Tiers)</h3>
+    <h3>Batch Expiry Timeline   Days to Expiry (Gantt View, All Tiers)</h3>
     <div class="gantt-legend">
       <div class="gl-item"><div class="gl-dot" style="background:var(--red)"></div>Critical ≤30d</div>
-      <div class="gl-item"><div class="gl-dot" style="background:var(--amber)"></div>Warning 31–60d</div>
-      <div class="gl-item"><div class="gl-dot" style="background:var(--cyan)"></div>Monitor 61–90d</div>
+      <div class="gl-item"><div class="gl-dot" style="background:var(--amber)"></div>Warning 31 60d</div>
+      <div class="gl-item"><div class="gl-dot" style="background:var(--cyan)"></div>Monitor 61 90d</div>
       <div class="gl-item"><div class="gl-dot" style="background:var(--green)"></div>Safe >90d</div>
     </div>
     <div class="gantt-wrap"><canvas id="ganttChart"></canvas></div>
@@ -255,11 +255,11 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
   <div class="section-title">Expiry Risk Analysis</div>
   <div class="chart-grid">
     <div class="chart-card">
-      <h3>Write-Off Exposure by Category &amp; Tier (€K)</h3>
+      <h3>Write Off Exposure by Category &amp; Tier (€K)</h3>
       <div class="chart-wrap"><canvas id="exposureChart"></canvas></div>
     </div>
     <div class="chart-card">
-      <h3>Recovery vs Write-Off Risk — Bubble by Quantity</h3>
+      <h3>Recovery vs Write Off Risk   Bubble by Quantity</h3>
       <div class="chart-wrap"><canvas id="scatterChart"></canvas></div>
     </div>
     <div class="chart-card">
@@ -267,7 +267,7 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
       <div class="chart-wrap"><canvas id="actionChart"></canvas></div>
     </div>
     <div class="chart-card">
-      <h3>DTE Distribution — Batches by Tier</h3>
+      <h3>DTE Distribution   Batches by Tier</h3>
       <div class="chart-wrap"><canvas id="dteChart"></canvas></div>
     </div>
     <div class="chart-card">
@@ -295,7 +295,7 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
           <th>BATCH ID</th><th>SKU</th><th>PRODUCT</th><th>CATEGORY</th><th>SITE</th>
           <th>QTY (UNITS)</th><th>VALUE (€)</th><th>MFG DATE</th><th>EXPIRY DATE</th>
           <th>DTE (DAYS)</th><th>RISK TIER</th><th>ACTION</th>
-          <th>RECOVERY (€)</th><th>WRITE-OFF RISK (€)</th>
+          <th>RECOVERY (€)</th><th>WRITE OFF RISK (€)</th>
         </tr>
       </thead>
       <tbody id="tableBody"></tbody>
@@ -305,10 +305,10 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
 
 <!-- FORECAST -->
 <div class="section fade-up">
-  <div class="section-title">90-Day Write-Off Exposure Forecast</div>
+  <div class="section-title">90 Day Write Off Exposure Forecast</div>
   <div class="forecast-section">
     <div class="forecast-header">
-      <h3>Rolling Write-Off Exposure — Next 90 Days by Category</h3>
+      <h3>Rolling Write Off Exposure   Next 90 Days by Category</h3>
       <div class="scenario-btns">
         <button class="scenario-btn active" onclick="setScenario('noaction',this)">No Action Taken</button>
         <button class="scenario-btn" onclick="setScenario('fefo',this)">FEFO Enforced</button>
@@ -326,15 +326,15 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
   <div class="advice-box">
     <h3>💡 Recommendations for Inventory &amp; Warehouse Teams</h3>
     <ul>
-      <li><strong>FEFO (First Expiry, First Out)</strong> discipline prevents 60–70% of expiry write-offs. It requires zero manual overrides in the WMS pick sequence — enforce it as a system-locked rule, not a training guideline. Every manual pick override should trigger an alert to a supervisor.</li>
-      <li>Set automated DTE alerts at <strong>three thresholds</strong>: 90 days (plan), 60 days (act), 30 days (escalate). The 90-day trigger is the critical one — it gives enough time for markdown, customer diversion, or manufacturing schedule adjustment before value is destroyed.</li>
-      <li>For <strong>pharma and medical</strong> batches, write-off is often the only compliant option once DTE &lt; shelf-life threshold for patient safety. Build regulatory disposal cost into the risk model — it's frequently 3–4× the product write-off value.</li>
-      <li><strong>Markdown recovery</strong> at the 31–60 day window typically recovers 60–75% of face value. At &lt;30 days, recovery drops to 20–40%. The markdown decision delay from 45 days to 15 days effectively destroys half the potential recovery value.</li>
-      <li>Root cause is almost always a <strong>forecasting or inbound ordering error</strong>. Map every Critical-tier batch back to the original PO and demand forecast — batch expiry is a lagging indicator of upstream planning failure, not a warehouse problem.</li>
+      <li><strong>FEFO (First Expiry, First Out)</strong> discipline prevents 60 70% of expiry write offs. It requires zero manual overrides in the WMS pick sequence   enforce it as a system locked rule, not a training guideline. Every manual pick override should trigger an alert to a supervisor.</li>
+      <li>Set automated DTE alerts at <strong>three thresholds</strong>: 90 days (plan), 60 days (act), 30 days (escalate). The 90 day trigger is the critical one   it gives enough time for markdown, customer diversion, or manufacturing schedule adjustment before value is destroyed.</li>
+      <li>For <strong>pharma and medical</strong> batches, write off is often the only compliant option once DTE &lt; shelf life threshold for patient safety. Build regulatory disposal cost into the risk model   it's frequently 3 4× the product write off value.</li>
+      <li><strong>Markdown recovery</strong> at the 31 60 day window typically recovers 60 75% of face value. At &lt;30 days, recovery drops to 20 40%. The markdown decision delay from 45 days to 15 days effectively destroys half the potential recovery value.</li>
+      <li>Root cause is almost always a <strong>forecasting or inbound ordering error</strong>. Map every Critical tier batch back to the original PO and demand forecast   batch expiry is a lagging indicator of upstream planning failure, not a warehouse problem.</li>
       <li>Run the SQL extract <strong>weekly, not monthly</strong>. Monthly cadence means batches can enter Critical tier between runs with no actionable window remaining.</li>
     </ul>
     <div class="advice-takeaway">
-      <strong>Key Takeaway:</strong> Every euro of batch write-off represents a compound failure — a forecasting miss, a reorder error, and a FEFO enforcement gap — all undiscovered until too late. Prevention starts upstream; the expiry tracker just makes the damage visible before it becomes permanent.
+      <strong>Key Takeaway:</strong> Every euro of batch write off represents a compound failure   a forecasting miss, a reorder error, and a FEFO enforcement gap   all undiscovered until too late. Prevention starts upstream; the expiry tracker just makes the damage visible before it becomes permanent.
     </div>
   </div>
 </div>

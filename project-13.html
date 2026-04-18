@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Inventory Turnover Benchmarker | Chibuike Dialaekwe</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root {
@@ -207,7 +207,7 @@ tbody td { padding: 0.65rem 1rem; color: var(--text); white-space: nowrap; }
 <div id="progress-bar"></div>
 
 <nav>
-  <span class="nav-logo">CD / PROJECT-13</span>
+  <span class="nav-logo">CD / PROJECT 13</span>
   <div class="nav-links">
     <a href="index.html">← Portfolio</a>
     <button class="theme-btn" id="themeToggle">☀️</button>
@@ -223,7 +223,7 @@ tbody td { padding: 0.65rem 1rem; color: var(--text); white-space: nowrap; }
     <span class="badge badge-cyan">POWER BI</span>
   </div>
   <h1>Inventory Turnover <span>Benchmarker</span></h1>
-  <p class="hero-sub">Compares internal inventory performance — ITR, DIO, GMROI, and dead stock % — against published industry benchmarks across Retail, FMCG, Industrial, and Automotive sectors with traffic-light RAG status.</p>
+  <p class="hero-sub">Compares internal inventory performance   ITR, DIO, GMROI, and dead stock %   against published industry benchmarks across Retail, FMCG, Industrial, and Automotive sectors with traffic light RAG status.</p>
 </div>
 
 <!-- PSF -->
@@ -233,17 +233,17 @@ tbody td { padding: 0.65rem 1rem; color: var(--text); white-space: nowrap; }
     <div class="psf-card problem">
       <div class="psf-label">⚑ Problem</div>
       <h3>Blind Benchmarking</h3>
-      <p>Most companies track inventory metrics in isolation — monitoring turnover ratios and days-on-hand without context. No visibility into whether performance is competitive versus sector peers leads to misallocated working capital and missed optimisation opportunities.</p>
+      <p>Most companies track inventory metrics in isolation   monitoring turnover ratios and days on hand without context. No visibility into whether performance is competitive versus sector peers leads to misallocated working capital and missed optimisation opportunities.</p>
     </div>
     <div class="psf-card solution">
       <div class="psf-label">⚙ Solution</div>
       <h3>Power BI Benchmark Model</h3>
-      <p>A Power BI model combining internal inventory data with published sector benchmarks (Retail, FMCG, Industrial, Automotive). Traffic-light RAG status on ITR, DIO, GMROI, and dead stock % shows at a glance where performance lags or leads industry standards.</p>
+      <p>A Power BI model combining internal inventory data with published sector benchmarks (Retail, FMCG, Industrial, Automotive). Traffic light RAG status on ITR, DIO, GMROI, and dead stock % shows at a glance where performance lags or leads industry standards.</p>
     </div>
     <div class="psf-card findings">
       <div class="psf-label">✓ Findings</div>
       <h3>Working Capital Unlocked</h3>
-      <p>31% of SKUs rated RED — below benchmark ITR — representing €4.2M in trapped working capital. Automotive and Industrial categories show the largest gaps. Closing the benchmark gap by 1 ITR point across RED SKUs projects a €1.1M cash release over 12 months.</p>
+      <p>31% of SKUs rated RED   below benchmark ITR   representing €4.2M in trapped working capital. Automotive and Industrial categories show the largest gaps. Closing the benchmark gap by 1 ITR point across RED SKUs projects a €1.1M cash release over 12 months.</p>
     </div>
   </div>
 </div>
@@ -252,7 +252,7 @@ tbody td { padding: 0.65rem 1rem; color: var(--text); white-space: nowrap; }
 <div class="section fade-up">
   <div class="section-title">RAG Status Summary</div>
   <div class="rag-panel">
-    <h3>Portfolio RAG Breakdown — Current vs Benchmark ITR</h3>
+    <h3>Portfolio RAG Breakdown   Current vs Benchmark ITR</h3>
     <div class="rag-grid" id="ragPanel"></div>
   </div>
 
@@ -271,15 +271,15 @@ tbody td { padding: 0.65rem 1rem; color: var(--text); white-space: nowrap; }
       </div>
       <div class="calc-field">
         <label>COGS (€)</label>
-        <input type="number" id="calcCOGS" value="1200000" min="0" step="10000"/>
+        <input type="number" id="calcCOGS" value="1200000" min="0" step="10000" />
       </div>
       <div class="calc-field">
         <label>AVG INVENTORY (€)</label>
-        <input type="number" id="calcInv" value="300000" min="1" step="5000"/>
+        <input type="number" id="calcInv" value="300000" min="1" step="5000" />
       </div>
       <div class="calc-field">
         <label>DEAD STOCK (%)</label>
-        <input type="number" id="calcDead" value="8" min="0" max="100" step="0.5"/>
+        <input type="number" id="calcDead" value="8" min="0" max="100" step="0.5" />
       </div>
     </div>
     <button class="calc-btn" onclick="runCalc()">Calculate Benchmark Position</button>
@@ -376,7 +376,7 @@ tbody td { padding: 0.65rem 1rem; color: var(--text); white-space: nowrap; }
   <div class="section-title">Working Capital Forecast</div>
   <div class="forecast-section">
     <div class="forecast-header">
-      <h3>Projected WC Release if ITR Reaches Benchmark (12-Month View)</h3>
+      <h3>Projected WC Release if ITR Reaches Benchmark (12 Month View)</h3>
       <div class="scenario-btns">
         <button class="scenario-btn active" onclick="setScenario('base',this)">Base (+0.5 ITR/Qtr)</button>
         <button class="scenario-btn" onclick="setScenario('optimistic',this)">Optimistic (+1.0 ITR/Qtr)</button>
@@ -394,15 +394,15 @@ tbody td { padding: 0.65rem 1rem; color: var(--text); white-space: nowrap; }
   <div class="advice-box">
     <h3>💡 Recommendations for Inventory Leaders</h3>
     <ul>
-      <li>A 1-point improvement in Inventory Turnover Ratio typically frees <strong>8–12% of working capital</strong> — for this portfolio, that equals €320K–€480K per ITR point gained.</li>
-      <li>Prioritise RED-status categories in Automotive and Industrial first — they show the widest benchmark gaps and the highest trapped capital per SKU.</li>
-      <li>Attack dead stock above 10% immediately: markdowns, liquidation auctions, or supplier buy-back clauses are faster than slow sell-through and free cash faster.</li>
-      <li>GMROI below 2.0x signals margin compression on top of turnover lag — review pricing and supplier terms simultaneously with inventory reduction programmes.</li>
-      <li>FMCG categories are closest to benchmark; focus continuous improvement there on DIO tightening (target sub-25 days) rather than broad inventory cuts.</li>
-      <li>Implement rolling 13-week demand-based reorder reviews to prevent seasonal stock buildup that inflates DIO in Q3/Q4 peaks.</li>
+      <li>A 1 point improvement in Inventory Turnover Ratio typically frees <strong>8 12% of working capital</strong>   for this portfolio, that equals €320K €480K per ITR point gained.</li>
+      <li>Prioritise RED status categories in Automotive and Industrial first   they show the widest benchmark gaps and the highest trapped capital per SKU.</li>
+      <li>Attack dead stock above 10% immediately: markdowns, liquidation auctions, or supplier buy back clauses are faster than slow sell through and free cash faster.</li>
+      <li>GMROI below 2.0x signals margin compression on top of turnover lag   review pricing and supplier terms simultaneously with inventory reduction programmes.</li>
+      <li>FMCG categories are closest to benchmark; focus continuous improvement there on DIO tightening (target sub 25 days) rather than broad inventory cuts.</li>
+      <li>Implement rolling 13 week demand based reorder reviews to prevent seasonal stock buildup that inflates DIO in Q3/Q4 peaks.</li>
     </ul>
     <div class="advice-takeaway">
-      <strong>Key Takeaway:</strong> Benchmarking reveals the <em>opportunity cost of inaction</em>. Every quarter a RED-status SKU stays below benchmark ITR is a quarter of compounding working capital cost — funding competitor growth instead of your own.
+      <strong>Key Takeaway:</strong> Benchmarking reveals the <em>opportunity cost of inaction</em>. Every quarter a RED status SKU stays below benchmark ITR is a quarter of compounding working capital cost   funding competitor growth instead of your own.
     </div>
   </div>
 </div>

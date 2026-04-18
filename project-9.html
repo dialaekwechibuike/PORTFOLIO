@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Freight Spend Intelligence — Chibuike Dialaekwe</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Freight Spend Intelligence   Chibuike Dialaekwe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root{--bg:#080c14;--bg2:#0d1220;--bg3:#111827;--card:#0f1623;--text:#e8eaf6;--muted:#7986a3;--hint:#4a5568;--border:rgba(0,229,255,0.12);--border2:rgba(0,229,255,0.25);--cyan:#00e5ff;--green:#00ff88;--amber:#ffb300;--red:#ff4757;--body-bg:#080c14;}
@@ -209,13 +209,13 @@ footer a{color:var(--cyan);text-decoration:none;}
 <!-- HERO -->
 <div class="hero fade-up">
   <div class="hero-badge"><span class="badge-dot"></span>🚚 UNCOVERS HIDDEN FREIGHT COSTS</div>
-  <h1>Freight Spend<br/><span>Intelligence</span></h1>
+  <h1>Freight Spend<br /><span>Intelligence</span></h1>
   <div class="hero-meta">
     <span class="tag tag-cat">🚚 Logistics</span>
     <span class="tag tag-tool">SQL</span>
     <span class="tag tag-tool">Python</span>
   </div>
-  <p class="hero-problem">Freight costs are fragmented across 8 carriers, multiple freight forwarders, and disconnected invoice systems — making total cost of shipment nearly impossible to benchmark. No lane-level visibility exists, so overpayments accumulate undetected. Carriers set rates knowing shippers lack the data to challenge them.</p>
+  <p class="hero-problem">Freight costs are fragmented across 8 carriers, multiple freight forwarders, and disconnected invoice systems   making total cost of shipment nearly impossible to benchmark. No lane level visibility exists, so overpayments accumulate undetected. Carriers set rates knowing shippers lack the data to challenge them.</p>
 </div>
 
 <!-- FILTER BAR -->
@@ -269,28 +269,28 @@ footer a{color:var(--cyan);text-decoration:none;}
   <div class="section-title">Freight Cost Analysis</div>
   <div class="charts-grid">
     <div class="chart-card full-width">
-      <div class="chart-title">Freight Spend by Lane — Actual vs Benchmark (€)</div>
-      <div class="chart-sub">Top 12 lanes by spend volume. Red bars indicate lanes where actual cost exceeds market benchmark — priority renegotiation targets</div>
+      <div class="chart-title">Freight Spend by Lane   Actual vs Benchmark (€)</div>
+      <div class="chart-sub">Top 12 lanes by spend volume. Red bars indicate lanes where actual cost exceeds market benchmark   priority renegotiation targets</div>
       <div class="chart-wrap-lg"><canvas id="laneChart"></canvas></div>
     </div>
     <div class="chart-card">
       <div class="chart-title">Spend by Carrier (€)</div>
-      <div class="chart-sub">Total freight spend distribution across 8 carrier partners — concentration risk and renegotiation leverage</div>
+      <div class="chart-sub">Total freight spend distribution across 8 carrier partners   concentration risk and renegotiation leverage</div>
       <div class="chart-wrap"><canvas id="carrierChart"></canvas></div>
     </div>
     <div class="chart-card">
       <div class="chart-title">Spend by Transport Mode (€)</div>
-      <div class="chart-sub">Modal split of freight spend — identifies modal shift opportunities from high-cost air to road or sea</div>
+      <div class="chart-sub">Modal split of freight spend   identifies modal shift opportunities from high cost air to road or sea</div>
       <div class="chart-wrap"><canvas id="modeChart"></canvas></div>
     </div>
     <div class="chart-card">
       <div class="chart-title">Cost Per Kg by Carrier (€/kg)</div>
-      <div class="chart-sub">Efficiency benchmark — carriers with high cost/kg on similar routes signal contract renegotiation opportunity</div>
+      <div class="chart-sub">Efficiency benchmark   carriers with high cost/kg on similar routes signal contract renegotiation opportunity</div>
       <div class="chart-wrap"><canvas id="cpkChart"></canvas></div>
     </div>
     <div class="chart-card">
       <div class="chart-title">Variance from Benchmark by Mode (%)</div>
-      <div class="chart-sub">How far actual cost deviates from market rate per transport mode — positive = overpaying vs benchmark</div>
+      <div class="chart-sub">How far actual cost deviates from market rate per transport mode   positive = overpaying vs benchmark</div>
       <div class="chart-wrap"><canvas id="varianceChart"></canvas></div>
     </div>
   </div>
@@ -298,7 +298,7 @@ footer a{color:var(--cyan);text-decoration:none;}
   <!-- DATA TABLE -->
   <div class="section-eyebrow">// raw data</div>
   <div class="section-title">📊 Raw Dataset</div>
-  <p style="color:var(--muted);font-size:14px;margin-bottom:16px;">Freight invoice data aggregated across 8 carriers — 50 rows shown. Red rows = overcharge flagged (&gt;15% above benchmark).</p>
+  <p style="color:var(--muted);font-size:14px;margin-bottom:16px;">Freight invoice data aggregated across 8 carriers   50 rows shown. Red rows = overcharge flagged (&gt;15% above benchmark).</p>
   <div class="tbl-wrap">
     <table>
       <thead>
@@ -323,29 +323,29 @@ footer a{color:var(--cyan);text-decoration:none;}
     <div class="psf-card problem">
       <div class="psf-header"><span class="psf-icon">🔴</span><span class="psf-label">▶ PROBLEM</span></div>
       <ul class="psf-list">
-        <li>Freight invoices from 8 carriers arrived in different formats — PDFs, Excel files, EDI messages — with no single consolidated view of total spend, making cross-carrier benchmarking impossible</li>
-        <li>Lane-level cost visibility did not exist: the company knew total freight spend but had no idea which origin-destination pairs were overpriced versus market rates</li>
-        <li>Carrier contracts were renegotiated based on general volume arguments, with no lane-level data to challenge specific rate line items — leaving significant negotiation leverage unused</li>
-        <li>Air freight was being used for shipments within 800km of road distance purely from habit — no one had quantified the modal shift saving available by switching to express road services</li>
+        <li>Freight invoices from 8 carriers arrived in different formats   PDFs, Excel files, EDI messages   with no single consolidated view of total spend, making cross carrier benchmarking impossible</li>
+        <li>Lane level cost visibility did not exist: the company knew total freight spend but had no idea which origin destination pairs were overpriced versus market rates</li>
+        <li>Carrier contracts were renegotiated based on general volume arguments, with no lane level data to challenge specific rate line items   leaving significant negotiation leverage unused</li>
+        <li>Air freight was being used for shipments within 800km of road distance purely from habit   no one had quantified the modal shift saving available by switching to express road services</li>
       </ul>
     </div>
     <div class="psf-card solution">
       <div class="psf-header"><span class="psf-icon">🔵</span><span class="psf-label">▶ SOLUTION</span></div>
       <ul class="psf-list">
         <li>SQL pipeline extracting and normalising freight invoice data from 8 carrier portals into a unified <code style="font-family:'Space Mono',monospace;font-size:12px;background:var(--bg3);padding:1px 5px;border-radius:3px;">freight_invoice_fact</code> table with standardised lane, weight, mode, and cost fields</li>
-        <li>Python benchmarking script pulls market rate indices (Freightos Baltic Index for sea, Xeneta benchmarks for road/air) and calculates variance per lane — flags any lane &gt;15% above benchmark as overcharge</li>
-        <li>Power BI dashboard visualising spend by carrier, lane, mode, and month — with drill-through from overcharge alerts directly to invoice-level detail for dispute resolution</li>
+        <li>Python benchmarking script pulls market rate indices (Freightos Baltic Index for sea, Xeneta benchmarks for road/air) and calculates variance per lane   flags any lane &gt;15% above benchmark as overcharge</li>
+        <li>Power BI dashboard visualising spend by carrier, lane, mode, and month   with drill through from overcharge alerts directly to invoice level detail for dispute resolution</li>
         <li>Modal shift analyser calculates CO₂ and cost saving from switching flagged air shipments to road or rail, linking freight optimisation to ESG reporting requirements</li>
       </ul>
     </div>
     <div class="psf-card findings">
       <div class="psf-header"><span class="psf-icon">🟢</span><span class="psf-label">▶ FINDINGS</span></div>
       <ul class="psf-list">
-        <li>27% of lanes were priced above the market benchmark — with the Hamburg→Warsaw road lane overcharged by 34%, representing €48,000 in addressable annual savings from a single route renegotiation</li>
-        <li>Air freight accounted for 38% of total spend but only 12% of shipment volume — analysis revealed 41% of air shipments could have moved by express road at 65% lower cost per kg</li>
-        <li>DB Schenker showed the highest cost/kg variance at +21% above benchmark on Central European lanes — direct renegotiation using this data secured a 17% rate reduction within 6 weeks</li>
-        <li>Consolidating 3 partially-loaded sea freight shipments per month into 1 full FCL container would reduce sea freight cost by €31,000 annually while also reducing Scope 3 emissions</li>
-        <li>Total identified savings across all flagged lanes: <strong>€214,000/year</strong> — representing 12.4% of total freight spend</li>
+        <li>27% of lanes were priced above the market benchmark   with the Hamburg→Warsaw road lane overcharged by 34%, representing €48,000 in addressable annual savings from a single route renegotiation</li>
+        <li>Air freight accounted for 38% of total spend but only 12% of shipment volume   analysis revealed 41% of air shipments could have moved by express road at 65% lower cost per kg</li>
+        <li>DB Schenker showed the highest cost/kg variance at +21% above benchmark on Central European lanes   direct renegotiation using this data secured a 17% rate reduction within 6 weeks</li>
+        <li>Consolidating 3 partially loaded sea freight shipments per month into 1 full FCL container would reduce sea freight cost by €31,000 annually while also reducing Scope 3 emissions</li>
+        <li>Total identified savings across all flagged lanes: <strong>€214,000/year</strong>   representing 12.4% of total freight spend</li>
       </ul>
     </div>
   </div>
@@ -357,7 +357,7 @@ footer a{color:var(--cyan);text-decoration:none;}
   <div class="section-title">📈 Forecast &amp; Projections</div>
   <div class="chart-card">
     <div class="chart-title">Annual Freight Spend Forecast with Lane Optimization Potential (€)</div>
-    <div class="chart-sub">Historical monthly spend (solid) vs 12-month forward projection — shaded area shows savings achievable if flagged lanes are renegotiated</div>
+    <div class="chart-sub">Historical monthly spend (solid) vs 12 month forward projection   shaded area shows savings achievable if flagged lanes are renegotiated</div>
     <div class="scenario-btns">
       <button class="scen-btn active" onclick="setScenario('base',this)">Base Case</button>
       <button class="scen-btn" onclick="setScenario('optimistic',this)">Full Optimization</button>
@@ -373,27 +373,27 @@ footer a{color:var(--cyan);text-decoration:none;}
   <div class="section-eyebrow">// strategic guidance</div>
   <div class="section-title">💡 Advice for Companies with Similar Challenges</div>
   <div class="advice-card">
-    <div class="advice-title">Freight Cost Control — Key Recommendations</div>
+    <div class="advice-title">Freight Cost Control   Key Recommendations</div>
     <ul class="advice-list">
-      <li>Before renegotiating carrier contracts, build a lane-level spend database first. Carriers set rates knowing shippers lack visibility. Even 3 months of clean freight data gives you the negotiating leverage to reduce rates 10–20% — far more than general volume arguments achieve.</li>
-      <li>Benchmark every lane separately, not just total contract value. A carrier can give you a 3% overall rate reduction while quietly raising rates on your highest-volume lanes by 8%. Lane-by-lane benchmarking closes this loophole entirely.</li>
-      <li>Audit your modal split quarterly. Air freight usage drifts upward over time as operations teams default to speed — often unnecessarily. A simple rule: any shipment under 800km and non-urgent should be road. Any >5,000km and non-urgent should be sea. Apply it systematically and you will find 10–20% of your air spend is avoidable.</li>
-      <li>Connect freight optimisation to your ESG reporting from day one. The same analysis that finds cost savings also identifies Scope 3 emission reductions. Presenting freight savings alongside CO₂ reduction numbers gives the project dual business justification and is increasingly expected by sustainability-conscious customers.</li>
+      <li>Before renegotiating carrier contracts, build a lane level spend database first. Carriers set rates knowing shippers lack visibility. Even 3 months of clean freight data gives you the negotiating leverage to reduce rates 10 20%   far more than general volume arguments achieve.</li>
+      <li>Benchmark every lane separately, not just total contract value. A carrier can give you a 3% overall rate reduction while quietly raising rates on your highest volume lanes by 8%. Lane by lane benchmarking closes this loophole entirely.</li>
+      <li>Audit your modal split quarterly. Air freight usage drifts upward over time as operations teams default to speed   often unnecessarily. A simple rule: any shipment under 800km and non urgent should be road. Any >5,000km and non urgent should be sea. Apply it systematically and you will find 10 20% of your air spend is avoidable.</li>
+      <li>Connect freight optimisation to your ESG reporting from day one. The same analysis that finds cost savings also identifies Scope 3 emission reductions. Presenting freight savings alongside CO₂ reduction numbers gives the project dual business justification and is increasingly expected by sustainability conscious customers.</li>
     </ul>
     <div class="takeaway">
       <div class="takeaway-label">// KEY TAKEAWAY</div>
-      <p>Companies that invest in freight data infrastructure consistently outperform those that rely on relationship-based carrier management. One analyst with 3 months of clean invoice data and a benchmarking model will deliver more freight savings than a procurement director with 10 years of carrier relationships but no lane-level visibility. Data always wins in freight negotiations.</p>
+      <p>Companies that invest in freight data infrastructure consistently outperform those that rely on relationship based carrier management. One analyst with 3 months of clean invoice data and a benchmarking model will deliver more freight savings than a procurement director with 10 years of carrier relationships but no lane level visibility. Data always wins in freight negotiations.</p>
     </div>
   </div>
 </div>
 
 <div class="nav-bottom fade-up">
-  <a href="project-8.html" class="btn-back">← S&OP Simulator</a>
+  <a href="project-8.html" class="btn-back">← S&OP; Simulator</a>
   <a href="project-10.html" class="btn-next">Next: Reorder Point Automation →</a>
 </div>
 
 <footer>
-  <span>© 2026 Chibuike Dialaekwe · <a href="mailto:Dialaekwechibuike@gmail.com">Dialaekwechibuike@gmail.com</a> · <a href="https://linkedin.com/in/chibuike-dialaekwe-15582b248" target="_blank">LinkedIn</a></span>
+  <span>© 2026 Chibuike Dialaekwe   <a href="mailto:Dialaekwechibuike@gmail.com">Dialaekwechibuike@gmail.com</a>   <a href="https://linkedin.com/in/chibuike-dialaekwe-15582b248" target="_blank">LinkedIn</a></span>
 </footer>
 
 <script>

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>S&OP Planning Simulator — Chibuike Dialaekwe</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>S&OP; Planning Simulator   Chibuike Dialaekwe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root{--bg:#080c14;--bg2:#0d1220;--bg3:#111827;--card:#0f1623;--text:#e8eaf6;--muted:#7986a3;--hint:#4a5568;--border:rgba(0,229,255,0.12);--border2:rgba(0,229,255,0.25);--cyan:#00e5ff;--green:#00ff88;--amber:#ffb300;--red:#ff4757;--body-bg:#080c14;}
@@ -222,20 +222,20 @@ footer a{color:var(--cyan);text-decoration:none;}
 <!-- HERO -->
 <div class="hero fade-up">
   <div class="hero-badge"><span class="badge-dot"></span>📊 ALIGNS SUPPLY TO DEMAND PLAN</div>
-  <h1>S&amp;OP Planning<br/><span>Simulator</span></h1>
+  <h1>S&amp;OP Planning<br /><span>Simulator</span></h1>
   <div class="hero-meta">
     <span class="tag tag-cat">📊 Forecasting</span>
     <span class="tag tag-tool">Excel</span>
   </div>
-  <p class="hero-problem">Sales &amp; Operations Planning is done in disconnected spreadsheets across commercial and supply chain teams, causing misalignment between demand forecasts and production capacity. The monthly S&amp;OP meeting has no shared data model — sales input optimistic numbers, operations counters conservatively, and no one reconciles the gap before it becomes a production crisis.</p>
+  <p class="hero-problem">Sales &amp; Operations Planning is done in disconnected spreadsheets across commercial and supply chain teams, causing misalignment between demand forecasts and production capacity. The monthly S&amp;OP meeting has no shared data model   sales input optimistic numbers, operations counters conservatively, and no one reconciles the gap before it becomes a production crisis.</p>
 </div>
 
 <!-- LIVE SIMULATOR -->
 <div class="simulator fade-up">
   <div class="sim-header">
     <div>
-      <div class="sim-title">⚙️ Live S&OP Simulator</div>
-      <div class="sim-subtitle">Adjust demand and capacity inputs to see real-time reconciliation and recommended actions</div>
+      <div class="sim-title">⚙️ Live S&OP; Simulator</div>
+      <div class="sim-subtitle">Adjust demand and capacity inputs to see real time reconciliation and recommended actions</div>
     </div>
   </div>
   <div class="sim-controls">
@@ -250,19 +250,19 @@ footer a{color:var(--cyan);text-decoration:none;}
       </select>
     </div>
     <div class="sim-group">
-      <label class="sim-label">DEMAND ADJUSTMENT — <span id="demandLabel">0%</span></label>
+      <label class="sim-label">DEMAND ADJUSTMENT   <span id="demandLabel">0%</span></label>
       <div class="slider-row">
-        <span style="font-size:12px;color:var(--muted);">-30%</span>
-        <input type="range" id="demandSlider" min="-30" max="30" value="0" step="1" oninput="updateSlider('demand',this.value);runSim()"/>
+        <span style="font-size:12px;color:var(--muted);"> 30%</span>
+        <input type="range" id="demandSlider" min="-30" max="30" value="0" step="1" oninput="updateSlider('demand',this.value);runSim()" />
         <span style="font-size:12px;color:var(--muted);">+30%</span>
         <span class="slider-val" id="demandVal">0%</span>
       </div>
     </div>
     <div class="sim-group">
-      <label class="sim-label">CAPACITY ADJUSTMENT — <span id="capacityLabel">0%</span></label>
+      <label class="sim-label">CAPACITY ADJUSTMENT   <span id="capacityLabel">0%</span></label>
       <div class="slider-row">
-        <span style="font-size:12px;color:var(--muted);">-20%</span>
-        <input type="range" id="capacitySlider" min="-20" max="20" value="0" step="1" oninput="updateSlider('capacity',this.value);runSim()"/>
+        <span style="font-size:12px;color:var(--muted);"> 20%</span>
+        <input type="range" id="capacitySlider" min="-20" max="20" value="0" step="1" oninput="updateSlider('capacity',this.value);runSim()" />
         <span style="font-size:12px;color:var(--muted);">+20%</span>
         <span class="slider-val" id="capacityVal">0%</span>
       </div>
@@ -295,27 +295,27 @@ footer a{color:var(--cyan);text-decoration:none;}
   <div class="charts-grid">
     <div class="chart-card full-width">
       <div class="chart-title">Demand Forecast vs Production Capacity vs Sales Input (12 Months)</div>
-      <div class="chart-sub">Three-way view of demand plan, capacity ceiling, and sales team input — the gap between these lines drives S&OP actions</div>
+      <div class="chart-sub">Three way view of demand plan, capacity ceiling, and sales team input   the gap between these lines drives S&OP; actions</div>
       <div class="chart-wrap-lg"><canvas id="sopMainChart"></canvas></div>
     </div>
     <div class="chart-card">
-      <div class="chart-title">Monthly Demand-Supply Gap (Units)</div>
+      <div class="chart-title">Monthly Demand Supply Gap (Units)</div>
       <div class="chart-sub">Positive = surplus capacity, negative = production shortfall requiring action</div>
       <div class="chart-wrap"><canvas id="gapChart"></canvas></div>
     </div>
     <div class="chart-card">
-      <div class="chart-title">Inventory Position — Opening vs Closing Stock</div>
+      <div class="chart-title">Inventory Position   Opening vs Closing Stock</div>
       <div class="chart-sub">Stock level trajectory across the planning horizon, including safety stock floor</div>
       <div class="chart-wrap"><canvas id="stockChart"></canvas></div>
     </div>
     <div class="chart-card">
       <div class="chart-title">Demand Confidence Level by Month (%)</div>
-      <div class="chart-sub">Planning confidence declines the further out the horizon — drives buffer stock decisions</div>
+      <div class="chart-sub">Planning confidence declines the further out the horizon   drives buffer stock decisions</div>
       <div class="chart-wrap"><canvas id="confChart"></canvas></div>
     </div>
     <div class="chart-card">
       <div class="chart-title">Recommended Actions Distribution</div>
-      <div class="chart-sub">Count of action types recommended across the planning cycle — shows where effort is concentrated</div>
+      <div class="chart-sub">Count of action types recommended across the planning cycle   shows where effort is concentrated</div>
       <div class="chart-wrap"><canvas id="actionChart"></canvas></div>
     </div>
   </div>
@@ -323,7 +323,7 @@ footer a{color:var(--cyan);text-decoration:none;}
   <!-- RECONCILIATION TABLE -->
   <div class="section-eyebrow">// reconciliation output</div>
   <div class="section-title">Monthly S&amp;OP Reconciliation Plan</div>
-  <p style="color:var(--muted);font-size:14px;margin-bottom:16px;">Full month-by-month reconciliation of demand forecast, production capacity, and inventory position with recommended S&OP actions.</p>
+  <p style="color:var(--muted);font-size:14px;margin-bottom:16px;">Full month by month reconciliation of demand forecast, production capacity, and inventory position with recommended S&OP; actions.</p>
   <div class="rec-table-wrap">
     <table>
       <thead>
@@ -335,7 +335,7 @@ footer a{color:var(--cyan);text-decoration:none;}
           <th>Prod. Capacity (units)</th>
           <th>Opening Stock</th>
           <th>Closing Stock</th>
-          <th>Demand-Supply Gap</th>
+          <th>Demand Supply Gap</th>
           <th>Recommended Action</th>
           <th>Confidence</th>
         </tr>
@@ -343,11 +343,11 @@ footer a{color:var(--cyan);text-decoration:none;}
       <tbody id="sopTableBody"></tbody>
     </table>
   </div>
-  <button class="dl-btn" onclick="downloadCSV()">⬇ Download Full S&OP Dataset (CSV)</button>
+  <button class="dl-btn" onclick="downloadCSV()">⬇ Download Full S&OP; Dataset (CSV)</button>
 
   <!-- EXEC SUMMARY -->
   <div style="margin-top:40px;" class="section-eyebrow">// executive summary</div>
-  <div class="section-title">One-Page S&amp;OP Executive Summary</div>
+  <div class="section-title">One Page S&amp;OP Executive Summary</div>
   <div class="exec-summary" id="execSummary"></div>
 </div>
 
@@ -359,29 +359,29 @@ footer a{color:var(--cyan);text-decoration:none;}
     <div class="psf-card problem">
       <div class="psf-header"><span class="psf-icon">🔴</span><span class="psf-label">▶ PROBLEM</span></div>
       <ul class="psf-list">
-        <li>Commercial teams consistently overforecast demand in S&OP cycles — average overforecast of 18% vs actuals — inflating production schedules and leading to costly end-of-season overstocks</li>
+        <li>Commercial teams consistently overforecast demand in S&OP; cycles   average overforecast of 18% vs actuals   inflating production schedules and leading to costly end of season overstocks</li>
         <li>Supply chain planners underforecast as a hedge against capacity risk, creating a systematic downward bias that causes stockouts in peak demand months despite available capacity</li>
-        <li>The monthly S&OP meeting had no shared numerical model — each team brought their own spreadsheet and the meeting became a negotiation rather than a data-driven decision</li>
+        <li>The monthly S&OP; meeting had no shared numerical model   each team brought their own spreadsheet and the meeting became a negotiation rather than a data driven decision</li>
         <li>Demand and supply plans were reconciled retrospectively, meaning decisions on procurement, production scheduling, and logistics capacity were made on outdated numbers</li>
       </ul>
     </div>
     <div class="psf-card solution">
       <div class="psf-header"><span class="psf-icon">🔵</span><span class="psf-label">▶ SOLUTION</span></div>
       <ul class="psf-list">
-        <li>Interactive S&OP simulator built in Excel/web with a single shared data model — demand forecast, sales input, and production capacity loaded from the same SQL source, eliminating version conflicts</li>
-        <li>Month-by-month reconciliation logic calculates the demand-supply gap and automatically recommends one of four actions: Increase Production, Reduce Order, Hold Plan, or Expedite Procurement</li>
-        <li>Confidence scoring applies statistical uncertainty bands to each forecast month — months 1–3 at 85%+ confidence, months 4–6 at 70–85%, beyond 6 months at 55–70% — flagging where buffer stock is justified</li>
-        <li>Automated one-page executive summary generated after each simulation run, giving leadership a pre-formatted decision brief for the S&OP review meeting</li>
+        <li>Interactive S&OP; simulator built in Excel/web with a single shared data model   demand forecast, sales input, and production capacity loaded from the same SQL source, eliminating version conflicts</li>
+        <li>Month by month reconciliation logic calculates the demand supply gap and automatically recommends one of four actions: Increase Production, Reduce Order, Hold Plan, or Expedite Procurement</li>
+        <li>Confidence scoring applies statistical uncertainty bands to each forecast month   months 1 3 at 85%+ confidence, months 4 6 at 70 85%, beyond 6 months at 55 70%   flagging where buffer stock is justified</li>
+        <li>Automated one page executive summary generated after each simulation run, giving leadership a pre formatted decision brief for the S&OP; review meeting</li>
       </ul>
     </div>
     <div class="psf-card findings">
       <div class="psf-header"><span class="psf-icon">🟢</span><span class="psf-label">▶ FINDINGS</span></div>
       <ul class="psf-list">
-        <li>Apparel and FMCG product families showed the largest demand-supply gaps in Q2 and Q4 — periods that align with seasonal promotions that weren't factored into the production capacity model</li>
-        <li>Production capacity was over-committed in 4 out of 12 months due to maintenance windows being excluded from the planner's capacity input — simulator exposed this blind spot immediately</li>
-        <li>Sales input consistently exceeded statistical forecast by 12–22% in months 1–3 — confirming a systematic optimism bias that the shared model now makes visible and discussable</li>
-        <li>Within two S&OP cycles of deploying the shared simulator, cross-functional alignment time in the monthly meeting reduced from 3.5 hours to 55 minutes</li>
-        <li>Inventory holding costs reduced by €94,000 in the first two quarters as overstocking decisions were caught at the planning stage rather than post-production</li>
+        <li>Apparel and FMCG product families showed the largest demand supply gaps in Q2 and Q4   periods that align with seasonal promotions that weren't factored into the production capacity model</li>
+        <li>Production capacity was over committed in 4 out of 12 months due to maintenance windows being excluded from the planner's capacity input   simulator exposed this blind spot immediately</li>
+        <li>Sales input consistently exceeded statistical forecast by 12 22% in months 1 3   confirming a systematic optimism bias that the shared model now makes visible and discussable</li>
+        <li>Within two S&OP; cycles of deploying the shared simulator, cross functional alignment time in the monthly meeting reduced from 3.5 hours to 55 minutes</li>
+        <li>Inventory holding costs reduced by €94,000 in the first two quarters as overstocking decisions were caught at the planning stage rather than post production</li>
       </ul>
     </div>
   </div>
@@ -392,8 +392,8 @@ footer a{color:var(--cyan);text-decoration:none;}
   <div class="section-eyebrow">// outlook</div>
   <div class="section-title">📈 Forecast &amp; Projections</div>
   <div class="chart-card">
-    <div class="chart-title">6-Month Rolling Demand vs Capacity Gap Projection</div>
-    <div class="chart-sub">Forward projection of demand-supply gap — positive values indicate surplus capacity, negative values indicate production shortfall</div>
+    <div class="chart-title">6 Month Rolling Demand vs Capacity Gap Projection</div>
+    <div class="chart-sub">Forward projection of demand supply gap   positive values indicate surplus capacity, negative values indicate production shortfall</div>
     <div class="scenario-btns">
       <button class="scen-btn active" onclick="setScenario('base',this)">Base Case</button>
       <button class="scen-btn" onclick="setScenario('optimistic',this)">Optimistic</button>
@@ -409,16 +409,16 @@ footer a{color:var(--cyan);text-decoration:none;}
   <div class="section-eyebrow">// strategic guidance</div>
   <div class="section-title">💡 Advice for Companies with Similar Challenges</div>
   <div class="advice-card">
-    <div class="advice-title">S&amp;OP Process Design — Key Recommendations</div>
+    <div class="advice-title">S&amp;OP Process Design   Key Recommendations</div>
     <ul class="advice-list">
-      <li>A single shared S&OP model accessible to both sales and supply chain eliminates 80% of the cross-functional conflict in monthly planning meetings. Governance matters more than the tool — agree on one number together before the meeting, not during it.</li>
-      <li>Separate the statistical forecast from the sales input. The statistical forecast is your neutral baseline — it removes human bias. The sales input then becomes an adjustment with justification required. This shift alone reveals how much of your forecast error is coming from optimism bias versus genuine market signal.</li>
-      <li>Never run S&OP on a single scenario. Base, optimistic, and pessimistic plans give your supply chain team clear triggers — "if demand exceeds X, we activate buffer stock" — rather than waiting until the month is already running to react.</li>
-      <li>Build confidence scoring into every planning month. A forecast for next month and a forecast for 6 months from now are not equally reliable. Treating them as equivalent drives poor inventory buffering decisions. Taper confidence explicitly — it forces procurement to apply the right safety margins.</li>
+      <li>A single shared S&OP; model accessible to both sales and supply chain eliminates 80% of the cross functional conflict in monthly planning meetings. Governance matters more than the tool   agree on one number together before the meeting, not during it.</li>
+      <li>Separate the statistical forecast from the sales input. The statistical forecast is your neutral baseline   it removes human bias. The sales input then becomes an adjustment with justification required. This shift alone reveals how much of your forecast error is coming from optimism bias versus genuine market signal.</li>
+      <li>Never run S&OP; on a single scenario. Base, optimistic, and pessimistic plans give your supply chain team clear triggers   "if demand exceeds X, we activate buffer stock"   rather than waiting until the month is already running to react.</li>
+      <li>Build confidence scoring into every planning month. A forecast for next month and a forecast for 6 months from now are not equally reliable. Treating them as equivalent drives poor inventory buffering decisions. Taper confidence explicitly   it forces procurement to apply the right safety margins.</li>
     </ul>
     <div class="takeaway">
       <div class="takeaway-label">// KEY TAKEAWAY</div>
-      <p>The S&OP process fails not because of a lack of data, but because each function guards its own numbers. A shared simulator that produces one agreed consensus plan — even imperfect — consistently outperforms the parallel-spreadsheet approach. Alignment on a single number, reviewed together, beats analytical precision reviewed in silos every time.</p>
+      <p>The S&OP; process fails not because of a lack of data, but because each function guards its own numbers. A shared simulator that produces one agreed consensus plan   even imperfect   consistently outperforms the parallel spreadsheet approach. Alignment on a single number, reviewed together, beats analytical precision reviewed in silos every time.</p>
     </div>
   </div>
 </div>
@@ -430,7 +430,7 @@ footer a{color:var(--cyan);text-decoration:none;}
 </div>
 
 <footer>
-  <span>© 2026 Chibuike Dialaekwe · <a href="mailto:Dialaekwechibuike@gmail.com">Dialaekwechibuike@gmail.com</a> · <a href="https://linkedin.com/in/chibuike-dialaekwe-15582b248" target="_blank">LinkedIn</a></span>
+  <span>© 2026 Chibuike Dialaekwe   <a href="mailto:Dialaekwechibuike@gmail.com">Dialaekwechibuike@gmail.com</a>   <a href="https://linkedin.com/in/chibuike-dialaekwe-15582b248" target="_blank">LinkedIn</a></span>
 </footer>
 
 <script>

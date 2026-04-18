@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Warehouse KPI Dashboard — Chibuike Dialaekwe</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Warehouse KPI Dashboard   Chibuike Dialaekwe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root {
@@ -226,14 +226,14 @@ footer a{color:var(--cyan);text-decoration:none;}
 
 <!-- HERO -->
 <div class="hero fade-up">
-  <div class="hero-badge"><span class="badge-dot"></span>🏭 REAL-TIME OPS VISIBILITY</div>
-  <h1>Warehouse KPI<br/><span>Dashboard</span></h1>
+  <div class="hero-badge"><span class="badge-dot"></span>🏭 REAL TIME OPS VISIBILITY</div>
+  <h1>Warehouse KPI<br /><span>Dashboard</span></h1>
   <div class="hero-meta">
     <span class="tag tag-cat">📦 Inventory</span>
     <span class="tag tag-tool">Power BI</span>
     <span class="tag tag-tool">SQL</span>
   </div>
-  <p class="hero-problem">Warehouse managers lack a unified view of pick rates, order accuracy, capacity utilisation, and throughput across shifts. Data sits in WMS exports that require manual Excel manipulation — causing reporting delays, missed inefficiencies, and shift-level blind spots worth thousands in lost productivity per month.</p>
+  <p class="hero-problem">Warehouse managers lack a unified view of pick rates, order accuracy, capacity utilisation, and throughput across shifts. Data sits in WMS exports that require manual Excel manipulation   causing reporting delays, missed inefficiencies, and shift level blind spots worth thousands in lost productivity per month.</p>
 </div>
 
 <!-- CONTROLS -->
@@ -265,7 +265,7 @@ footer a{color:var(--cyan);text-decoration:none;}
 
   <!-- SHIFT LEADERBOARD -->
   <div class="section-eyebrow" style="margin-top:8px;">// shift performance</div>
-  <div class="section-title">Shift-Level Drill-Down</div>
+  <div class="section-title">Shift Level Drill Down</div>
   <div class="shift-grid" id="shiftGrid"></div>
 
   <!-- CHARTS -->
@@ -279,22 +279,22 @@ footer a{color:var(--cyan);text-decoration:none;}
     </div>
     <div class="chart-card">
       <div class="chart-title">Order Accuracy Rate (%)</div>
-      <div class="chart-sub">Daily order accuracy trend — target 99.5% accuracy with week-over-week view</div>
+      <div class="chart-sub">Daily order accuracy trend   target 99.5% accuracy with week over week view</div>
       <div class="chart-wrap"><canvas id="accuracyChart"></canvas></div>
     </div>
     <div class="chart-card">
       <div class="chart-title">Capacity Utilisation by Zone (%)</div>
-      <div class="chart-sub">Current storage utilisation per warehouse zone — threshold at 85%</div>
+      <div class="chart-sub">Current storage utilisation per warehouse zone   threshold at 85%</div>
       <div class="chart-wrap"><canvas id="capacityChart"></canvas></div>
     </div>
     <div class="chart-card">
-      <div class="chart-title">Dock-to-Stock Time (hrs)</div>
-      <div class="chart-sub">Average inbound processing time from dock arrival to put-away completion</div>
+      <div class="chart-title">Dock to Stock Time (hrs)</div>
+      <div class="chart-sub">Average inbound processing time from dock arrival to put away completion</div>
       <div class="chart-wrap"><canvas id="dockChart"></canvas></div>
     </div>
     <div class="chart-card">
-      <div class="chart-title">Outbound On-Time Rate (%)</div>
-      <div class="chart-sub">Daily outbound despatch on-time performance against committed cut-off times</div>
+      <div class="chart-title">Outbound On Time Rate (%)</div>
+      <div class="chart-sub">Daily outbound despatch on time performance against committed cut off times</div>
       <div class="chart-wrap"><canvas id="otdChart"></canvas></div>
     </div>
     <div class="chart-card">
@@ -307,7 +307,7 @@ footer a{color:var(--cyan);text-decoration:none;}
   <!-- RAW DATA -->
   <div class="section-eyebrow" style="margin-top:8px;">// dataset</div>
   <div class="section-title">📊 Raw Dataset</div>
-  <p style="color:var(--muted);font-size:14px;margin-bottom:16px;">Real WMS-style data used in this analysis — 50 rows shown. Download full dataset below.</p>
+  <p style="color:var(--muted);font-size:14px;margin-bottom:16px;">Real WMS style data used in this analysis   50 rows shown. Download full dataset below.</p>
   <div class="table-wrap">
     <table id="dataTable">
       <thead>
@@ -331,29 +331,29 @@ footer a{color:var(--cyan);text-decoration:none;}
     <div class="psf-card problem">
       <div class="psf-header"><span class="psf-icon">🔴</span><span class="psf-label">▶ PROBLEM</span></div>
       <ul class="psf-list">
-        <li>Warehouse managers had no real-time view of pick rates or order accuracy — KPI reports required 2–3 hours of manual Excel extraction from the WMS every morning</li>
-        <li>Shift-level performance differences were invisible, meaning low-performing shifts were never identified or coached in time to recover within the same working day</li>
-        <li>Capacity utilisation was tracked by zone in separate spreadsheets, causing bottlenecks in high-density zones that weren't flagged until overflow occurred</li>
+        <li>Warehouse managers had no real time view of pick rates or order accuracy   KPI reports required 2 3 hours of manual Excel extraction from the WMS every morning</li>
+        <li>Shift level performance differences were invisible, meaning low performing shifts were never identified or coached in time to recover within the same working day</li>
+        <li>Capacity utilisation was tracked by zone in separate spreadsheets, causing bottlenecks in high density zones that weren't flagged until overflow occurred</li>
         <li>Returns processing backlogs built up undetected across shifts, creating stock accuracy issues that fed downstream fulfilment errors</li>
       </ul>
     </div>
     <div class="psf-card solution">
       <div class="psf-header"><span class="psf-icon">🔵</span><span class="psf-label">▶ SOLUTION</span></div>
       <ul class="psf-list">
-        <li>SQL data pipeline aggregating WMS operative-level pick data, dock events, and despatch records into a single warehouse_kpi_daily table refreshed every 15 minutes</li>
-        <li>Power BI dashboard with 12 KPI cards, shift-level drill-down, and zone-level capacity heat-map — visible on floor-mounted screens and manager tablets</li>
+        <li>SQL data pipeline aggregating WMS operative level pick data, dock events, and despatch records into a single warehouse_kpi_daily table refreshed every 15 minutes</li>
+        <li>Power BI dashboard with 12 KPI cards, shift level drill down, and zone level capacity heat map   visible on floor mounted screens and manager tablets</li>
         <li>Automated daily PDF report generated at 08:00 summarising previous day's performance by shift, emailed to warehouse manager and ops director automatically</li>
-        <li>Threshold-based alerts: pick rate drops below 85 units/hr or accuracy falls below 99.2% trigger a Slack/Teams notification to the shift supervisor within 5 minutes</li>
+        <li>Threshold based alerts: pick rate drops below 85 units/hr or accuracy falls below 99.2% trigger a Slack/Teams notification to the shift supervisor within 5 minutes</li>
       </ul>
     </div>
     <div class="psf-card findings">
       <div class="psf-header"><span class="psf-icon">🟢</span><span class="psf-label">▶ FINDINGS</span></div>
       <ul class="psf-list">
-        <li>Night shift consistently underperformed on pick rate (avg 79 units/hr vs 98 for Morning) — root cause: inadequate RF scanner provisioning and single zone access after 22:00</li>
-        <li>Zone C operated at 91% capacity on average — 6 percentage points above the safety threshold, causing 23% of pick delays due to congestion in narrow aisles</li>
-        <li>Dock-to-stock time averaged 3.8 hours on Monday and Friday (inbound peaks) vs 2.1 hours mid-week — staffing didn't align with inbound schedule</li>
-        <li>Returns processing time improved 31% after dashboard go-live as supervisors could see backlog building in real time and redeploy operatives proactively</li>
-        <li>Order accuracy improved from 98.7% to 99.4% within 6 weeks as shift-level visibility created accountability and catch-and-correct behaviours</li>
+        <li>Night shift consistently underperformed on pick rate (avg 79 units/hr vs 98 for Morning)   root cause: inadequate RF scanner provisioning and single zone access after 22:00</li>
+        <li>Zone C operated at 91% capacity on average   6 percentage points above the safety threshold, causing 23% of pick delays due to congestion in narrow aisles</li>
+        <li>Dock to stock time averaged 3.8 hours on Monday and Friday (inbound peaks) vs 2.1 hours mid week   staffing didn't align with inbound schedule</li>
+        <li>Returns processing time improved 31% after dashboard go live as supervisors could see backlog building in real time and redeploy operatives proactively</li>
+        <li>Order accuracy improved from 98.7% to 99.4% within 6 weeks as shift level visibility created accountability and catch and correct behaviours</li>
       </ul>
     </div>
   </div>
@@ -364,7 +364,7 @@ footer a{color:var(--cyan);text-decoration:none;}
   <div class="section-eyebrow">// outlook</div>
   <div class="section-title">📈 Forecast &amp; Projections</div>
   <div class="chart-card">
-    <div class="chart-title">Weekly Throughput Forecast — Units Picked (Next 12 Weeks)</div>
+    <div class="chart-title">Weekly Throughput Forecast   Units Picked (Next 12 Weeks)</div>
     <div class="chart-sub">Historical throughput (solid) vs projected (dashed) based on order volume trends and seasonal uplift modelling</div>
     <div class="scenario-btns">
       <button class="scen-btn active" onclick="setScenario('base',this)">Base Case</button>
@@ -383,16 +383,16 @@ footer a{color:var(--cyan);text-decoration:none;}
   <div class="section-eyebrow">// strategic guidance</div>
   <div class="section-title">💡 Advice for Companies with Similar Challenges</div>
   <div class="advice-card">
-    <div class="advice-title">Warehouse Operations Visibility — Key Recommendations</div>
+    <div class="advice-title">Warehouse Operations Visibility   Key Recommendations</div>
     <ul class="advice-list">
-      <li>Start with just 5 KPIs on your warehouse dashboard — pick rate, order accuracy, capacity utilisation, on-time outbound, and returns rate. Adding more metrics without acting on the basics creates noise rather than insight. Master the core 5 first, then layer in complexity.</li>
-      <li>Shift-level granularity is where the real value lies. Aggregate daily data masks the variance between morning, afternoon, and night shifts that accounts for 15–20% productivity gaps in most warehouses. You cannot manage what you cannot see at shift level.</li>
-      <li>Connect your dashboard to your WMS's raw SQL tables, not Excel exports. Manual extraction creates a 12–24 hour reporting lag that makes your dashboard a historical artefact rather than an operational tool. SQL queries running on a 15-minute refresh cost nothing but deliver enormous value.</li>
-      <li>Set threshold-based alerts before your dashboard goes live. A dashboard no one looks at is worthless — but a dashboard that sends an alert when pick rate drops below target forces attention at exactly the right moment.</li>
+      <li>Start with just 5 KPIs on your warehouse dashboard   pick rate, order accuracy, capacity utilisation, on time outbound, and returns rate. Adding more metrics without acting on the basics creates noise rather than insight. Master the core 5 first, then layer in complexity.</li>
+      <li>Shift level granularity is where the real value lies. Aggregate daily data masks the variance between morning, afternoon, and night shifts that accounts for 15 20% productivity gaps in most warehouses. You cannot manage what you cannot see at shift level.</li>
+      <li>Connect your dashboard to your WMS's raw SQL tables, not Excel exports. Manual extraction creates a 12 24 hour reporting lag that makes your dashboard a historical artefact rather than an operational tool. SQL queries running on a 15 minute refresh cost nothing but deliver enormous value.</li>
+      <li>Set threshold based alerts before your dashboard goes live. A dashboard no one looks at is worthless   but a dashboard that sends an alert when pick rate drops below target forces attention at exactly the right moment.</li>
     </ul>
     <div class="takeaway">
       <div class="takeaway-label">// KEY TAKEAWAY</div>
-      <p>A well-built warehouse KPI dashboard doesn't just report what happened yesterday — it enables same-shift intervention. The goal is to get management response time from 24 hours (morning report) down to under 15 minutes (real-time alert). That single change, in a 50-person warehouse operating 3 shifts, is worth €80,000–€150,000 per year in recovered productivity.</p>
+      <p>A well built warehouse KPI dashboard doesn't just report what happened yesterday   it enables same shift intervention. The goal is to get management response time from 24 hours (morning report) down to under 15 minutes (real time alert). That single change, in a 50 person warehouse operating 3 shifts, is worth €80,000 €150,000 per year in recovered productivity.</p>
     </div>
   </div>
 </div>
@@ -400,12 +400,12 @@ footer a{color:var(--cyan);text-decoration:none;}
 <!-- BOTTOM NAV -->
 <div class="nav-bottom fade-up">
   <a href="project-6.html" class="btn-back">← Project 6: Supplier Risk Scorecard</a>
-  <a href="project-8.html" class="btn-next">Next Project: S&OP Simulator →</a>
+  <a href="project-8.html" class="btn-next">Next Project: S&OP; Simulator →</a>
 </div>
 
 <!-- FOOTER -->
 <footer>
-  <span>© 2026 Chibuike Dialaekwe · <a href="mailto:Dialaekwechibuike@gmail.com">Dialaekwechibuike@gmail.com</a> · <a href="https://linkedin.com/in/chibuike-dialaekwe-15582b248" target="_blank">LinkedIn</a></span>
+  <span>© 2026 Chibuike Dialaekwe   <a href="mailto:Dialaekwechibuike@gmail.com">Dialaekwechibuike@gmail.com</a>   <a href="https://linkedin.com/in/chibuike-dialaekwe-15582b248" target="_blank">LinkedIn</a></span>
 </footer>
 
 <script>

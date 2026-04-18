@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Forecast Accuracy Scorecard | Chibuike Dialaekwe</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root{
@@ -168,7 +168,7 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
 <body>
 <div id="progress-bar"></div>
 <nav>
-  <span class="nav-logo">CD / PROJECT-18</span>
+  <span class="nav-logo">CD / PROJECT 18</span>
   <div class="nav-links">
     <a href="index.html">← Portfolio</a>
     <button class="theme-btn" id="themeToggle">☀️</button>
@@ -183,7 +183,7 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
     <span class="badge badge-purple">POWER BI</span>
   </div>
   <h1>Forecast Accuracy <span>Scorecard</span></h1>
-  <p class="hero-sub">Power BI scorecard breaking down MAPE, BIAS, and MAE by SKU, planner, category, and time horizon — with planner league table, root cause classification, MAPE heatmap, and traffic-light RAG status to drive accountability and targeted improvement.</p>
+  <p class="hero-sub">Power BI scorecard breaking down MAPE, BIAS, and MAE by SKU, planner, category, and time horizon   with planner league table, root cause classification, MAPE heatmap, and traffic light RAG status to drive accountability and targeted improvement.</p>
 </div>
 
 <!-- PSF -->
@@ -193,17 +193,17 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
     <div class="psf-card problem">
       <div class="psf-label">⚑ Problem</div>
       <h3>A Single MAPE Nobody Acts On</h3>
-      <p>Most organisations report a single aggregate MAPE — 28%, good enough — on a monthly slide. Nobody knows which SKUs, which planners, or which time horizons are driving error. Without that granularity, improvement programmes are unfocused, accountability is diffuse, and the number rarely moves year on year.</p>
+      <p>Most organisations report a single aggregate MAPE   28%, good enough   on a monthly slide. Nobody knows which SKUs, which planners, or which time horizons are driving error. Without that granularity, improvement programmes are unfocused, accountability is diffuse, and the number rarely moves year on year.</p>
     </div>
     <div class="psf-card solution">
       <div class="psf-label">⚙ Solution</div>
-      <h3>Power BI Multi-Dimensional Scorecard</h3>
-      <p>A Power BI model computing MAPE, BIAS (directional error), and MAE at SKU × planner × week × horizon level. Planner league table creates accountability. Root cause classification (over-forecast, under-forecast, lumpy demand, new product) enables targeted intervention. Heatmap surfaces persistent problem categories and weeks.</p>
+      <h3>Power BI Multi Dimensional Scorecard</h3>
+      <p>A Power BI model computing MAPE, BIAS (directional error), and MAE at SKU × planner × week × horizon level. Planner league table creates accountability. Root cause classification (over forecast, under forecast, lumpy demand, new product) enables targeted intervention. Heatmap surfaces persistent problem categories and weeks.</p>
     </div>
     <div class="psf-card findings">
       <div class="psf-label">✓ Findings</div>
       <h3>MAPE Cut from 28% to 19.6%</h3>
-      <p>Portfolio MAPE improved from 28.2% to 19.6% over 12 weeks — a 30% error reduction. Over-forecasting is the dominant root cause (41% of errors), driven by promotional lift assumptions that consistently overshoot. Two planners account for 58% of total error units despite covering only 35% of SKUs. Dairy category is the single largest error contributor at 34% MAPE.</p>
+      <p>Portfolio MAPE improved from 28.2% to 19.6% over 12 weeks   a 30% error reduction. Over forecasting is the dominant root cause (41% of errors), driven by promotional lift assumptions that consistently overshoot. Two planners account for 58% of total error units despite covering only 35% of SKUs. Dairy category is the single largest error contributor at 34% MAPE.</p>
     </div>
   </div>
 </div>
@@ -212,21 +212,21 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
 <div class="section fade-up">
   <div class="section-title">Planner Accountability Scorecard</div>
   <div class="league-header">
-    <h3>Planner League Table — MAPE Ranking</h3>
+    <h3>Planner League Table   MAPE Ranking</h3>
     <span class="league-subtitle">Click a planner to highlight in charts</span>
   </div>
   <div class="league-grid" id="leagueGrid"></div>
 
-  <div class="section-title" style="margin-top:1rem">MAPE Heatmap — Category × Week</div>
+  <div class="section-title" style="margin-top:1rem">MAPE Heatmap   Category × Week</div>
   <div class="heatmap-box">
-    <h3>Forecast Error Intensity — Darker = Higher MAPE</h3>
+    <h3>Forecast Error Intensity   Darker = Higher MAPE</h3>
     <div class="heatmap-container" id="heatmapContainer"></div>
     <div class="heatmap-legend">
       <span class="hl-label">MAPE:</span>
       <div class="hl-scale">
         <div class="hl-cell" style="background:rgba(0,255,136,0.7)"></div><span style="font-size:.68rem;color:var(--muted)">&lt;10%</span>
-        <div class="hl-cell" style="background:rgba(0,212,255,0.65)"></div><span style="font-size:.68rem;color:var(--muted)">10–20%</span>
-        <div class="hl-cell" style="background:rgba(255,184,0,0.7)"></div><span style="font-size:.68rem;color:var(--muted)">20–30%</span>
+        <div class="hl-cell" style="background:rgba(0,212,255,0.65)"></div><span style="font-size:.68rem;color:var(--muted)">10 20%</span>
+        <div class="hl-cell" style="background:rgba(255,184,0,0.7)"></div><span style="font-size:.68rem;color:var(--muted)">20 30%</span>
         <div class="hl-cell" style="background:rgba(255,68,102,0.7)"></div><span style="font-size:.68rem;color:var(--muted)">&gt;30%</span>
       </div>
     </div>
@@ -255,10 +255,10 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
   <div class="filter-bar">
     <span class="filter-label">HORIZON:</span>
     <button class="filter-btn active" onclick="filterData('horizon','All',this)">All</button>
-    <button class="filter-btn" onclick="filterData('horizon',1,this)">1-Week</button>
-    <button class="filter-btn" onclick="filterData('horizon',4,this)">4-Week</button>
-    <button class="filter-btn" onclick="filterData('horizon',8,this)">8-Week</button>
-    <button class="filter-btn" onclick="filterData('horizon',12,this)">12-Week</button>
+    <button class="filter-btn" onclick="filterData('horizon',1,this)">1 Week</button>
+    <button class="filter-btn" onclick="filterData('horizon',4,this)">4 Week</button>
+    <button class="filter-btn" onclick="filterData('horizon',8,this)">8 Week</button>
+    <button class="filter-btn" onclick="filterData('horizon',12,this)">12 Week</button>
   </div>
   <div class="kpi-grid" id="kpiGrid"></div>
 </div>
@@ -268,11 +268,11 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
   <div class="section-title">Accuracy Analysis Charts</div>
   <div class="chart-grid">
     <div class="chart-card">
-      <h3>MAPE Trend — Portfolio &amp; by Category (12-Week)</h3>
+      <h3>MAPE Trend   Portfolio &amp; by Category (12 Week)</h3>
       <div class="chart-wrap-tall"><canvas id="mapeTrendChart"></canvas></div>
     </div>
     <div class="chart-card">
-      <h3>BIAS Decomposition — Over vs Under Forecast by Planner</h3>
+      <h3>BIAS Decomposition   Over vs Under Forecast by Planner</h3>
       <div class="chart-wrap"><canvas id="biasChart"></canvas></div>
     </div>
     <div class="chart-card">
@@ -280,7 +280,7 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
       <div class="chart-wrap"><canvas id="rootChart"></canvas></div>
     </div>
     <div class="chart-card">
-      <h3>MAPE by SKU — Top Error Drivers</h3>
+      <h3>MAPE by SKU   Top Error Drivers</h3>
       <div class="chart-wrap-tall"><canvas id="skuChart"></canvas></div>
     </div>
     <div class="chart-card">
@@ -321,7 +321,7 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
   <div class="section-title">MAPE Improvement Trajectory</div>
   <div class="forecast-section">
     <div class="forecast-header">
-      <h3>Projected Portfolio MAPE — 12-Month Improvement Roadmap</h3>
+      <h3>Projected Portfolio MAPE   12 Month Improvement Roadmap</h3>
       <div class="scenario-btns">
         <button class="scenario-btn active" onclick="setScenario('base',this)">Base (Scorecard + Coaching)</button>
         <button class="scenario-btn" onclick="setScenario('fast',this)">Accelerated (+ AI Tools)</button>
@@ -339,15 +339,15 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
   <div class="advice-box">
     <h3>💡 Recommendations for Demand Planning Leaders</h3>
     <ul>
-      <li><strong>MAPE below 15% at SKU level is world-class</strong>; most organisations run at 25–35%. Target 20% as a 12-month milestone and treat sub-20% as a competitive advantage in working capital efficiency and service levels.</li>
-      <li>The planner league table is a management tool, not a blame tool. Use it to identify <strong>coaching opportunities and process gaps</strong> — the planner with the highest MAPE is often managing the most volatile SKUs or the weakest data quality, not making poor decisions.</li>
-      <li><strong>BIAS is more actionable than MAPE</strong>. Persistent positive bias (chronic over-forecast) inflates inventory and masks actual demand signals. Persistent negative bias (under-forecast) causes stockouts. Target BIAS within ±5% before attacking absolute MAPE.</li>
-      <li>Root cause analysis must be SKU-level, not aggregate. <strong>Over-forecast in promotionals</strong> and <strong>lumpy demand in industrial</strong> require completely different interventions — blending them into a single MAPE improvement programme dilutes both.</li>
-      <li>The heatmap reveals <strong>systematic category-level errors</strong> that persist week after week — these indicate model structural issues (wrong seasonality, missing causal variables) rather than one-off events. Structural fixes outperform planner coaching for these categories.</li>
-      <li>Run a monthly <strong>forecast review cadence</strong>: top 10 error SKUs reviewed with root cause per planner, compared to prior month. The scorecard only creates value if someone acts on it — the cadence is the governance mechanism.</li>
+      <li><strong>MAPE below 15% at SKU level is world class</strong>; most organisations run at 25 35%. Target 20% as a 12 month milestone and treat sub 20% as a competitive advantage in working capital efficiency and service levels.</li>
+      <li>The planner league table is a management tool, not a blame tool. Use it to identify <strong>coaching opportunities and process gaps</strong>   the planner with the highest MAPE is often managing the most volatile SKUs or the weakest data quality, not making poor decisions.</li>
+      <li><strong>BIAS is more actionable than MAPE</strong>. Persistent positive bias (chronic over forecast) inflates inventory and masks actual demand signals. Persistent negative bias (under forecast) causes stockouts. Target BIAS within ±5% before attacking absolute MAPE.</li>
+      <li>Root cause analysis must be SKU level, not aggregate. <strong>Over forecast in promotionals</strong> and <strong>lumpy demand in industrial</strong> require completely different interventions   blending them into a single MAPE improvement programme dilutes both.</li>
+      <li>The heatmap reveals <strong>systematic category level errors</strong> that persist week after week   these indicate model structural issues (wrong seasonality, missing causal variables) rather than one off events. Structural fixes outperform planner coaching for these categories.</li>
+      <li>Run a monthly <strong>forecast review cadence</strong>: top 10 error SKUs reviewed with root cause per planner, compared to prior month. The scorecard only creates value if someone acts on it   the cadence is the governance mechanism.</li>
     </ul>
     <div class="advice-takeaway">
-      <strong>Key Takeaway:</strong> A 1% MAPE improvement across a €50M+ planning portfolio typically frees 0.5–1% of working capital. The scorecard does not improve forecast accuracy — the conversations it forces between planners, sales, and finance do.
+      <strong>Key Takeaway:</strong> A 1% MAPE improvement across a €50M+ planning portfolio typically frees 0.5 1% of working capital. The scorecard does not improve forecast accuracy   the conversations it forces between planners, sales, and finance do.
     </div>
   </div>
 </div>

@@ -179,7 +179,7 @@ tbody td{padding:10px 14px;color:var(--text);vertical-align:middle}
       <span class="meta-tag meta-tool">SQL</span>
       <span class="meta-tag meta-tool">Spend Analytics</span>
     </div>
-    <p class="project-summary">Excel-based procurement model pulling from SQL-aggregated PO data. Delivers supplier comparison tables, spend heatmaps by category, and automated cost-saving alerts whenever a supplier's price exceeds the category average by more than 10%.</p>
+    <p class="project-summary">Excel based procurement model pulling from SQL aggregated PO data. Delivers supplier comparison tables, spend heatmaps by category, and automated cost saving alerts whenever a supplier's price exceeds the category average by more than 10%.</p>
   </div>
 
   <!-- KPIs -->
@@ -210,29 +210,29 @@ tbody td{padding:10px 14px;color:var(--text);vertical-align:middle}
 
   <div class="charts-grid fade-up">
     <div class="chart-card">
-      <div class="chart-title">📊 <strong>Total Spend by Category</strong> — 12-month cumulative (€)</div>
+      <div class="chart-title">📊 <strong>Total Spend by Category</strong>   12 month cumulative (€)</div>
       <div class="chart-wrap"><canvas id="chartSpend"></canvas></div>
     </div>
     <div class="chart-card">
-      <div class="chart-title">🏆 <strong>Supplier Spend Concentration</strong> — top 6 suppliers</div>
+      <div class="chart-title">🏆 <strong>Supplier Spend Concentration</strong>   top 6 suppliers</div>
       <div class="chart-wrap-md"><canvas id="chartSupplier"></canvas></div>
     </div>
   </div>
 
   <div class="charts-grid-2 fade-up">
     <div class="chart-card">
-      <div class="chart-title">📈 <strong>Price vs. Category Average</strong> — variance % per supplier</div>
+      <div class="chart-title">📈 <strong>Price vs. Category Average</strong>   variance % per supplier</div>
       <div class="chart-wrap-sm"><canvas id="chartVariance"></canvas></div>
     </div>
     <div class="chart-card">
-      <div class="chart-title">📉 <strong>Monthly Spend Trend</strong> — all categories combined (€)</div>
+      <div class="chart-title">📉 <strong>Monthly Spend Trend</strong>   all categories combined (€)</div>
       <div class="chart-wrap-sm"><canvas id="chartTrend"></canvas></div>
     </div>
   </div>
 
   <!-- SPEND HEATMAP -->
   <div class="alert-panel fade-up heatmap-section">
-    <div class="alert-panel-title">🌡 Spend Heatmap — Monthly Spend Intensity by Category (darker = higher spend)</div>
+    <div class="alert-panel-title">🌡 Spend Heatmap   Monthly Spend Intensity by Category (darker = higher spend)</div>
     <div style="font-size:0.75rem;color:var(--hint);margin-bottom:12px">Each cell represents one month of spend. Hover for details.</div>
     <div class="heatmap-outer">
       <div class="heatmap-cats" id="hmCats"></div>
@@ -245,7 +245,7 @@ tbody td{padding:10px 14px;color:var(--text);vertical-align:middle}
 
   <!-- SAVINGS ALERTS -->
   <div class="alert-panel fade-up">
-    <div class="alert-panel-title">⚠️ Live Saving Opportunity Alerts — suppliers exceeding category average by >10%</div>
+    <div class="alert-panel-title">⚠️ Live Saving Opportunity Alerts   suppliers exceeding category average by >10%</div>
     <div class="alert-list" id="alertList"></div>
   </div>
 
@@ -254,8 +254,8 @@ tbody td{padding:10px 14px;color:var(--text);vertical-align:middle}
     <div class="panel-card panel-problem">
       <div class="panel-header ph-red">▶ Problem</div>
       <ul>
-        <li>Procurement teams lacked visibility into supplier pricing trends across categories — cost-saving opportunities remained invisible in fragmented PO data spread across 3 systems.</li>
-        <li>Spend analysis previously took a senior buyer 2–3 days per quarter using manual Excel exports — now completed in under a day with automated SQL aggregation.</li>
+        <li>Procurement teams lacked visibility into supplier pricing trends across categories   cost saving opportunities remained invisible in fragmented PO data spread across 3 systems.</li>
+        <li>Spend analysis previously took a senior buyer 2 3 days per quarter using manual Excel exports   now completed in under a day with automated SQL aggregation.</li>
         <li>No benchmarking mechanism existed: buyers had no way to know if a price quoted by Supplier A was above or below what other suppliers charged for the same category.</li>
         <li>Spend was concentrated: top 3 suppliers accounted for 71% of total spend, yet no consolidation strategy or volume negotiation had been attempted in 18 months.</li>
       </ul>
@@ -264,19 +264,19 @@ tbody td{padding:10px 14px;color:var(--text);vertical-align:middle}
       <div class="panel-header ph-cyan">▶ Solution</div>
       <ul>
         <li>SQL pipeline queries PO header and line tables from ERP, calculates category average unit price per quarter, and flags any supplier line where actual price exceeds average by >10%.</li>
-        <li>Excel model consumes SQL output via Power Query refresh — one click updates all charts, heatmaps, and saving opportunity alerts for the full 12-month dataset.</li>
-        <li>Spend heatmap built in Excel conditional formatting shows monthly spend intensity by category — immediately revealing seasonal procurement patterns and spend concentration.</li>
-        <li>Saving opportunity alerts categorised by tier: High (>25% above average), Medium (10–25%), with estimated EUR saving if price aligned to category average.</li>
+        <li>Excel model consumes SQL output via Power Query refresh   one click updates all charts, heatmaps, and saving opportunity alerts for the full 12 month dataset.</li>
+        <li>Spend heatmap built in Excel conditional formatting shows monthly spend intensity by category   immediately revealing seasonal procurement patterns and spend concentration.</li>
+        <li>Saving opportunity alerts categorised by tier: High (>25% above average), Medium (10 25%), with estimated EUR saving if price aligned to category average.</li>
       </ul>
     </div>
     <div class="panel-card panel-findings">
       <div class="panel-header ph-green">▶ Key Findings</div>
       <ul>
-        <li>MRO (Maintenance, Repair & Operations) category had the highest price variance — 3 suppliers charging between €8.40 and €14.20 per unit for equivalent items, a 69% spread. Immediate consolidation opportunity worth €47,200.</li>
+        <li>MRO (Maintenance, Repair & Operations) category had the highest price variance   3 suppliers charging between €8.40 and €14.20 per unit for equivalent items, a 69% spread. Immediate consolidation opportunity worth €47,200.</li>
         <li>Raw Materials spend spiked 34% in Q3 driven entirely by a single supplier (Kovač Chemicals) invoicing at 22% above the category average for 4 consecutive months without buyer challenge.</li>
-        <li>Top 6 suppliers account for 68% of total spend — strong consolidation leverage available if volume is used in contract renegotiations during the next sourcing cycle.</li>
-        <li>Packaging category shows lowest price variance (±4%) — suppliers in this category are price-aligned. Effort is better directed at Logistics and MRO where spreads are widest.</li>
-        <li>23 PO lines flagged as overpriced totalling €214,000 in addressable savings — equivalent to 7.5% of annual procurement budget accessible without changing any suppliers.</li>
+        <li>Top 6 suppliers account for 68% of total spend   strong consolidation leverage available if volume is used in contract renegotiations during the next sourcing cycle.</li>
+        <li>Packaging category shows lowest price variance (±4%)   suppliers in this category are price aligned. Effort is better directed at Logistics and MRO where spreads are widest.</li>
+        <li>23 PO lines flagged as overpriced totalling €214,000 in addressable savings   equivalent to 7.5% of annual procurement budget accessible without changing any suppliers.</li>
       </ul>
     </div>
   </div>
@@ -285,7 +285,7 @@ tbody td{padding:10px 14px;color:var(--text);vertical-align:middle}
   <div class="forecast-section fade-up">
     <div class="section-header">
       <span class="section-label">// projections</span>
-      <div class="section-title">📈 12-Month Forward Spend Forecast with Savings Opportunity</div>
+      <div class="section-title">📈 12 Month Forward Spend Forecast with Savings Opportunity</div>
     </div>
     <div class="scenario-toggle">
       <button class="scenario-btn active" onclick="setScenario('base',this)">Base (No Action)</button>
@@ -293,11 +293,11 @@ tbody td{padding:10px 14px;color:var(--text);vertical-align:middle}
       <button class="scenario-btn" onclick="setScenario('pessimistic',this)">Inflation +8%</button>
     </div>
     <div class="chart-card">
-      <div class="chart-title">📉 <strong>Projected Annual Procurement Spend</strong> · solid = historical · dashed = projected</div>
+      <div class="chart-title">📉 <strong>Projected Annual Procurement Spend</strong>   solid = historical   dashed = projected</div>
       <div class="chart-wrap"><canvas id="chartForecast"></canvas></div>
     </div>
     <div class="forecast-summary">
-      <strong>Base scenario (no action):</strong> Total annual procurement spend is projected at €3.12M — a 9.8% increase driven by commodity inflation in Raw Materials and increased Logistics volumes. <strong>With savings realised:</strong> If the 23 flagged overpriced lines are renegotiated to category average and the MRO consolidation is actioned, projected spend falls to €2.91M — saving €214,000 vs base. <strong>Inflation +8% scenario:</strong> Assumes commodity price increases flow through unchallenged, projecting spend at €3.38M — underscoring the urgency of locking in price agreements with key suppliers before Q2.
+      <strong>Base scenario (no action):</strong> Total annual procurement spend is projected at €3.12M   a 9.8% increase driven by commodity inflation in Raw Materials and increased Logistics volumes. <strong>With savings realised:</strong> If the 23 flagged overpriced lines are renegotiated to category average and the MRO consolidation is actioned, projected spend falls to €2.91M   saving €214,000 vs base. <strong>Inflation +8% scenario:</strong> Assumes commodity price increases flow through unchallenged, projecting spend at €3.38M   underscoring the urgency of locking in price agreements with key suppliers before Q2.
     </div>
   </div>
 
@@ -308,7 +308,7 @@ tbody td{padding:10px 14px;color:var(--text);vertical-align:middle}
       <div class="section-title">📊 Raw Dataset</div>
     </div>
     <div class="table-header">
-      <p class="table-subtitle">Real data used in this analysis — 50 rows shown. Download full dataset below.</p>
+      <p class="table-subtitle">Real data used in this analysis   50 rows shown. Download full dataset below.</p>
       <button class="download-btn" onclick="downloadCSV()">⬇ Download Full Dataset (CSV)</button>
     </div>
     <div class="table-wrap">
@@ -334,21 +334,21 @@ tbody td{padding:10px 14px;color:var(--text);vertical-align:middle}
     <div class="advice-card">
       <div class="advice-title">💡 Practical Recommendations</div>
       <ul>
-        <li>Centralise all PO data into a single SQL table before attempting spend analytics. Even a simple union of ERP exports into one table — cleaned and deduplicated — gives you more spend visibility than most companies have ever had. The analysis itself is straightforward once the data is unified.</li>
-        <li>Basic price benchmarking across suppliers in the same category typically surfaces 8–15% in addressable savings within the first quarter. You don't need an external benchmarking tool — your own historical PO data is the benchmark. Calculate category average unit price and compare every active supplier to it.</li>
-        <li>Target the highest-variance categories first, not the highest-spend ones. A 20% price reduction in a €200k category beats a 2% reduction in a €1M category. Identify where your price spread is widest and that is where your negotiation effort delivers the most return per hour spent.</li>
-        <li>Run the spend analysis quarterly, not annually. Supplier pricing drift is subtle — a 3% quarter-on-quarter increase goes unnoticed but compounds to 12% by year-end. Automated SQL refresh means the quarterly run costs a buyer 30 minutes rather than 2 days.</li>
+        <li>Centralise all PO data into a single SQL table before attempting spend analytics. Even a simple union of ERP exports into one table   cleaned and deduplicated   gives you more spend visibility than most companies have ever had. The analysis itself is straightforward once the data is unified.</li>
+        <li>Basic price benchmarking across suppliers in the same category typically surfaces 8 15% in addressable savings within the first quarter. You don't need an external benchmarking tool   your own historical PO data is the benchmark. Calculate category average unit price and compare every active supplier to it.</li>
+        <li>Target the highest variance categories first, not the highest spend ones. A 20% price reduction in a €200k category beats a 2% reduction in a €1M category. Identify where your price spread is widest and that is where your negotiation effort delivers the most return per hour spent.</li>
+        <li>Run the spend analysis quarterly, not annually. Supplier pricing drift is subtle   a 3% quarter on quarter increase goes unnoticed but compounds to 12% by year end. Automated SQL refresh means the quarterly run costs a buyer 30 minutes rather than 2 days.</li>
       </ul>
       <div class="key-takeaway">
         <span class="kt-label">⚡ Key Takeaway</span>
-        <p class="kt-text">Procurement savings are not found in negotiation rooms — they are found in data. Companies that build even a basic spend visibility tool consistently find 7–12% of addressable savings sitting in plain sight in their own PO history. The constraint is never the negotiating skill; it is always the lack of data to support the conversation.</p>
+        <p class="kt-text">Procurement savings are not found in negotiation rooms   they are found in data. Companies that build even a basic spend visibility tool consistently find 7 12% of addressable savings sitting in plain sight in their own PO history. The constraint is never the negotiating skill; it is always the lack of data to support the conversation.</p>
       </div>
     </div>
   </div>
 
   <div class="page-nav fade-up">
     <a href="project-3.html">← Demand Forecast Planner</a>
-    <a href="project-5.html">Next: Last-Mile Delivery Optimizer →</a>
+    <a href="project-5.html">Next: Last Mile Delivery Optimizer →</a>
   </div>
 </main>
 

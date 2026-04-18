@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Demand Sensing Dashboard | Chibuike Dialaekwe</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root {
@@ -174,7 +174,7 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
 <body>
 <div id="progress-bar"></div>
 <nav>
-  <span class="nav-logo">CD / PROJECT-14</span>
+  <span class="nav-logo">CD / PROJECT 14</span>
   <div class="nav-links">
     <a href="index.html">← Portfolio</a>
     <button class="theme-btn" id="themeToggle">☀️</button>
@@ -191,7 +191,7 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
     <span class="badge badge-green">PYTHON</span>
   </div>
   <h1>Demand Sensing <span>Dashboard</span></h1>
-  <p class="hero-sub">Python + ML pipeline ingesting POS data, social sentiment, weather patterns, and promotional calendars to generate 12-week demand sensing forecasts with confidence bands, anomaly detection, and signal attribution — detecting shifts 3 weeks before traditional models.</p>
+  <p class="hero-sub">Python + ML pipeline ingesting POS data, social sentiment, weather patterns, and promotional calendars to generate 12 week demand sensing forecasts with confidence bands, anomaly detection, and signal attribution   detecting shifts 3 weeks before traditional models.</p>
 </div>
 
 <!-- PSF -->
@@ -201,17 +201,17 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
     <div class="psf-card problem">
       <div class="psf-label">⚑ Problem</div>
       <h3>Lagging Statistical Forecasts</h3>
-      <p>Traditional forecasting relies on historical averages and moving windows — it can only react after demand has shifted. Promotions, weather events, social virality, and competitor actions create demand spikes that arrive 2–4 weeks before they appear in sales data, leaving planners perpetually behind.</p>
+      <p>Traditional forecasting relies on historical averages and moving windows   it can only react after demand has shifted. Promotions, weather events, social virality, and competitor actions create demand spikes that arrive 2 4 weeks before they appear in sales data, leaving planners perpetually behind.</p>
     </div>
     <div class="psf-card solution">
       <div class="psf-label">⚙ Solution</div>
       <h3>AI Demand Sensing Pipeline</h3>
-      <p>A Python-based sensing engine integrates POS velocity, Google Trends signals, weather API inputs, promotional calendars, and social sentiment scoring. An ensemble model (XGBoost + Prophet) blends statistical and signal-based forecasts, generating 12-week ahead predictions with confidence intervals and anomaly flags.</p>
+      <p>A Python based sensing engine integrates POS velocity, Google Trends signals, weather API inputs, promotional calendars, and social sentiment scoring. An ensemble model (XGBoost + Prophet) blends statistical and signal based forecasts, generating 12 week ahead predictions with confidence intervals and anomaly flags.</p>
     </div>
     <div class="psf-card findings">
       <div class="psf-label">✓ Findings</div>
       <h3>Error Reduced 38% vs Statistical</h3>
-      <p>AI sensing cut average MAPE from 18.4% to 11.4% — a 38% improvement — across 8 SKUs over 12 weeks. Promotional lifts were detected 3 weeks early in 7 of 8 cases. 4 anomaly events were flagged before impacting service levels, avoiding an estimated €340K in emergency procurement costs.</p>
+      <p>AI sensing cut average MAPE from 18.4% to 11.4%   a 38% improvement   across 8 SKUs over 12 weeks. Promotional lifts were detected 3 weeks early in 7 of 8 cases. 4 anomaly events were flagged before impacting service levels, avoiding an estimated €340K in emergency procurement costs.</p>
     </div>
   </div>
 </div>
@@ -223,7 +223,7 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
   <!-- SIGNAL FEED -->
   <div class="signal-panel">
     <div class="signal-panel-header">
-      <h3>Active Demand Signals — Ingestion Pipeline</h3>
+      <h3>Active Demand Signals   Ingestion Pipeline</h3>
       <div class="signal-live"><div class="live-dot"></div>LIVE SIGNALS</div>
     </div>
     <div class="signal-list" id="signalFeed"></div>
@@ -231,7 +231,7 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
 
   <!-- SKU DRILL-DOWN -->
   <div class="sku-selector">
-    <h3>⚡ SKU Drill-Down — AI vs Statistical Forecast</h3>
+    <h3>⚡ SKU Drill Down   AI vs Statistical Forecast</h3>
     <div class="sku-grid" id="skuGrid"></div>
     <div class="sku-chart-wrap"><canvas id="skuChart"></canvas></div>
   </div>
@@ -269,7 +269,7 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
       <div class="chart-wrap-tall"><canvas id="mainChart"></canvas></div>
     </div>
     <div class="chart-card">
-      <h3>MAPE: AI Sensing vs Statistical — by Category</h3>
+      <h3>MAPE: AI Sensing vs Statistical   by Category</h3>
       <div class="chart-wrap"><canvas id="mapeChart"></canvas></div>
     </div>
     <div class="chart-card">
@@ -314,10 +314,10 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
 
 <!-- FORECAST -->
 <div class="section fade-up">
-  <div class="section-title">8-Week Forward Demand Sensing Forecast</div>
+  <div class="section-title">8 Week Forward Demand Sensing Forecast</div>
   <div class="forecast-section">
     <div class="forecast-header">
-      <h3>Portfolio Demand — Historical + 8-Week Forward with Confidence Bands</h3>
+      <h3>Portfolio Demand   Historical + 8 Week Forward with Confidence Bands</h3>
       <div class="scenario-btns">
         <button class="scenario-btn active" onclick="setScenario('base',this)">Base Sensing</button>
         <button class="scenario-btn" onclick="setScenario('promo',this)">With Promotions</button>
@@ -335,15 +335,15 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
   <div class="advice-box">
     <h3>💡 Recommendations for Demand Planning Teams</h3>
     <ul>
-      <li>Demand sensing reduces forecast error by <strong>30–50% at the weekly level</strong> versus statistical baselines — the greatest gains are in promotional and weather-sensitive categories where exogenous signals dominate demand.</li>
-      <li>Don't replace your statistical forecast — layer sensing on top of it. The ensemble approach (signal-weighted blending) consistently outperforms either model alone, especially at short (1–4 week) horizons.</li>
+      <li>Demand sensing reduces forecast error by <strong>30 50% at the weekly level</strong> versus statistical baselines   the greatest gains are in promotional and weather sensitive categories where exogenous signals dominate demand.</li>
+      <li>Don't replace your statistical forecast   layer sensing on top of it. The ensemble approach (signal weighted blending) consistently outperforms either model alone, especially at short (1 4 week) horizons.</li>
       <li>Prioritise signal feeds in order of value: promotional calendars first (highest, most controllable), then weather API, then social sentiment. Competitor signals are high value but harder to source reliably at scale.</li>
-      <li>Anomaly detection is your early warning system — configure alerts for any week where AI sensing diverges from statistical forecast by more than 15%. Investigate before the week arrives, not after stockout.</li>
-      <li>Confidence bands narrow as signals strengthen. Share the confidence % with inventory planners — a low-confidence high-uplift week demands safety stock buffer; a high-confidence forecast warrants JIT replenishment.</li>
-      <li>Refresh the model on a rolling 13-week window. Demand patterns drift, and a sensing model trained on stale data can perform worse than a simple moving average within 6–8 weeks of a regime change.</li>
+      <li>Anomaly detection is your early warning system   configure alerts for any week where AI sensing diverges from statistical forecast by more than 15%. Investigate before the week arrives, not after stockout.</li>
+      <li>Confidence bands narrow as signals strengthen. Share the confidence % with inventory planners   a low confidence high uplift week demands safety stock buffer; a high confidence forecast warrants JIT replenishment.</li>
+      <li>Refresh the model on a rolling 13 week window. Demand patterns drift, and a sensing model trained on stale data can perform worse than a simple moving average within 6 8 weeks of a regime change.</li>
     </ul>
     <div class="advice-takeaway">
-      <strong>Key Takeaway:</strong> The real value of demand sensing is not better numbers on a spreadsheet — it's the <em>3-week lead time</em> it gives procurement and production to act before a demand wave hits. Speed of signal is worth more than model accuracy.
+      <strong>Key Takeaway:</strong> The real value of demand sensing is not better numbers on a spreadsheet   it's the <em>3 week lead time</em> it gives procurement and production to act before a demand wave hits. Speed of signal is worth more than model accuracy.
     </div>
   </div>
 </div>

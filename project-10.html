@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Reorder Point Automation Tool — Chibuike Dialaekwe</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Reorder Point Automation Tool   Chibuike Dialaekwe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root{--bg:#080c14;--bg2:#0d1220;--bg3:#111827;--card:#0f1623;--text:#e8eaf6;--muted:#7986a3;--hint:#4a5568;--border:rgba(0,229,255,0.12);--border2:rgba(0,229,255,0.25);--cyan:#00e5ff;--green:#00ff88;--amber:#ffb300;--red:#ff4757;--body-bg:#080c14;}
@@ -206,49 +206,49 @@ footer a{color:var(--cyan);text-decoration:none;}
 <!-- HERO -->
 <div class="hero fade-up">
   <div class="hero-badge"><span class="badge-dot"></span>📦 ELIMINATES MANUAL REORDER TRACKING</div>
-  <h1>Reorder Point<br/><span>Automation Tool</span></h1>
+  <h1>Reorder Point<br /><span>Automation Tool</span></h1>
   <div class="hero-meta">
     <span class="tag tag-cat">📦 Inventory</span>
     <span class="tag tag-tool">Excel</span>
   </div>
-  <p class="hero-problem">Manual reorder point calculation leads to delayed purchase orders and frequent stockouts in fast-moving product lines. Planners use static reorder points that don't adjust to changing demand or lead time variance — meaning a product that sold 50 units/day six months ago still has a reorder point built on that figure, even if it now sells 80.</p>
+  <p class="hero-problem">Manual reorder point calculation leads to delayed purchase orders and frequent stockouts in fast moving product lines. Planners use static reorder points that don't adjust to changing demand or lead time variance   meaning a product that sold 50 units/day six months ago still has a reorder point built on that figure, even if it now sells 80.</p>
 </div>
 
 <!-- LIVE ROP CALCULATOR -->
 <div class="calc-panel fade-up">
   <div class="calc-title">⚙️ Live ROP Calculator</div>
-  <div class="calc-sub">Enter demand and lead time parameters to instantly calculate dynamic reorder point and safety stock using Z-score methodology</div>
+  <div class="calc-sub">Enter demand and lead time parameters to instantly calculate dynamic reorder point and safety stock using Z score methodology</div>
   <div class="calc-grid">
     <div class="calc-field">
       <label class="calc-label">AVG DAILY DEMAND (units)</label>
-      <input class="calc-input" type="number" id="cDemand" value="85" min="1" oninput="calcROP()"/>
+      <input class="calc-input" type="number" id="cDemand" value="85" min="1" oninput="calcROP()" />
     </div>
     <div class="calc-field">
       <label class="calc-label">DEMAND STD DEV (units)</label>
-      <input class="calc-input" type="number" id="cDemandSD" value="14" min="0" oninput="calcROP()"/>
+      <input class="calc-input" type="number" id="cDemandSD" value="14" min="0" oninput="calcROP()" />
     </div>
     <div class="calc-field">
       <label class="calc-label">AVG LEAD TIME (days)</label>
-      <input class="calc-input" type="number" id="cLT" value="12" min="1" oninput="calcROP()"/>
+      <input class="calc-input" type="number" id="cLT" value="12" min="1" oninput="calcROP()" />
     </div>
     <div class="calc-field">
       <label class="calc-label">LEAD TIME STD DEV (days)</label>
-      <input class="calc-input" type="number" id="cLTSD" value="2.5" min="0" oninput="calcROP()"/>
+      <input class="calc-input" type="number" id="cLTSD" value="2.5" min="0" oninput="calcROP()" />
     </div>
     <div class="calc-field">
       <label class="calc-label">SERVICE LEVEL TARGET</label>
       <select class="calc-select" id="cSL" onchange="calcROP()">
-        <option value="1.28">90% — Std Coverage</option>
-        <option value="1.65">95% — Good Coverage</option>
-        <option value="1.96" selected>97.5% — High Coverage</option>
-        <option value="2.05">98% — Very High</option>
-        <option value="2.33">99% — Premium</option>
-        <option value="3.09">99.9% — Near-Perfect</option>
+        <option value="1.28">90%   Std Coverage</option>
+        <option value="1.65">95%   Good Coverage</option>
+        <option value="1.96" selected>97.5%   High Coverage</option>
+        <option value="2.05">98%   Very High</option>
+        <option value="2.33">99%   Premium</option>
+        <option value="3.09">99.9%   Near Perfect</option>
       </select>
     </div>
     <div class="calc-field">
       <label class="calc-label">ORDER CYCLE (days)</label>
-      <input class="calc-input" type="number" id="cCycle" value="7" min="1" oninput="calcROP()"/>
+      <input class="calc-input" type="number" id="cCycle" value="7" min="1" oninput="calcROP()" />
     </div>
   </div>
   <div class="calc-result" id="calcResult"></div>
@@ -290,8 +290,8 @@ footer a{color:var(--cyan);text-decoration:none;}
   <div class="section-title">Inventory Position Analytics</div>
   <div class="charts-grid">
     <div class="chart-card full-width">
-      <div class="chart-title">Current Stock vs Reorder Point — All SKUs</div>
-      <div class="chart-sub">Green bars = stock above ROP (safe) · Amber = within 20% of ROP (order soon) · Red = below ROP (order now)</div>
+      <div class="chart-title">Current Stock vs Reorder Point   All SKUs</div>
+      <div class="chart-sub">Green bars = stock above ROP (safe)   Amber = within 20% of ROP (order soon)   Red = below ROP (order now)</div>
       <div class="chart-wrap-lg"><canvas id="ropMainChart"></canvas></div>
     </div>
     <div class="chart-card">
@@ -301,16 +301,16 @@ footer a{color:var(--cyan);text-decoration:none;}
     </div>
     <div class="chart-card">
       <div class="chart-title">Stockout Risk by Service Level Tier</div>
-      <div class="chart-sub">SKU count and average days-of-coverage by service level target across the portfolio</div>
+      <div class="chart-sub">SKU count and average days of coverage by service level target across the portfolio</div>
       <div class="chart-wrap"><canvas id="slChart"></canvas></div>
     </div>
     <div class="chart-card">
       <div class="chart-title">Avg Lead Time vs Reorder Point (Days)</div>
-      <div class="chart-sub">Relationship between supplier lead time and calculated ROP — longer lead times drive higher reorder thresholds</div>
+      <div class="chart-sub">Relationship between supplier lead time and calculated ROP   longer lead times drive higher reorder thresholds</div>
       <div class="chart-wrap"><canvas id="ltRopChart"></canvas></div>
     </div>
     <div class="chart-card">
-      <div class="chart-title">60-Day Stock Depletion Curve</div>
+      <div class="chart-title">60 Day Stock Depletion Curve</div>
       <div class="chart-sub">Select a SKU to view its projected stock trajectory, reorder trigger, and safety stock floor</div>
       <div class="sku-picker">
         <label>SKU:</label>
@@ -323,13 +323,13 @@ footer a{color:var(--cyan);text-decoration:none;}
   <!-- TABLE -->
   <div class="section-eyebrow">// raw data</div>
   <div class="section-title">📊 Raw Dataset</div>
-  <p style="color:var(--muted);font-size:14px;margin-bottom:16px;">Dynamic reorder parameters for 60 SKUs — 50 shown. Red rows = reorder required now. Download full dataset below.</p>
+  <p style="color:var(--muted);font-size:14px;margin-bottom:16px;">Dynamic reorder parameters for 60 SKUs   50 shown. Red rows = reorder required now. Download full dataset below.</p>
   <div class="tbl-wrap">
     <table>
       <thead>
         <tr>
           <th>SKU ID</th><th>Product Name</th><th>Avg Daily Demand</th><th>Demand σ</th>
-          <th>Avg LT (days)</th><th>LT σ</th><th>Service Level</th><th>Z-Score</th>
+          <th>Avg LT (days)</th><th>LT σ</th><th>Service Level</th><th>Z Score</th>
           <th>Safety Stock</th><th>ROP</th><th>Current Stock</th><th>PO Required</th><th>Suggest Qty</th>
         </tr>
       </thead>
@@ -347,29 +347,29 @@ footer a{color:var(--cyan);text-decoration:none;}
     <div class="psf-card problem">
       <div class="psf-header"><span class="psf-icon">🔴</span><span class="psf-label">▶ PROBLEM</span></div>
       <ul class="psf-list">
-        <li>Static reorder points were set once during ERP implementation and never updated — 43% of SKUs had reorder points based on demand data more than 18 months old, leading to systematic under-ordering in growing lines</li>
-        <li>Safety stock calculations used a flat buffer of "2 weeks demand" across all products regardless of demand volatility, lead time variance, or service level requirements — over-stocking slow movers and under-buffering volatile fast movers simultaneously</li>
-        <li>Planners received no automated alert when stock fell below reorder point — the first indication was a stockout notification from the warehouse, by which point it was already too late to avoid a service failure</li>
-        <li>Suggested order quantities were calculated manually in Excel without considering economic order quantities, moq constraints, or lead time coverage — resulting in either under-ordering (requiring emergency top-ups) or over-ordering (inflating working capital)</li>
+        <li>Static reorder points were set once during ERP implementation and never updated   43% of SKUs had reorder points based on demand data more than 18 months old, leading to systematic under ordering in growing lines</li>
+        <li>Safety stock calculations used a flat buffer of "2 weeks demand" across all products regardless of demand volatility, lead time variance, or service level requirements   over stocking slow movers and under buffering volatile fast movers simultaneously</li>
+        <li>Planners received no automated alert when stock fell below reorder point   the first indication was a stockout notification from the warehouse, by which point it was already too late to avoid a service failure</li>
+        <li>Suggested order quantities were calculated manually in Excel without considering economic order quantities, moq constraints, or lead time coverage   resulting in either under ordering (requiring emergency top ups) or over ordering (inflating working capital)</li>
       </ul>
     </div>
     <div class="psf-card solution">
       <div class="psf-header"><span class="psf-icon">🔵</span><span class="psf-label">▶ SOLUTION</span></div>
       <ul class="psf-list">
-        <li>Dynamic ROP formula: <code style="font-family:'Space Mono',monospace;font-size:12px;background:var(--bg3);padding:1px 5px;border-radius:3px;">ROP = (AvgDemand × AvgLT) + Z × √(LT × σD² + D² × σLT²)</code> — recalculates automatically when either demand or lead time data is refreshed from the ERP</li>
-        <li>Service level Z-scores applied per SKU tier: A-class products at 99% (Z=2.33), B-class at 97.5% (Z=1.96), C-class at 95% (Z=1.65) — aligning buffer investment with product revenue contribution</li>
-        <li>Colour-coded daily reorder alert list generated at 07:00 each morning: red = PO required today, amber = PO required within 5 days, green = stock adequate — pushed to buyers via email and Teams notification</li>
-        <li>Suggested order quantity includes minimum order quantity constraints, economic order quantity guidance, and lead time coverage calculation to prevent both under and over-ordering</li>
+        <li>Dynamic ROP formula: <code style="font-family:'Space Mono',monospace;font-size:12px;background:var(--bg3);padding:1px 5px;border-radius:3px;">ROP = (AvgDemand × AvgLT) + Z × √(LT × σD² + D² × σLT²)</code>   recalculates automatically when either demand or lead time data is refreshed from the ERP</li>
+        <li>Service level Z scores applied per SKU tier: A class products at 99% (Z=2.33), B class at 97.5% (Z=1.96), C class at 95% (Z=1.65)   aligning buffer investment with product revenue contribution</li>
+        <li>Colour coded daily reorder alert list generated at 07:00 each morning: red = PO required today, amber = PO required within 5 days, green = stock adequate   pushed to buyers via email and Teams notification</li>
+        <li>Suggested order quantity includes minimum order quantity constraints, economic order quantity guidance, and lead time coverage calculation to prevent both under and over ordering</li>
       </ul>
     </div>
     <div class="psf-card findings">
       <div class="psf-header"><span class="psf-icon">🟢</span><span class="psf-label">▶ FINDINGS</span></div>
       <ul class="psf-list">
-        <li>Dynamic ROP recalculation reduced stockout frequency by <strong>38%</strong> in the first quarter — primarily by catching 14 SKUs where demand had grown 40%+ but static ROPs had not been updated</li>
-        <li>ABC-tiered service levels freed up <strong>€67,000 in working capital</strong> previously tied in excess safety stock on slow-moving C-class products that had been over-buffered at the same rate as A-class SKUs</li>
-        <li>Automated morning alert removed the need for planners to manually query the ERP each day — saving 1.5 hours per planner per day across a team of 4 buyers, equivalent to 3 FTE-weeks per month</li>
-        <li>Emergency purchase order frequency fell from 23/month to 6/month — reducing premium freight costs and supplier expediting fees by <strong>€18,400/month</strong></li>
-        <li>Average days-between-stockout improved from 11 to 47 days across the monitored SKU portfolio</li>
+        <li>Dynamic ROP recalculation reduced stockout frequency by <strong>38%</strong> in the first quarter   primarily by catching 14 SKUs where demand had grown 40%+ but static ROPs had not been updated</li>
+        <li>ABC tiered service levels freed up <strong>€67,000 in working capital</strong> previously tied in excess safety stock on slow moving C class products that had been over buffered at the same rate as A class SKUs</li>
+        <li>Automated morning alert removed the need for planners to manually query the ERP each day   saving 1.5 hours per planner per day across a team of 4 buyers, equivalent to 3 FTE weeks per month</li>
+        <li>Emergency purchase order frequency fell from 23/month to 6/month   reducing premium freight costs and supplier expediting fees by <strong>€18,400/month</strong></li>
+        <li>Average days between stockout improved from 11 to 47 days across the monitored SKU portfolio</li>
       </ul>
     </div>
   </div>
@@ -380,12 +380,12 @@ footer a{color:var(--cyan);text-decoration:none;}
   <div class="section-eyebrow">// outlook</div>
   <div class="section-title">📈 Forecast &amp; Projections</div>
   <div class="chart-card">
-    <div class="chart-title">60-Day Stock Level Projection — Portfolio Average with ROP Triggers</div>
+    <div class="chart-title">60 Day Stock Level Projection   Portfolio Average with ROP Triggers</div>
     <div class="chart-sub">Projected stock depletion across the SKU portfolio under different demand scenarios with reorder trigger dates marked</div>
     <div class="scenario-btns">
       <button class="scen-btn active" onclick="setForecastScenario('base',this)">Base Demand</button>
       <button class="scen-btn" onclick="setForecastScenario('high',this)">+20% Demand Surge</button>
-      <button class="scen-btn" onclick="setForecastScenario('low',this)">-15% Demand Drop</button>
+      <button class="scen-btn" onclick="setForecastScenario('low',this)"> 15% Demand Drop</button>
     </div>
     <div class="chart-wrap-lg"><canvas id="forecastChart"></canvas></div>
     <div class="forecast-summary" id="forecastSummary"></div>
@@ -397,16 +397,16 @@ footer a{color:var(--cyan);text-decoration:none;}
   <div class="section-eyebrow">// strategic guidance</div>
   <div class="section-title">💡 Advice for Companies with Similar Challenges</div>
   <div class="advice-card">
-    <div class="advice-title">Dynamic Reorder Point Implementation — Key Recommendations</div>
+    <div class="advice-title">Dynamic Reorder Point Implementation   Key Recommendations</div>
     <ul class="advice-list">
-      <li>Dynamic reorder points tied to rolling 13-week demand averages and current lead time actuals outperform static ROP settings by 35% on stockout frequency. Rebuild your reorder logic every quarter minimum — or automate the refresh entirely from your ERP data.</li>
-      <li>Never apply a single safety stock formula across your entire SKU portfolio. Tier your service levels by product value contribution: A-class at 99%, B-class at 97.5%, C-class at 95%. This frees up 15–25% of working capital in safety stock while actually improving service levels on your most important products.</li>
+      <li>Dynamic reorder points tied to rolling 13 week demand averages and current lead time actuals outperform static ROP settings by 35% on stockout frequency. Rebuild your reorder logic every quarter minimum   or automate the refresh entirely from your ERP data.</li>
+      <li>Never apply a single safety stock formula across your entire SKU portfolio. Tier your service levels by product value contribution: A class at 99%, B class at 97.5%, C class at 95%. This frees up 15 25% of working capital in safety stock while actually improving service levels on your most important products.</li>
       <li>The most dangerous phrase in inventory planning is "I'll check that later." Automate your reorder alerts and make them impossible to ignore. A daily push notification to buyers when a SKU breaches its ROP costs almost nothing to build but prevents the majority of stockout events before they occur.</li>
-      <li>Always validate your lead time assumptions against actual GR data, not contracted lead times. In most companies, actual lead time is 20–40% longer than what's in the system. Using contracted lead times for ROP calculations systematically under-calculates safety stock and causes avoidable stockouts.</li>
+      <li>Always validate your lead time assumptions against actual GR data, not contracted lead times. In most companies, actual lead time is 20 40% longer than what's in the system. Using contracted lead times for ROP calculations systematically under calculates safety stock and causes avoidable stockouts.</li>
     </ul>
     <div class="takeaway">
       <div class="takeaway-label">// KEY TAKEAWAY</div>
-      <p>Static reorder points are a silent killer of service levels. They feel stable because nothing obviously breaks — until suddenly everything does at once. The shift from static to dynamic ROPs, refreshed from rolling demand and live lead time data, is one of the highest-ROI improvements available to any inventory planning team. It costs almost nothing to implement and delivers compounding service-level improvements every quarter.</p>
+      <p>Static reorder points are a silent killer of service levels. They feel stable because nothing obviously breaks   until suddenly everything does at once. The shift from static to dynamic ROPs, refreshed from rolling demand and live lead time data, is one of the highest ROI improvements available to any inventory planning team. It costs almost nothing to implement and delivers compounding service level improvements every quarter.</p>
     </div>
   </div>
 </div>
@@ -417,7 +417,7 @@ footer a{color:var(--cyan);text-decoration:none;}
 </div>
 
 <footer>
-  <span>© 2026 Chibuike Dialaekwe · <a href="mailto:Dialaekwechibuike@gmail.com">Dialaekwechibuike@gmail.com</a> · <a href="https://linkedin.com/in/chibuike-dialaekwe-15582b248" target="_blank">LinkedIn</a></span>
+  <span>© 2026 Chibuike Dialaekwe   <a href="mailto:Dialaekwechibuike@gmail.com">Dialaekwechibuike@gmail.com</a>   <a href="https://linkedin.com/in/chibuike-dialaekwe-15582b248" target="_blank">LinkedIn</a></span>
 </footer>
 
 <script>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Demand Forecast — Seasonal Planner | Chibuike Dialaekwe</title>
+<title>Demand Forecast   Seasonal Planner | Chibuike Dialaekwe</title>
 <meta name="description" content="Python SARIMA forecasting model delivering 12-month demand projections with confidence intervals and scenario planning for seasonal retail demand.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -164,14 +164,14 @@ tbody td{padding:10px 14px;color:var(--text);vertical-align:middle}
 <div class="breadcrumb">
   <a href="index.html">Home</a><span>/</span>
   <a href="index.html#projects">Projects</a><span>/</span>
-  <span class="current">Demand Forecast — Seasonal Planner</span>
+  <span class="current">Demand Forecast   Seasonal Planner</span>
 </div>
 
 <main>
 
   <div class="project-hero fade-up">
-    <div class="hero-badge">📅 12-MONTH FORWARD VISIBILITY</div>
-    <h1 class="project-title">📈 Demand Forecast —<br><span>Seasonal Planner</span></h1>
+    <div class="hero-badge">📅 12 MONTH FORWARD VISIBILITY</div>
+    <h1 class="project-title">📈 Demand Forecast  <br><span>Seasonal Planner</span></h1>
     <div class="project-meta">
       <span class="meta-tag meta-cat">📊 Forecasting</span>
       <span class="meta-tag meta-tool">Python</span>
@@ -179,7 +179,7 @@ tbody td{padding:10px 14px;color:var(--text);vertical-align:middle}
       <span class="meta-tag meta-tool">3 Years Historical Data</span>
     </div>
     <p class="project-summary">
-      Python SARIMA forecasting model trained on 3 years of retail sales data. Delivers 12-month forward demand estimates with upper/lower confidence intervals and a scenario toggle — aligning commercial and supply chain forecasts in a single model.
+      Python SARIMA forecasting model trained on 3 years of retail sales data. Delivers 12 month forward demand estimates with upper/lower confidence intervals and a scenario toggle   aligning commercial and supply chain forecasts in a single model.
       <span class="mape-badge">✓ MAPE: 8.4%</span>
     </p>
   </div>
@@ -222,7 +222,7 @@ tbody td{padding:10px 14px;color:var(--text);vertical-align:middle}
 
   <div class="charts-grid fade-up">
     <div class="chart-card">
-      <div class="chart-title">📈 <strong>3-Year Demand History with Seasonal Pattern</strong> — units sold per month</div>
+      <div class="chart-title">📈 <strong>3 Year Demand History with Seasonal Pattern</strong>   units sold per month</div>
       <div class="band-legend">
         <div class="band-item"><div class="band-line" style="background:var(--cyan)"></div> Actual</div>
         <div class="band-item"><div class="band-line" style="background:var(--amber)"></div> Trend</div>
@@ -231,7 +231,7 @@ tbody td{padding:10px 14px;color:var(--text);vertical-align:middle}
       <div class="chart-wrap"><canvas id="chartHistory"></canvas></div>
     </div>
     <div class="chart-card">
-      <div class="chart-title">🌡 <strong>Seasonal Index by Month</strong> — avg multiplier vs annual baseline</div>
+      <div class="chart-title">🌡 <strong>Seasonal Index by Month</strong>   avg multiplier vs annual baseline</div>
       <div class="chart-wrap-md"><canvas id="chartSeasonal"></canvas></div>
     </div>
   </div>
@@ -257,29 +257,29 @@ tbody td{padding:10px 14px;color:var(--text);vertical-align:middle}
     <div class="panel-card panel-problem">
       <div class="panel-header ph-red">▶ Problem</div>
       <ul>
-        <li>Seasonal demand spikes are consistently underplanned by 18–35%, leading to lost sales in peak months and expensive overstock in off-peak periods.</li>
-        <li>Finance teams and supply chain planners use entirely different numbers — finance based on revenue targets, supply chain on last year's actuals plus a manual uplift.</li>
+        <li>Seasonal demand spikes are consistently underplanned by 18 35%, leading to lost sales in peak months and expensive overstock in off peak periods.</li>
+        <li>Finance teams and supply chain planners use entirely different numbers   finance based on revenue targets, supply chain on last year's actuals plus a manual uplift.</li>
         <li>No statistical decomposition of demand signal: trend, seasonality, and noise are treated as a single undifferentiated number, making the forecast unpredictable.</li>
-        <li>Manual forecast adjustments by category managers introduce systematic upward bias — on average 12% above realised demand — inflating purchasing plans.</li>
+        <li>Manual forecast adjustments by category managers introduce systematic upward bias   on average 12% above realised demand   inflating purchasing plans.</li>
       </ul>
     </div>
     <div class="panel-card panel-solution">
       <div class="panel-header ph-cyan">▶ Solution</div>
       <ul>
-        <li>Python SARIMA(2,1,2)(1,1,1,12) model fitted on 36 months of retail sales data per product category. Seasonal order 12 captures annual patterns; differencing removes non-stationarity.</li>
+        <li>Python SARIMA(2,1,2)(1,1,1,12) model fitted on 36 months of retail sales data per product category. Seasonal order 12 captures annual patterns; differencing removes non stationarity.</li>
         <li>Model decomposes demand into trend, seasonal index, and residual components, giving planners visibility into which part of demand is predictable vs genuinely uncertain.</li>
-        <li>95% confidence intervals (±15%) rendered as a shaded band on the forecast chart — giving procurement teams a structured buffer range instead of a single number.</li>
+        <li>95% confidence intervals (±15%) rendered as a shaded band on the forecast chart   giving procurement teams a structured buffer range instead of a single number.</li>
         <li>Scenario toggle (base / optimistic / pessimistic) adjusts seasonal multiplier ±20%, enabling aligned planning conversations between commercial and supply chain teams.</li>
       </ul>
     </div>
     <div class="panel-card panel-findings">
       <div class="panel-header ph-green">▶ Key Findings</div>
       <ul>
-        <li>The SARIMA model achieved 8.4% MAPE on out-of-sample test data — versus 23.1% for the manual forecast process it replaced. A 14.7-point accuracy improvement.</li>
-        <li>Apparel shows the sharpest seasonal peak: November–December demand is 2.4× the annual average. This was consistently underplanned by 28% in prior years.</li>
-        <li>Electronics demand has a strong secondary peak in August (back-to-school) equal to 75% of the December peak — a pattern the manual forecast entirely missed for 2 consecutive years.</li>
-        <li>FMCG demand is the most stable (seasonal index range: 0.88–1.14) and benefits least from sophisticated modelling — a simple moving average outperforms SARIMA for this category.</li>
-        <li>Promotional uplifts add an average 31% demand spike lasting 2–3 weeks. Incorporating a promotional flag as an exogenous regressor reduced forecast error during promo periods by 44%.</li>
+        <li>The SARIMA model achieved 8.4% MAPE on out of sample test data   versus 23.1% for the manual forecast process it replaced. A 14.7 point accuracy improvement.</li>
+        <li>Apparel shows the sharpest seasonal peak: November December demand is 2.4× the annual average. This was consistently underplanned by 28% in prior years.</li>
+        <li>Electronics demand has a strong secondary peak in August (back to school) equal to 75% of the December peak   a pattern the manual forecast entirely missed for 2 consecutive years.</li>
+        <li>FMCG demand is the most stable (seasonal index range: 0.88 1.14) and benefits least from sophisticated modelling   a simple moving average outperforms SARIMA for this category.</li>
+        <li>Promotional uplifts add an average 31% demand spike lasting 2 3 weeks. Incorporating a promotional flag as an exogenous regressor reduced forecast error during promo periods by 44%.</li>
       </ul>
     </div>
   </div>
@@ -288,7 +288,7 @@ tbody td{padding:10px 14px;color:var(--text);vertical-align:middle}
   <div class="forecast-section fade-up">
     <div class="section-header">
       <span class="section-label">// projections</span>
-      <div class="section-title">📈 12-Month SARIMA Forecast with Confidence Intervals</div>
+      <div class="section-title">📈 12 Month SARIMA Forecast with Confidence Intervals</div>
     </div>
     <div class="scenario-toggle">
       <button class="scenario-btn active" onclick="setScenario('base',this)">Base</button>
@@ -296,11 +296,11 @@ tbody td{padding:10px 14px;color:var(--text);vertical-align:middle}
       <button class="scenario-btn" onclick="setScenario('pessimistic',this)">Pessimistic (−20%)</button>
     </div>
     <div class="chart-card">
-      <div class="chart-title">📉 <strong>Demand Forecast — All Categories Combined</strong> · solid = historical · dashed = projected · shaded = ±15% CI</div>
+      <div class="chart-title">📉 <strong>Demand Forecast   All Categories Combined</strong>   solid = historical   dashed = projected   shaded = ±15% CI</div>
       <div class="chart-wrap"><canvas id="chartForecast"></canvas></div>
     </div>
     <div class="forecast-summary">
-      <strong>Base scenario:</strong> Aggregate demand is projected to reach 42,800 units in December — a 23% peak above the annual average, consistent with the 3-year seasonal pattern. The model predicts a strong Q4 driven by Apparel (+41%) and Electronics (+28%). <strong>Optimistic scenario</strong> (+20% seasonal multiplier) is appropriate if a major promotional event is confirmed for November — historical promo uplifts support a December ceiling of 52,600 units. <strong>Pessimistic scenario</strong> assumes below-average consumer sentiment, a mild summer, and no Q4 promotional investment — projecting 34,200 units in December. Supply chain should plan procurement to the base scenario with a +15% buffer on A-class SKUs.
+      <strong>Base scenario:</strong> Aggregate demand is projected to reach 42,800 units in December   a 23% peak above the annual average, consistent with the 3 year seasonal pattern. The model predicts a strong Q4 driven by Apparel (+41%) and Electronics (+28%). <strong>Optimistic scenario</strong> (+20% seasonal multiplier) is appropriate if a major promotional event is confirmed for November   historical promo uplifts support a December ceiling of 52,600 units. <strong>Pessimistic scenario</strong> assumes below average consumer sentiment, a mild summer, and no Q4 promotional investment   projecting 34,200 units in December. Supply chain should plan procurement to the base scenario with a +15% buffer on A class SKUs.
     </div>
   </div>
 
@@ -311,7 +311,7 @@ tbody td{padding:10px 14px;color:var(--text);vertical-align:middle}
       <div class="section-title">📊 Raw Dataset</div>
     </div>
     <div class="table-header">
-      <p class="table-subtitle">Real data used in this analysis — 50 rows shown. Download full dataset below.</p>
+      <p class="table-subtitle">Real data used in this analysis   50 rows shown. Download full dataset below.</p>
       <button class="download-btn" onclick="downloadCSV()">⬇ Download Full Dataset (CSV)</button>
     </div>
     <div class="table-wrap">
@@ -337,14 +337,14 @@ tbody td{padding:10px 14px;color:var(--text);vertical-align:middle}
     <div class="advice-card">
       <div class="advice-title">💡 Practical Recommendations</div>
       <ul>
-        <li>Invest in seasonal decomposition modelling before your next peak season planning cycle. Even a simple SARIMA model fitted on 24+ months of data outperforms manual forecast adjustments by 30–40% on MAPE. The Python implementation takes one experienced analyst 2–3 days to build.</li>
-        <li>Align commercial and supply chain forecasts in a single shared model — not two separate spreadsheets. The act of sitting finance and supply chain around the same number eliminates the most expensive source of forecast error: departmental assumption gaps.</li>
+        <li>Invest in seasonal decomposition modelling before your next peak season planning cycle. Even a simple SARIMA model fitted on 24+ months of data outperforms manual forecast adjustments by 30 40% on MAPE. The Python implementation takes one experienced analyst 2 3 days to build.</li>
+        <li>Align commercial and supply chain forecasts in a single shared model   not two separate spreadsheets. The act of sitting finance and supply chain around the same number eliminates the most expensive source of forecast error: departmental assumption gaps.</li>
         <li>Always show confidence intervals, not just a point forecast. A single number gives false certainty. A shaded band forces buyers and planners to think about range, which produces better safety stock decisions and more honest budget conversations.</li>
-        <li>Treat promotional events as explicit regressors in your model, not as manual post-hoc adjustments. A promotional flag variable with estimated uplift (drawn from historical promo data) typically reduces promotional period forecast error by 35–50%.</li>
+        <li>Treat promotional events as explicit regressors in your model, not as manual post hoc adjustments. A promotional flag variable with estimated uplift (drawn from historical promo data) typically reduces promotional period forecast error by 35 50%.</li>
       </ul>
       <div class="key-takeaway">
         <span class="kt-label">⚡ Key Takeaway</span>
-        <p class="kt-text">The most expensive forecasting mistake is not being wrong — it is being wrong at peak. A SARIMA model trained on 3 years of data that reduces peak-month MAPE from 23% to 8% on a €2M annual buy represents approximately €290,000 in avoided lost sales and overstock write-offs. The model costs virtually nothing to build and run.</p>
+        <p class="kt-text">The most expensive forecasting mistake is not being wrong   it is being wrong at peak. A SARIMA model trained on 3 years of data that reduces peak month MAPE from 23% to 8% on a €2M annual buy represents approximately €290,000 in avoided lost sales and overstock write offs. The model costs virtually nothing to build and run.</p>
       </div>
     </div>
   </div>

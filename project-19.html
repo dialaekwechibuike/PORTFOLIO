@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Purchase Order Analytics Hub | Chibuike Dialaekwe</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root{
@@ -159,7 +159,7 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
 <body>
 <div id="progress-bar"></div>
 <nav>
-  <span class="nav-logo">CD / PROJECT-19</span>
+  <span class="nav-logo">CD / PROJECT 19</span>
   <div class="nav-links">
     <a href="index.html">← Portfolio</a>
     <button class="theme-btn" id="themeToggle">☀️</button>
@@ -175,7 +175,7 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
     <span class="badge badge-green">POWER BI</span>
   </div>
   <h1>Purchase Order <span>Analytics Hub</span></h1>
-  <p class="hero-sub">SQL extraction + Power BI model turning raw ERP PO data into a unified hub showing spend analytics, PO cycle times, approval bottlenecks, supplier concentration, invoice variance, and a real-time exceptions register for overdue, over-budget, and unapproved orders.</p>
+  <p class="hero-sub">SQL extraction + Power BI model turning raw ERP PO data into a unified hub showing spend analytics, PO cycle times, approval bottlenecks, supplier concentration, invoice variance, and a real time exceptions register for overdue, over budget, and unapproved orders.</p>
 </div>
 
 <!-- PSF -->
@@ -185,17 +185,17 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
     <div class="psf-card problem">
       <div class="psf-label">⚑ Problem</div>
       <h3>PO Data Trapped in ERP</h3>
-      <p>Purchase order data exists in the ERP but surfaces only as raw transaction exports — 40-column flat files that require hours of pivot-table work to generate a spend report. No visibility into cycle times, approval bottlenecks, supplier concentration risk, or POs past due date until Finance raises a query at month-end.</p>
+      <p>Purchase order data exists in the ERP but surfaces only as raw transaction exports   40 column flat files that require hours of pivot table work to generate a spend report. No visibility into cycle times, approval bottlenecks, supplier concentration risk, or POs past due date until Finance raises a query at month end.</p>
     </div>
     <div class="psf-card solution">
       <div class="psf-label">⚙ Solution</div>
       <h3>SQL + Power BI Analytics Hub</h3>
-      <p>A scheduled SQL query extracts, joins, and aggregates PO data into a star schema (PO fact + supplier/category/buyer dimensions). Power BI layers on top with a spend treemap, cycle time analysis, approval bottleneck waterfall, invoice variance flags, and a live exceptions register refreshed daily before the 8am procurement stand-up.</p>
+      <p>A scheduled SQL query extracts, joins, and aggregates PO data into a star schema (PO fact + supplier/category/buyer dimensions). Power BI layers on top with a spend treemap, cycle time analysis, approval bottleneck waterfall, invoice variance flags, and a live exceptions register refreshed daily before the 8am procurement stand up.</p>
     </div>
     <div class="psf-card findings">
       <div class="psf-label">✓ Findings</div>
       <h3>€340K Invoice Variance Detected</h3>
-      <p>62 POs flagged with anomalies across 1,240 tracked. €340K in invoice-to-PO variance identified — 68% attributable to a single supplier category (Raw Materials). Average PO cycle time 14.2 days vs a 10-day target; approval bottleneck concentrated in two buyers. 3-way match automation reduced invoice exceptions by 41%.</p>
+      <p>62 POs flagged with anomalies across 1,240 tracked. €340K in invoice to PO variance identified   68% attributable to a single supplier category (Raw Materials). Average PO cycle time 14.2 days vs a 10 day target; approval bottleneck concentrated in two buyers. 3 way match automation reduced invoice exceptions by 41%.</p>
     </div>
   </div>
 </div>
@@ -206,13 +206,13 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
 
   <div class="exception-tabs">
     <button class="ex-tab active overdue" onclick="setExTab('overdue',this)">
-      Overdue POs <span class="ex-count exc-red" id="cnt-overdue">—</span>
+      Overdue POs <span class="ex-count exc-red" id="cnt-overdue"> </span>
     </button>
     <button class="ex-tab" onclick="setExTab('overbudget',this)">
-      Over Budget <span class="ex-count exc-amber" id="cnt-overbudget">—</span>
+      Over Budget <span class="ex-count exc-amber" id="cnt-overbudget"> </span>
     </button>
     <button class="ex-tab" onclick="setExTab('unapproved',this)">
-      Unapproved &gt;5 Days <span class="ex-count exc-purple" id="cnt-unapproved">—</span>
+      Unapproved &gt;5 Days <span class="ex-count exc-purple" id="cnt-unapproved"> </span>
     </button>
   </div>
   <div class="exception-list" id="exceptionList" style="margin-bottom:1.5rem;"></div>
@@ -220,7 +220,7 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
   <!-- TREEMAP -->
   <div class="section-title" style="margin-top:1rem">Spend Treemap</div>
   <div class="treemap-box">
-    <h3>PO Spend by Category — Proportional View (€K)</h3>
+    <h3>PO Spend by Category   Proportional View (€K)</h3>
     <div class="treemap-container" id="treemapContainer"></div>
   </div>
 </div>
@@ -262,7 +262,7 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
   <div class="section-title">Spend &amp; Cycle Time Analysis</div>
   <div class="chart-grid">
     <div class="chart-card">
-      <h3>PO Spend by Category (€K) — Actuals vs Budget</h3>
+      <h3>PO Spend by Category (€K)   Actuals vs Budget</h3>
       <div class="chart-wrap"><canvas id="spendChart"></canvas></div>
     </div>
     <div class="chart-card">
@@ -270,7 +270,7 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
       <div class="chart-wrap"><canvas id="cycleChart"></canvas></div>
     </div>
     <div class="chart-card">
-      <h3>Invoice Variance — PO Value vs Invoice Value (€K)</h3>
+      <h3>Invoice Variance   PO Value vs Invoice Value (€K)</h3>
       <div class="chart-wrap"><canvas id="varChart"></canvas></div>
     </div>
     <div class="chart-card">
@@ -282,7 +282,7 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
       <div class="chart-wrap-tall"><canvas id="trendChart"></canvas></div>
     </div>
     <div class="chart-card">
-      <h3>Supplier Concentration — Top 10 by Spend (€K)</h3>
+      <h3>Supplier Concentration   Top 10 by Spend (€K)</h3>
       <div class="chart-wrap-tall"><canvas id="supplierChart"></canvas></div>
     </div>
   </div>
@@ -312,10 +312,10 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
 
 <!-- FORECAST -->
 <div class="section fade-up">
-  <div class="section-title">6-Month Spend Forecast</div>
+  <div class="section-title">6 Month Spend Forecast</div>
   <div class="forecast-section">
     <div class="forecast-header">
-      <h3>Monthly PO Spend vs Procurement Budget — 6-Month Forward View</h3>
+      <h3>Monthly PO Spend vs Procurement Budget   6 Month Forward View</h3>
       <div class="scenario-btns">
         <button class="scenario-btn active" onclick="setScenario('base',this)">Base (Current Pipeline)</button>
         <button class="scenario-btn" onclick="setScenario('optimised',this)">Optimised (Savings Applied)</button>
@@ -333,22 +333,22 @@ tbody td{padding:.65rem 1rem;color:var(--text);white-space:nowrap;}
   <div class="advice-box">
     <h3>💡 Recommendations for Procurement Operations Teams</h3>
     <ul>
-      <li><strong>3-way match automation</strong> (PO → Goods Receipt → Invoice) reduces invoice processing cost by 60–80% and virtually eliminates payment disputes. Without it, the AP team manually reconciles mismatches that a simple SQL join would catch automatically.</li>
-      <li>The PO cycle time chart will show you where approvals bottleneck. Every day in approval is a day of supplier lead time consumed — a buyer with a 6-day average approval time is effectively making the supply chain 6 days shorter for their category.</li>
-      <li><strong>Supplier concentration risk</strong> is invisible until it isn't. If your top-3 suppliers account for more than 50% of category spend, you have leverage concentration but also single-source fragility. Model a dual-source scenario before an event forces you to.</li>
+      <li><strong>3 way match automation</strong> (PO → Goods Receipt → Invoice) reduces invoice processing cost by 60 80% and virtually eliminates payment disputes. Without it, the AP team manually reconciles mismatches that a simple SQL join would catch automatically.</li>
+      <li>The PO cycle time chart will show you where approvals bottleneck. Every day in approval is a day of supplier lead time consumed   a buyer with a 6 day average approval time is effectively making the supply chain 6 days shorter for their category.</li>
+      <li><strong>Supplier concentration risk</strong> is invisible until it isn't. If your top 3 suppliers account for more than 50% of category spend, you have leverage concentration but also single source fragility. Model a dual source scenario before an event forces you to.</li>
       <li>Invoice variance above ±3% at PO level is a red flag for either specification drift (the goods delivered don't match the PO), pricing errors, or fraud. Flag these for mandatory review at any variance above €1,000.</li>
-      <li>POs raised after delivery (retrospective POs) are the clearest indicator of a <strong>maverick spend</strong> problem. The analytics hub makes them visible; the fix is contract compliance training and a PO-first purchasing policy enforced in the ERP.</li>
-      <li>Run a monthly <strong>PO ageing report</strong>: any open PO older than 90 days with no receipt should be reviewed for cancellation or re-negotiation. Aged open POs inflate committed spend figures and distort budget visibility for Finance.</li>
+      <li>POs raised after delivery (retrospective POs) are the clearest indicator of a <strong>maverick spend</strong> problem. The analytics hub makes them visible; the fix is contract compliance training and a PO first purchasing policy enforced in the ERP.</li>
+      <li>Run a monthly <strong>PO ageing report</strong>: any open PO older than 90 days with no receipt should be reviewed for cancellation or re negotiation. Aged open POs inflate committed spend figures and distort budget visibility for Finance.</li>
     </ul>
     <div class="advice-takeaway">
-      <strong>Key Takeaway:</strong> The PO is the first control point in the procure-to-pay cycle. Every downstream problem — wrong invoice, missed delivery, budget overrun — is traceable to a failure at PO creation or approval. Getting the data right at source, and surfacing it daily, is the foundation of procurement governance.
+      <strong>Key Takeaway:</strong> The PO is the first control point in the procure to pay cycle. Every downstream problem   wrong invoice, missed delivery, budget overrun   is traceable to a failure at PO creation or approval. Getting the data right at source, and surfacing it daily, is the foundation of procurement governance.
     </div>
   </div>
 </div>
 
 <div class="page-nav">
   <a class="btn-nav" href="project-18.html">← Forecast Scorecard</a>
-  <a class="btn-nav" href="project-20.html">AI Replenishment Co-Pilot →</a>
+  <a class="btn-nav" href="project-20.html">AI Replenishment Co Pilot →</a>
 </div>
 
 <script>

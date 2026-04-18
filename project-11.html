@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Supplier Lead Time Tracker — Chibuike Dialaekwe</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Supplier Lead Time Tracker   Chibuike Dialaekwe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root{--bg:#080c14;--bg2:#0d1220;--bg3:#111827;--card:#0f1623;--text:#e8eaf6;--muted:#7986a3;--hint:#4a5568;--border:rgba(0,229,255,0.12);--border2:rgba(0,229,255,0.25);--cyan:#00e5ff;--green:#00ff88;--amber:#ffb300;--red:#ff4757;}
@@ -191,13 +191,13 @@ footer a{color:var(--cyan);text-decoration:none;}
 
 <!-- HERO -->
 <div class="hero fade-up">
-  <div class="hero-badge"><span class="badge-dot"></span>🏆 IMPROVES ON-TIME DELIVERY 25%</div>
-  <h1>Supplier Lead Time<br/><span>Tracker</span></h1>
+  <div class="hero-badge"><span class="badge-dot"></span>🏆 IMPROVES ON TIME DELIVERY 25%</div>
+  <h1>Supplier Lead Time<br /><span>Tracker</span></h1>
   <div class="hero-meta">
     <span class="tag tag-cat">🛒 Procurement</span>
     <span class="tag tag-tool">SQL</span>
   </div>
-  <p class="hero-problem">Purchasing teams have no historical visibility into supplier lead time accuracy, making supply planning unreliable. Promised lead times in contracts often differ significantly from actual delivery performance — and without a data model comparing the two, procurement teams can't quantify the gap, can't hold suppliers accountable, and can't build it into their safety stock calculations.</p>
+  <p class="hero-problem">Purchasing teams have no historical visibility into supplier lead time accuracy, making supply planning unreliable. Promised lead times in contracts often differ significantly from actual delivery performance   and without a data model comparing the two, procurement teams can't quantify the gap, can't hold suppliers accountable, and can't build it into their safety stock calculations.</p>
 </div>
 
 <!-- FILTER BAR -->
@@ -219,7 +219,7 @@ footer a{color:var(--cyan);text-decoration:none;}
   <div class="review-header">
     <span class="review-title">⚠ Suppliers Flagged for Review</span>
     <span class="review-count" id="reviewCount">0</span>
-    <span style="font-size:13px;color:var(--muted);">lead time variance &gt;20% — recommend immediate supplier review meeting</span>
+    <span style="font-size:13px;color:var(--muted);">lead time variance &gt;20%   recommend immediate supplier review meeting</span>
   </div>
   <div class="review-list" id="reviewList"></div>
 </div>
@@ -241,27 +241,27 @@ footer a{color:var(--cyan);text-decoration:none;}
   <div class="charts-grid">
     <div class="chart-card full-width">
       <div class="chart-title">Promised vs Actual Lead Time by Supplier (Avg Days)</div>
-      <div class="chart-sub">Side-by-side comparison — bars above the promised line indicate chronic over-delivery; the gap is the hidden safety stock cost</div>
+      <div class="chart-sub">Side by side comparison   bars above the promised line indicate chronic over delivery; the gap is the hidden safety stock cost</div>
       <div class="chart-wrap-lg"><canvas id="pvAChart"></canvas></div>
     </div>
     <div class="chart-card">
       <div class="chart-title">Lead Time Variance Distribution (%)</div>
-      <div class="chart-sub">How often each supplier delivers early, on-time, or late — shows reliability pattern not visible from averages alone</div>
+      <div class="chart-sub">How often each supplier delivers early, on time, or late   shows reliability pattern not visible from averages alone</div>
       <div class="chart-wrap"><canvas id="varDistChart"></canvas></div>
     </div>
     <div class="chart-card">
       <div class="chart-title">Reliability Score Ranking</div>
-      <div class="chart-sub">Composite reliability score (0–100) — weighted on consistency, variance, and on-time rate. Flagged at &lt;70</div>
+      <div class="chart-sub">Composite reliability score (0 100)   weighted on consistency, variance, and on time rate. Flagged at &lt;70</div>
       <div class="chart-wrap"><canvas id="reliabilityChart"></canvas></div>
     </div>
     <div class="chart-card">
       <div class="chart-title">Avg Lead Time Variance by Category (days)</div>
-      <div class="chart-sub">Which procurement categories suffer the most lead time slippage — helps prioritise supplier development effort</div>
+      <div class="chart-sub">Which procurement categories suffer the most lead time slippage   helps prioritise supplier development effort</div>
       <div class="chart-wrap"><canvas id="catVarChart"></canvas></div>
     </div>
     <div class="chart-card">
-      <div class="chart-title">Monthly On-Time Delivery Rate — Last 12 Months</div>
-      <div class="chart-sub">Portfolio-wide OTD% trend — target 95%. Declining trend signals systemic supplier performance degradation</div>
+      <div class="chart-title">Monthly On Time Delivery Rate   Last 12 Months</div>
+      <div class="chart-sub">Portfolio wide OTD% trend   target 95%. Declining trend signals systemic supplier performance degradation</div>
       <div class="chart-wrap"><canvas id="otdTrendChart"></canvas></div>
     </div>
   </div>
@@ -269,7 +269,7 @@ footer a{color:var(--cyan);text-decoration:none;}
   <!-- TABLE -->
   <div class="section-eyebrow">// raw data</div>
   <div class="section-title">📊 Raw Dataset</div>
-  <p style="color:var(--muted);font-size:14px;margin-bottom:16px;">PO-level lead time records from ERP — 50 rows shown. Red rows = review flagged (variance &gt;20%). Download full dataset below.</p>
+  <p style="color:var(--muted);font-size:14px;margin-bottom:16px;">PO level lead time records from ERP   50 rows shown. Red rows = review flagged (variance &gt;20%). Download full dataset below.</p>
   <div class="tbl-wrap">
     <table>
       <thead>
@@ -294,28 +294,28 @@ footer a{color:var(--cyan);text-decoration:none;}
     <div class="psf-card problem">
       <div class="psf-header"><span class="psf-icon">🔴</span><span class="psf-label">▶ PROBLEM</span></div>
       <ul class="psf-list">
-        <li>Lead time data lived only in individual PO line items inside the ERP — no aggregated view existed showing whether a supplier's historical performance matched their contracted commitment</li>
-        <li>Safety stock calculations used contracted lead times rather than actual lead times, systematically under-calculating buffer stock for unreliable suppliers and causing avoidable stockouts</li>
-        <li>Supplier review meetings relied on anecdotal delay examples rather than statistical performance data — suppliers could dispute individual cases, and without a dataset, procurement had no rebuttal</li>
-        <li>No early-warning mechanism existed — a supplier could be drifting 8 days late on average for 3 months before anyone noticed, because the deterioration was gradual and invisible in individual PO reviews</li>
+        <li>Lead time data lived only in individual PO line items inside the ERP   no aggregated view existed showing whether a supplier's historical performance matched their contracted commitment</li>
+        <li>Safety stock calculations used contracted lead times rather than actual lead times, systematically under calculating buffer stock for unreliable suppliers and causing avoidable stockouts</li>
+        <li>Supplier review meetings relied on anecdotal delay examples rather than statistical performance data   suppliers could dispute individual cases, and without a dataset, procurement had no rebuttal</li>
+        <li>No early warning mechanism existed   a supplier could be drifting 8 days late on average for 3 months before anyone noticed, because the deterioration was gradual and invisible in individual PO reviews</li>
       </ul>
     </div>
     <div class="psf-card solution">
       <div class="psf-header"><span class="psf-icon">🔵</span><span class="psf-label">▶ SOLUTION</span></div>
       <ul class="psf-list">
         <li>SQL pipeline joining ERP purchase order headers with goods receipt records to build a <code style="font-family:'Space Mono',monospace;font-size:12px;background:var(--bg3);padding:1px 5px;border-radius:3px;">supplier_lead_time_fact</code> table with one row per PO line, capturing promised and actual lead times with full date arithmetic</li>
-        <li>Reliability score formula: weighted average of on-time rate (50%), inverse of variance coefficient (30%), and trend direction (20%) — giving a single 0–100 score per supplier that updates monthly</li>
-        <li>Automated review flag triggered at &gt;20% variance on a rolling 90-day basis, with a supplier performance brief auto-generated in Power BI for insertion into the quarterly review pack</li>
-        <li>Lead time actuals fed back into the inventory planning model to replace contracted lead times — immediately improving safety stock accuracy for 14 suppliers with chronic overruns</li>
+        <li>Reliability score formula: weighted average of on time rate (50%), inverse of variance coefficient (30%), and trend direction (20%)   giving a single 0 100 score per supplier that updates monthly</li>
+        <li>Automated review flag triggered at &gt;20% variance on a rolling 90 day basis, with a supplier performance brief auto generated in Power BI for insertion into the quarterly review pack</li>
+        <li>Lead time actuals fed back into the inventory planning model to replace contracted lead times   immediately improving safety stock accuracy for 14 suppliers with chronic overruns</li>
       </ul>
     </div>
     <div class="psf-card findings">
       <div class="psf-header"><span class="psf-icon">🟢</span><span class="psf-label">▶ FINDINGS</span></div>
       <ul class="psf-list">
-        <li>Average actual lead time across the supplier base was <strong>4.8 days longer</strong> than contracted — effectively doubling the required safety stock for those suppliers when the actuals replaced contract figures in the planning model</li>
-        <li>Electronics category showed the worst performance: avg variance of +6.2 days (31% above contract), driven primarily by two suppliers using contracted lead times from 2022 that no longer reflected their post-COVID capacity</li>
-        <li>Switching safety stock calculations to actual lead times for flagged suppliers reduced both stockout events (down 31%) and overstock instances (down 18%) simultaneously — because some suppliers were actually faster than their contracts stated</li>
-        <li>Supplier review meetings became data-driven within one cycle: suppliers presented with rolling 90-day variance data accepted responsibility for corrections in 7 of 8 cases where previously they had disputed delay claims</li>
+        <li>Average actual lead time across the supplier base was <strong>4.8 days longer</strong> than contracted   effectively doubling the required safety stock for those suppliers when the actuals replaced contract figures in the planning model</li>
+        <li>Electronics category showed the worst performance: avg variance of +6.2 days (31% above contract), driven primarily by two suppliers using contracted lead times from 2022 that no longer reflected their post COVID capacity</li>
+        <li>Switching safety stock calculations to actual lead times for flagged suppliers reduced both stockout events (down 31%) and overstock instances (down 18%) simultaneously   because some suppliers were actually faster than their contracts stated</li>
+        <li>Supplier review meetings became data driven within one cycle: suppliers presented with rolling 90 day variance data accepted responsibility for corrections in 7 of 8 cases where previously they had disputed delay claims</li>
         <li>OTD rate improved from 76% to 94% within two quarters as suppliers became aware their lead time performance was being tracked and scored monthly</li>
       </ul>
     </div>
@@ -327,8 +327,8 @@ footer a{color:var(--cyan);text-decoration:none;}
   <div class="section-eyebrow">// outlook</div>
   <div class="section-title">📈 Forecast &amp; Projections</div>
   <div class="chart-card">
-    <div class="chart-title">6-Month Lead Time Trend Projection by Supplier</div>
-    <div class="chart-sub">Historical actual lead time (solid) vs projected trend (dashed) — declining = improving performance; rising = deteriorating reliability</div>
+    <div class="chart-title">6 Month Lead Time Trend Projection by Supplier</div>
+    <div class="chart-sub">Historical actual lead time (solid) vs projected trend (dashed)   declining = improving performance; rising = deteriorating reliability</div>
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap;">
       <label style="font-size:13px;color:var(--muted);font-family:'Space Mono',monospace;">SUPPLIER:</label>
       <select class="supplier-trend-select" id="trendSelect" onchange="buildTrendForecast()"></select>
@@ -348,16 +348,16 @@ footer a{color:var(--cyan);text-decoration:none;}
   <div class="section-eyebrow">// strategic guidance</div>
   <div class="section-title">💡 Advice for Companies with Similar Challenges</div>
   <div class="advice-card">
-    <div class="advice-title">Supplier Lead Time Management — Key Recommendations</div>
+    <div class="advice-title">Supplier Lead Time Management   Key Recommendations</div>
     <ul class="advice-list">
-      <li>Embed lead time reliability scores into your supplier KPI review process. A supplier consistently 5+ days late on a 14-day lead time is effectively doubling your safety stock requirement. Quantify this cost and present it in contract renegotiations — it makes the business case for penalty clauses or dual-sourcing undeniable.</li>
-      <li>Replace contracted lead times with rolling actuals in your planning system. This single change, requiring nothing more than a SQL query on your ERP goods receipt data, can immediately improve safety stock accuracy by 20–40% for suppliers with chronic lead time variance.</li>
+      <li>Embed lead time reliability scores into your supplier KPI review process. A supplier consistently 5+ days late on a 14 day lead time is effectively doubling your safety stock requirement. Quantify this cost and present it in contract renegotiations   it makes the business case for penalty clauses or dual sourcing undeniable.</li>
+      <li>Replace contracted lead times with rolling actuals in your planning system. This single change, requiring nothing more than a SQL query on your ERP goods receipt data, can immediately improve safety stock accuracy by 20 40% for suppliers with chronic lead time variance.</li>
       <li>Build a supplier lead time trend monitor, not just a snapshot. A supplier with a 15% variance today but a worsening trend over 3 months is a bigger risk than one with 20% variance on a stable or improving trajectory. Direction matters as much as current position.</li>
-      <li>Make the data visible to suppliers, not just internal teams. When suppliers know their lead time reliability is being measured and scored monthly — and that the score feeds into sourcing decisions — behaviour changes. Transparency is the cheapest performance improvement tool in procurement.</li>
+      <li>Make the data visible to suppliers, not just internal teams. When suppliers know their lead time reliability is being measured and scored monthly   and that the score feeds into sourcing decisions   behaviour changes. Transparency is the cheapest performance improvement tool in procurement.</li>
     </ul>
     <div class="takeaway">
       <div class="takeaway-label">// KEY TAKEAWAY</div>
-      <p>Supplier lead time reliability is one of the most undertracked metrics in supply chain. Every day of untracked variance is a day your safety stock model is working with wrong inputs — either over-buffering (wasting working capital) or under-buffering (risking stockouts). Building the SQL tracker costs one sprint. The compounding benefit to planning accuracy, working capital, and supplier accountability continues indefinitely.</p>
+      <p>Supplier lead time reliability is one of the most undertracked metrics in supply chain. Every day of untracked variance is a day your safety stock model is working with wrong inputs   either over buffering (wasting working capital) or under buffering (risking stockouts). Building the SQL tracker costs one sprint. The compounding benefit to planning accuracy, working capital, and supplier accountability continues indefinitely.</p>
     </div>
   </div>
 </div>
@@ -367,7 +367,7 @@ footer a{color:var(--cyan);text-decoration:none;}
   <a href="project-12.html" class="btn-next">Next: Carbon Footprint Logistics →</a>
 </div>
 <footer>
-  <span>© 2026 Chibuike Dialaekwe · <a href="mailto:Dialaekwechibuike@gmail.com">Dialaekwechibuike@gmail.com</a> · <a href="https://linkedin.com/in/chibuike-dialaekwe-15582b248" target="_blank">LinkedIn</a></span>
+  <span>© 2026 Chibuike Dialaekwe   <a href="mailto:Dialaekwechibuike@gmail.com">Dialaekwechibuike@gmail.com</a>   <a href="https://linkedin.com/in/chibuike-dialaekwe-15582b248" target="_blank">LinkedIn</a></span>
 </footer>
 
 <script>

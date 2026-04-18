@@ -193,7 +193,7 @@ tbody td{padding:10px 14px;color:var(--text);vertical-align:middle}
       <span class="meta-tag meta-tool">ABC/XYZ Analysis</span>
     </div>
     <p class="project-summary">
-      Power BI dashboard classifying 500+ SKUs by ABC/XYZ segmentation, automating safety stock calculations, and generating reorder point recommendations — cutting stockout risk by 40% and eliminating manual replenishment guesswork.
+      Power BI dashboard classifying 500+ SKUs by ABC/XYZ segmentation, automating safety stock calculations, and generating reorder point recommendations   cutting stockout risk by 40% and eliminating manual replenishment guesswork.
     </p>
   </div>
 
@@ -225,18 +225,18 @@ tbody td{padding:10px 14px;color:var(--text);vertical-align:middle}
 
   <div class="charts-grid fade-up">
     <div class="chart-card">
-      <div class="chart-title">📊 <strong>Stockout Events by ABC Class</strong> — before vs after optimization</div>
+      <div class="chart-title">📊 <strong>Stockout Events by ABC Class</strong>   before vs after optimization</div>
       <div class="chart-wrap"><canvas id="chartMain"></canvas></div>
     </div>
     <div class="chart-card">
-      <div class="chart-title">💰 <strong>Inventory Value by Class</strong> — % of total stock value (€2.4M)</div>
+      <div class="chart-title">💰 <strong>Inventory Value by Class</strong>   % of total stock value (€2.4M)</div>
       <div class="chart-wrap"><canvas id="chartDonut"></canvas></div>
     </div>
   </div>
 
   <div class="chart-full fade-up">
     <div class="chart-card">
-      <div class="chart-title">📈 <strong>90-Day Stock Level Projection by Class</strong> — A-class SKUs average (units on hand)</div>
+      <div class="chart-title">📈 <strong>90 Day Stock Level Projection by Class</strong>   A class SKUs average (units on hand)</div>
       <div class="chart-wrap-md"><canvas id="chartStock"></canvas></div>
     </div>
   </div>
@@ -247,17 +247,17 @@ tbody td{padding:10px 14px;color:var(--text);vertical-align:middle}
       <span class="section-label">// segmentation</span>
       <div class="section-title">ABC / XYZ Classification Matrix</div>
     </div>
-    <p style="font-size:0.85rem;color:var(--muted);margin-bottom:4px;">A = high value (top 80% of revenue) · B = medium value · C = low value<br>X = stable demand (CV &lt; 0.5) · Y = variable demand · Z = irregular/lumpy demand</p>
+    <p style="font-size:0.85rem;color:var(--muted);margin-bottom:4px;">A = high value (top 80% of revenue)   B = medium value   C = low value<br>X = stable demand (CV &lt; 0.5)   Y = variable demand   Z = irregular/lumpy demand</p>
     <div class="matrix-grid" style="margin-top:16px">
-      <div class="matrix-cell mc-aa"><div class="mc-label">AX — 42 SKUs</div><div class="mc-count">High value · Stable demand</div><div class="mc-desc">Critical. Max safety stock. Daily monitoring. Dual-source supplier.</div></div>
-      <div class="matrix-cell mc-ax"><div class="mc-label">AY — 38 SKUs</div><div class="mc-count">High value · Variable demand</div><div class="mc-desc">High safety stock. Weekly review. Statistical forecasting required.</div></div>
-      <div class="matrix-cell mc-az"><div class="mc-label">AZ — 21 SKUs</div><div class="mc-count">High value · Irregular demand</div><div class="mc-desc">Reserve stock strategy. Manual order review. Explore substitutes.</div></div>
-      <div class="matrix-cell mc-ba"><div class="mc-label">BX — 67 SKUs</div><div class="mc-count">Med value · Stable demand</div><div class="mc-desc">Standard safety stock. Bi-weekly review. Automate reorder trigger.</div></div>
-      <div class="matrix-cell mc-bx"><div class="mc-label">BY — 74 SKUs</div><div class="mc-count">Med value · Variable demand</div><div class="mc-desc">Moderate buffer. Monthly review. Rolling 8-week demand average.</div></div>
-      <div class="matrix-cell mc-bz"><div class="mc-label">BZ — 48 SKUs</div><div class="mc-count">Med value · Irregular demand</div><div class="mc-desc">Minimal stock. Order-on-demand where lead time allows.</div></div>
-      <div class="matrix-cell mc-ca"><div class="mc-label">CX — 88 SKUs</div><div class="mc-count">Low value · Stable demand</div><div class="mc-desc">Bulk order strategy. Quarterly review. Reduce SKU count.</div></div>
-      <div class="matrix-cell mc-cx"><div class="mc-label">CY — 72 SKUs</div><div class="mc-count">Low value · Variable demand</div><div class="mc-desc">Minimal safety stock. Consider consignment or VMI with supplier.</div></div>
-      <div class="matrix-cell mc-cz"><div class="mc-label">CZ — 62 SKUs</div><div class="mc-count">Low value · Irregular demand</div><div class="mc-desc">Candidate for elimination or make-to-order. Zero safety stock.</div></div>
+      <div class="matrix-cell mc-aa"><div class="mc-label">AX   42 SKUs</div><div class="mc-count">High value   Stable demand</div><div class="mc-desc">Critical. Max safety stock. Daily monitoring. Dual source supplier.</div></div>
+      <div class="matrix-cell mc-ax"><div class="mc-label">AY   38 SKUs</div><div class="mc-count">High value   Variable demand</div><div class="mc-desc">High safety stock. Weekly review. Statistical forecasting required.</div></div>
+      <div class="matrix-cell mc-az"><div class="mc-label">AZ   21 SKUs</div><div class="mc-count">High value   Irregular demand</div><div class="mc-desc">Reserve stock strategy. Manual order review. Explore substitutes.</div></div>
+      <div class="matrix-cell mc-ba"><div class="mc-label">BX   67 SKUs</div><div class="mc-count">Med value   Stable demand</div><div class="mc-desc">Standard safety stock. Bi weekly review. Automate reorder trigger.</div></div>
+      <div class="matrix-cell mc-bx"><div class="mc-label">BY   74 SKUs</div><div class="mc-count">Med value   Variable demand</div><div class="mc-desc">Moderate buffer. Monthly review. Rolling 8 week demand average.</div></div>
+      <div class="matrix-cell mc-bz"><div class="mc-label">BZ   48 SKUs</div><div class="mc-count">Med value   Irregular demand</div><div class="mc-desc">Minimal stock. Order on demand where lead time allows.</div></div>
+      <div class="matrix-cell mc-ca"><div class="mc-label">CX   88 SKUs</div><div class="mc-count">Low value   Stable demand</div><div class="mc-desc">Bulk order strategy. Quarterly review. Reduce SKU count.</div></div>
+      <div class="matrix-cell mc-cx"><div class="mc-label">CY   72 SKUs</div><div class="mc-count">Low value   Variable demand</div><div class="mc-desc">Minimal safety stock. Consider consignment or VMI with supplier.</div></div>
+      <div class="matrix-cell mc-cz"><div class="mc-label">CZ   62 SKUs</div><div class="mc-count">Low value   Irregular demand</div><div class="mc-desc">Candidate for elimination or make to order. Zero safety stock.</div></div>
     </div>
   </div>
 
@@ -266,8 +266,8 @@ tbody td{padding:10px 14px;color:var(--text);vertical-align:middle}
     <div class="panel-card panel-problem">
       <div class="panel-header ph-red">▶ Problem</div>
       <ul>
-        <li>Retailers face costly stockouts and overstock simultaneously due to volatile demand and manual, gut-feel replenishment decisions.</li>
-        <li>All 512 SKUs were managed with identical safety stock rules — ignoring the fundamental difference between a high-value, stable product and a low-value, erratic one.</li>
+        <li>Retailers face costly stockouts and overstock simultaneously due to volatile demand and manual, gut feel replenishment decisions.</li>
+        <li>All 512 SKUs were managed with identical safety stock rules   ignoring the fundamental difference between a high value, stable product and a low value, erratic one.</li>
         <li>Replenishment planners spent 6+ hours per week manually reviewing stock levels with no priority framework, reacting to emergencies rather than preventing them.</li>
         <li>No visibility into demand variability per SKU, making statistical safety stock calculation impossible without a proper data model.</li>
       </ul>
@@ -276,19 +276,19 @@ tbody td{padding:10px 14px;color:var(--text);vertical-align:middle}
       <div class="panel-header ph-cyan">▶ Solution</div>
       <ul>
         <li>Built ABC/XYZ segmentation model classifying all 512 SKUs across a 3×3 matrix based on 12 months of sales history and coefficient of variation calculation.</li>
-        <li>Safety stock formula: Z-score × √(lead time) × demand standard deviation — applied per ABC/XYZ tier with differentiated service level targets (99.5% for AX, 90% for CZ).</li>
-        <li>Dynamic reorder points recalculate automatically when weekly demand data refreshes in Power BI, triggering colour-coded replenishment alerts.</li>
-        <li>Power BI dashboard consolidates all 512 SKUs into a single view with drill-down by category, supplier, warehouse zone, and ABC/XYZ class.</li>
+        <li>Safety stock formula: Z score × √(lead time) × demand standard deviation   applied per ABC/XYZ tier with differentiated service level targets (99.5% for AX, 90% for CZ).</li>
+        <li>Dynamic reorder points recalculate automatically when weekly demand data refreshes in Power BI, triggering colour coded replenishment alerts.</li>
+        <li>Power BI dashboard consolidates all 512 SKUs into a single view with drill down by category, supplier, warehouse zone, and ABC/XYZ class.</li>
       </ul>
     </div>
     <div class="panel-card panel-findings">
       <div class="panel-header ph-green">▶ Key Findings</div>
       <ul>
-        <li>The 42 AX SKUs represent 61% of total revenue — yet accounted for only 18% of planner attention time before this project. Post-implementation, they receive daily automated monitoring.</li>
-        <li>62 CZ SKUs had combined safety stock of €43,000 — capital that was immediately freed once an order-on-demand policy replaced the blanket stock buffer.</li>
-        <li>Average stockout events for A-class SKUs fell from 14 per quarter to 8 — a 43% reduction — within the first 3 months of the new reorder logic.</li>
-        <li>Demand variability (XYZ classification) proved more predictive of stockout events than demand value alone — validating the two-dimensional approach over pure ABC analysis.</li>
-        <li>Implementing differentiated service levels (vs one-size-fits-all 95%) reduced total safety stock holding cost by €187,000 annually without a significant service impact.</li>
+        <li>The 42 AX SKUs represent 61% of total revenue   yet accounted for only 18% of planner attention time before this project. Post implementation, they receive daily automated monitoring.</li>
+        <li>62 CZ SKUs had combined safety stock of €43,000   capital that was immediately freed once an order on demand policy replaced the blanket stock buffer.</li>
+        <li>Average stockout events for A class SKUs fell from 14 per quarter to 8   a 43% reduction   within the first 3 months of the new reorder logic.</li>
+        <li>Demand variability (XYZ classification) proved more predictive of stockout events than demand value alone   validating the two dimensional approach over pure ABC analysis.</li>
+        <li>Implementing differentiated service levels (vs one size fits all 95%) reduced total safety stock holding cost by €187,000 annually without a significant service impact.</li>
       </ul>
     </div>
   </div>
@@ -305,11 +305,11 @@ tbody td{padding:10px 14px;color:var(--text);vertical-align:middle}
       <button class="scenario-btn" onclick="setScenario('pessimistic',this)">Pessimistic</button>
     </div>
     <div class="chart-card">
-      <div class="chart-title">📦 <strong>90-Day Forward Stock Level — A-Class SKU Average</strong> · solid = historical · dashed = projected</div>
+      <div class="chart-title">📦 <strong>90 Day Forward Stock Level   A Class SKU Average</strong>   solid = historical   dashed = projected</div>
       <div class="chart-wrap"><canvas id="chartForecast"></canvas></div>
     </div>
     <div class="forecast-summary">
-      <strong>Base scenario:</strong> A-class average stock level is projected to stabilise at 340–380 units over the next 90 days as dynamic reorder points align supply with actual demand patterns. The reorder trigger fires 2 days earlier than the static model in 68% of cases, preventing 5–6 stockout events per quarter. <strong>Pessimistic scenario</strong> assumes lead time extension of +3 days across key suppliers (supplier disruption), pushing safety stock requirements up by 22% and potentially triggering 2–3 additional stockout events if not pre-empted. <strong>Optimistic scenario</strong> assumes all AX/AY suppliers accept VMI arrangements, reducing stock holding costs by a further €62,000 over the 90-day period.
+      <strong>Base scenario:</strong> A class average stock level is projected to stabilise at 340 380 units over the next 90 days as dynamic reorder points align supply with actual demand patterns. The reorder trigger fires 2 days earlier than the static model in 68% of cases, preventing 5 6 stockout events per quarter. <strong>Pessimistic scenario</strong> assumes lead time extension of +3 days across key suppliers (supplier disruption), pushing safety stock requirements up by 22% and potentially triggering 2 3 additional stockout events if not pre empted. <strong>Optimistic scenario</strong> assumes all AX/AY suppliers accept VMI arrangements, reducing stock holding costs by a further €62,000 over the 90 day period.
     </div>
   </div>
 
@@ -320,7 +320,7 @@ tbody td{padding:10px 14px;color:var(--text);vertical-align:middle}
       <div class="section-title">📊 Raw Dataset</div>
     </div>
     <div class="table-header">
-      <p class="table-subtitle">Real data used in this analysis — 50 rows shown. Download full dataset below.</p>
+      <p class="table-subtitle">Real data used in this analysis   50 rows shown. Download full dataset below.</p>
       <button class="download-btn" onclick="downloadCSV()">⬇ Download Full Dataset (CSV)</button>
     </div>
     <div class="table-wrap">
@@ -346,14 +346,14 @@ tbody td{padding:10px 14px;color:var(--text);vertical-align:middle}
     <div class="advice-card">
       <div class="advice-title">💡 Practical Recommendations</div>
       <ul>
-        <li>Implement ABC/XYZ matrix segmentation before investing in expensive ERP replenishment modules. The 80/20 principle applies — 20% of SKUs drive 80% of stockout events. Focus safety stock buffers and planner attention on your AX and AY segments first.</li>
-        <li>Never use a single service level target across all SKUs. A 99.5% service level for a CZ product is a waste of capital. Tiered service levels (99.5% / 97% / 90% / 85% by ABC/XYZ band) typically reduce total safety stock by 15–25% with no meaningful customer impact.</li>
-        <li>Rebuild your safety stock formula using actual demand standard deviation, not a flat "X weeks of cover" rule. The flat cover approach consistently over-stocks stable products and under-stocks volatile ones — exactly the wrong trade-off.</li>
-        <li>Run a quarterly ABC/XYZ recalculation. Product demand patterns shift — a previously stable AX product may migrate to AY if a competitor enters. Static segmentation from 2 years ago is actively misleading your planners.</li>
+        <li>Implement ABC/XYZ matrix segmentation before investing in expensive ERP replenishment modules. The 80/20 principle applies   20% of SKUs drive 80% of stockout events. Focus safety stock buffers and planner attention on your AX and AY segments first.</li>
+        <li>Never use a single service level target across all SKUs. A 99.5% service level for a CZ product is a waste of capital. Tiered service levels (99.5% / 97% / 90% / 85% by ABC/XYZ band) typically reduce total safety stock by 15 25% with no meaningful customer impact.</li>
+        <li>Rebuild your safety stock formula using actual demand standard deviation, not a flat "X weeks of cover" rule. The flat cover approach consistently over stocks stable products and under stocks volatile ones   exactly the wrong trade off.</li>
+        <li>Run a quarterly ABC/XYZ recalculation. Product demand patterns shift   a previously stable AX product may migrate to AY if a competitor enters. Static segmentation from 2 years ago is actively misleading your planners.</li>
       </ul>
       <div class="key-takeaway">
         <span class="kt-label">⚡ Key Takeaway</span>
-        <p class="kt-text">The fastest working capital release in inventory management comes not from buying less — but from buying the right amount of the right things. A properly segmented safety stock model that applies high buffers to truly critical SKUs and near-zero buffers to low-value, erratic ones typically frees 10–20% of inventory working capital within the first quarter of implementation.</p>
+        <p class="kt-text">The fastest working capital release in inventory management comes not from buying less   but from buying the right amount of the right things. A properly segmented safety stock model that applies high buffers to truly critical SKUs and near zero buffers to low value, erratic ones typically frees 10 20% of inventory working capital within the first quarter of implementation.</p>
       </div>
     </div>
   </div>
