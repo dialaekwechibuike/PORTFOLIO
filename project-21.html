@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>AI Tenant Cost & Service Charge Allocator (Nebenkostenassistent) | Chibuike Dialaekwe</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#0a0a0f;--surface:#12121a;--surface2:#1a1a26;--border:#2a2a3a;
+  --text:#e8e8f0;--muted:#6b6b80;--accent:#00ff88;--accent2:#00cc6a;
+  --red:#ff4466;--amber:#ffb800;--cyan:#00d4ff;--purple:#a855f7;--green:#00ff88;
+  --font-mono:'Space Mono',monospace;--font-body:'Outfit',sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f4f4f8;--surface:#ffffff;--surface2:#eaeaf2;--border:#d0d0e0;
+  --text:#1a1a2e;--muted:#7070a0;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.6;transition:background .3s,color .3s;}
+#progress-bar{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,var(--accent),var(--cyan));z-index:1000;transition:width .1s;}
+nav{position:sticky;top:0;background:rgba(10,10,15,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);z-index:900;padding:0 2rem;}
+[data-theme="light"] nav{background:rgba(244,244,248,.92);}
+.nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:56px;}
+.nav-logo{font-family:var(--font-mono);font-size:.85rem;color:var(--accent);text-decoration:none;letter-spacing:.05em;}
+.nav-links{display:flex;align-items:center;gap:1rem;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.85rem;transition:color .2s;}
+.nav-links a:hover{color:var(--text);}
+.btn-theme{background:none;border:1px solid var(--border);border-radius:6px;padding:.3rem .6rem;cursor:pointer;font-size:.9rem;color:var(--text);transition:border-color .2s;}
+.btn-theme:hover{border-color:var(--accent);}
+
+.hero{max-width:1200px;margin:0 auto;padding:3.5rem 2rem 2rem;}
+.breadcrumb{font-family:var(--font-mono);font-size:.75rem;color:var(--muted);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;}
+.breadcrumb a{color:var(--muted);text-decoration:none;transition:color .2s;}
+.breadcrumb a:hover{color:var(--accent);}
+.badge{display:inline-block;background:rgba(0,212,255,.12);color:var(--cyan);border:1px solid rgba(0,212,255,.3);border-radius:4px;font-family:var(--font-mono);font-size:.65rem;letter-spacing:.08em;padding:.25rem .6rem;margin-bottom:1rem;}
+h1{font-family:var(--font-mono);font-size:clamp(1.6rem,3vw,2.4rem);font-weight:700;line-height:1.2;margin-bottom:.75rem;}
+h1 span{color:var(--cyan);}
+.hero-meta{display:flex;flex-wrap:wrap;gap:1rem;margin-bottom:2rem;}
+.meta-tag{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:.3rem .7rem;font-size:.8rem;color:var(--muted);}
+.meta-tag strong{color:var(--text);}
+
+.section{max-width:1200px;margin:0 auto;padding:2rem;}
+.section-title{font-family:var(--font-mono);font-size:.75rem;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:1.25rem;display:flex;align-items:center;gap:.5rem;}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* KPIs */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:1rem;margin-bottom:2rem;}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;position:relative;overflow:hidden;transition:border-color .2s,transform .2s;}
+.kpi-card:hover{border-color:var(--cyan);transform:translateY(-2px);}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--cyan);opacity:.4;}
+.kpi-label{font-size:.75rem;color:var(--muted);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.06em;}
+.kpi-value{font-family:var(--font-mono);font-size:1.7rem;font-weight:700;color:var(--cyan);line-height:1;}
+.kpi-sub{font-size:.75rem;color:var(--muted);margin-top:.4rem;}
+.tag{display:inline-block;border-radius:3px;font-family:var(--font-mono);font-size:.65rem;padding:.15rem .4rem;font-weight:700;}
+.tag-up{background:rgba(0,255,136,.15);color:var(--green);}
+.tag-down{background:rgba(255,68,102,.15);color:var(--red);}
+.tag-neu{background:rgba(107,107,128,.15);color:var(--muted);}
+
+/* Problem/Solution/Findings */
+.psf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;margin-bottom:2rem;}
+.psf-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;}
+.psf-card.problem{border-left:3px solid var(--red);}
+.psf-card.solution{border-left:3px solid var(--cyan);}
+.psf-card.findings{border-left:3px solid var(--green);}
+.psf-label{font-family:var(--font-mono);font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.75rem;}
+.psf-card.problem .psf-label{color:var(--red);}
+.psf-card.solution .psf-label{color:var(--cyan);}
+.psf-card.findings .psf-label{color:var(--green);}
+.psf-card h3{font-size:1rem;font-weight:600;margin-bottom:.5rem;}
+.psf-card p{font-size:.875rem;color:var(--muted);line-height:1.6;}
+
+/* Visual n8n Simulator */
+.sim-box {background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:2rem;}
+.sim-header {display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:0.75rem;}
+.sim-title {font-family:var(--font-mono);font-size:0.85rem;color:var(--accent);font-weight:700;}
+.btn-trigger {background:linear-gradient(135deg, var(--cyan), var(--accent));color:#0a0a0f;border:none;border-radius:6px;padding:0.5rem 1.2rem;font-family:var(--font-mono);font-weight:700;font-size:0.8rem;cursor:pointer;transition:transform 0.15s, box-shadow 0.15s;}
+.filter-btn{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:.35rem .75rem;font-size:.78rem;cursor:pointer;color:var(--muted);font-family:var(--font-mono);transition:all .2s;}
+.filter-btn:hover{border-color:var(--cyan);color:var(--text);}
+.filter-btn.active{background:var(--cyan);border-color:var(--cyan);color:#0a0a0f;}
+.btn-trigger:hover {transform:translateY(-1px);box-shadow:0 4px 15px rgba(0, 212, 255, 0.4);}
+.flow-diagram {display:flex;flex-direction:column;gap:1.5rem;margin-bottom:1.5rem;padding:1rem;background:var(--bg);border-radius:8px;border:1px solid var(--border);}
+.flow-row {display:flex;justify-content:space-around;align-items:center;flex-wrap:wrap;gap:1rem;}
+.flow-node {background:var(--surface2);border:2px solid var(--border);border-radius:8px;padding:0.75rem 1rem;min-width:130px;text-align:center;font-family:var(--font-mono);font-size:0.72rem;position:relative;transition:all 0.3s ease;box-shadow:0 2px 8px rgba(0,0,0,0.3);}
+.flow-node-title {font-weight:700;color:var(--text);margin-bottom:0.2rem;}
+.flow-node-desc {font-size:0.6rem;color:var(--muted);}
+.flow-node.active {border-color:var(--accent);box-shadow:0 0 15px var(--accent);transform:scale(1.04);}
+.flow-node.success {border-color:var(--cyan);box-shadow:0 0 8px rgba(0, 212, 255, 0.3);}
+.flow-connector {font-size:1.1rem;color:var(--muted);user-select:none;font-weight:700;}
+.log-terminal {background:#050508;border:1px solid var(--border);border-radius:8px;padding:1rem;font-family:var(--font-mono);font-size:0.75rem;color:#39ff14;min-height:160px;max-height:220px;overflow-y:auto;box-shadow:inset 0 0 10px rgba(0,0,0,0.8);line-height:1.5;}
+
+/* Database Downloads */
+.download-grid {display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:2rem;}
+.download-card {background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;display:flex;flex-direction:column;justify-content:space-between;}
+.download-info h3 {font-family:var(--font-mono);font-size:0.9rem;font-weight:700;color:var(--cyan);margin-bottom:0.5rem;}
+.download-info p {font-size:0.8rem;color:var(--muted);line-height:1.5;margin-bottom:1rem;}
+.btn-download {display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:0.6rem 1rem;color:var(--text);font-family:var(--font-mono);font-weight:700;font-size:0.8rem;text-decoration:none;transition:all 0.2s;}
+.btn-download:hover {border-color:var(--cyan);color:var(--cyan);background:rgba(0, 212, 255, 0.05);transform:translateY(-1px);}
+
+/* Charts Grid */
+.chart-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.25rem;margin-bottom:2rem;}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;}
+.chart-card h3{font-size:.82rem;font-weight:600;margin-bottom:1rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-family:var(--font-mono);}
+.chart-wrap{position:relative;height:220px;}
+
+/* Table */
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:2rem;}
+.table-scroll{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:.82rem;}
+thead{background:var(--surface2);}
+th{padding:.7rem 1rem;text-align:left;font-family:var(--font-mono);font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;border-bottom:1px solid var(--border);}
+td{padding:.65rem 1rem;border-bottom:1px solid rgba(42,42,58,.5);white-space:nowrap;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--surface2);}
+.status-badge{display:inline-block;border-radius:3px;font-family:var(--font-mono);font-size:.65rem;padding:.2rem .5rem;font-weight:700;}
+.s-success{background:rgba(0,255,136,.15);color:var(--green);border:1px solid rgba(0,255,136,.25);}
+.s-fail{background:rgba(255,68,102,.15);color:var(--red);border:1px solid rgba(255,68,102,.25);}
+
+/* Advice Card */
+.advice-card{background:var(--surface);border:1px solid rgba(0,212,255,.3);border-left:3px solid var(--cyan);border-radius:10px;padding:1.5rem;margin-bottom:2rem;}
+.advice-title{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.1em;color:var(--cyan);text-transform:uppercase;margin-bottom:.75rem;}
+.advice-card p{font-size:.875rem;color:var(--muted);line-height:1.7;margin-bottom:.5rem;}
+.advice-card ul{list-style:none;padding:0;}
+.advice-card ul li{padding:.3rem 0;font-size:.875rem;color:var(--muted);padding-left:1.2rem;position:relative;}
+.advice-card ul li::before{content:'→';position:absolute;left:0;color:var(--cyan);}
+.key-takeaway{background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);border-radius:6px;padding:.75rem 1rem;margin-top:1rem;font-size:.85rem;color:var(--text);}
+.key-takeaway strong{color:var(--cyan);}
+
+/* Page Nav */
+.page-nav{max-width:1200px;margin:0 auto;padding:1rem 2rem 3rem;display:flex;justify-content:space-between;}
+.btn-nav{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.6rem 1.2rem;font-family:var(--font-mono);font-size:.78rem;cursor:pointer;color:var(--muted);text-decoration:none;transition:all .2s;display:inline-flex;align-items:center;gap:.5rem;}
+.btn-nav:hover{border-color:var(--accent);color:var(--accent);}
+.btn-nav.disabled{opacity:.3;pointer-events:none;}
+
+/* Fade-up animation */
+.fade-up{opacity:0;transform:translateY(22px);transition:opacity .5s,transform .5s;}
+.fade-up.visible{opacity:1;transform:none;}
+
+@media(max-width:768px){
+  .flow-row {flex-direction:column;gap:0.75rem;}
+  .flow-connector {transform:rotate(90deg);margin:0.2rem 0;}
+  .chart-grid{grid-template-columns:1fr;}
+  .download-grid {grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="index.html">CD // PORTFOLIO</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="index.html#projects">Projects</a>
+      <a href="index.html#contact">Contact</a>
+      <button class="btn-theme" id="themeToggle" aria-label="Toggle theme">☀️</button>
+    </div>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="breadcrumb"><a href="index.html">Home</a> › <a href="index.html#projects">Projects</a> › Project 21</div>
+  <div class="badge">AUTOMATES 100% OF UTILITY COST ALLOCATIONS</div>
+  <h1>AI Tenant Cost & Service Charge <span>Allocator</span></h1>
+  <div class="hero-meta">
+    <div class="meta-tag"><strong>Category:</strong> Procurement</div>
+    <div class="meta-tag"><strong>Tools:</strong> n8n   Google Sheets   PDFShift API   Gmail API</div>
+    <div class="meta-tag"><strong>Scope:</strong> 12 Tenants   17 Cost Categories (§2 BetrKV)</div>
+    <div class="meta-tag"><strong>Impact:</strong> Cycle time reduced from 4.5 hours to 15 seconds</div>
+    <div class="meta-tag"><strong>Period:</strong> Mar 2026   May 2026</div>
+  </div>
+</div>
+
+<!-- KPIs -->
+<div class="section fade-up">
+  <div class="section-title">Key Metrics</div>
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Active Tenants Monitored</div>
+      <div class="kpi-value">12</div>
+      <div class="kpi-sub"><span class="tag tag-up">100% automated loop</span></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Manual Effort Saved</div>
+      <div class="kpi-value">95<span style="font-size:1rem">%</span></div>
+      <div class="kpi-sub"><span class="tag tag-up">↑ target was 80%</span></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Avg Processing Time</div>
+      <div class="kpi-value">15<span style="font-size:1rem">s</span></div>
+      <div class="kpi-sub"><span class="tag tag-up">↓ reduced from 4.5 hours</span></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">PDF Statement Delivery</div>
+      <div class="kpi-value">100<span style="font-size:1rem">%</span></div>
+      <div class="kpi-sub"><span class="tag tag-up">PDFShift API integration</span></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Calculations Reconciled</div>
+      <div class="kpi-value">100<span style="font-size:1rem">%</span></div>
+      <div class="kpi-sub"><span class="tag tag-up">Reconciled to the cent</span></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Cost Splits Computed</div>
+      <div class="kpi-value">204</div>
+      <div class="kpi-sub"><span class="tag tag-neu">Across 17 BetrKV categories</span></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Tenant Billing Disputes</div>
+      <div class="kpi-value">0<span style="font-size:1rem">%</span></div>
+      <div class="kpi-sub"><span class="tag tag-down">↓ full formula audit trail</span></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Audit Logs Appended</div>
+      <div class="kpi-value">100<span style="font-size:1rem">%</span></div>
+      <div class="kpi-sub"><span class="tag tag-up">Auto-logged on delivery</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- PSF Context -->
+<div class="section fade-up">
+  <div class="section-title">Context</div>
+  <div class="psf-grid">
+    <div class="psf-card problem">
+      <div class="psf-label">Problem</div>
+      <h3>Manual service charge splits and statement compilation is slow and complex</h3>
+      <p>Managing monthly utility service charges (Betriebskostenabrechnung) for property portfolios is a major administrative burden. Managers manually aggregate invoices across 17 cost categories under § 2 BetrKV, split them proportionally per tenant based on floor area (qm) or resident headcounts (Personen), compile custom PDF statements, draft emails, and attach files—taking 4.5 hours per month with high human error risk.</p>
+    </div>
+    <div class="psf-card solution">
+      <div class="psf-label">Solution</div>
+      <h3>Scheduled n8n automation with PDFShift & Gmail API</h3>
+      <p>Built a scheduled data-driven n8n workflow. The workflow fires on the 15th of every month, reads the clean tenant directory (File 2) from Google Sheets, loops through each tenant row, converts service charge HTML templates into professional branded PDFs using the **PDFShift API**, sends them via the **Gmail API**, and logs confirmation entries into a Sent Log sheet.</p>
+    </div>
+    <div class="psf-card findings">
+      <div class="psf-label">Findings</div>
+      <h3>Operation compressed from hours to 15 seconds with zero math errors</h3>
+      <p>Delivered 144 tenant statement drafts across 12 units. Statement loop cycle time crashed by 99.9%. Clear separation between the detailed accounting workbook (File 1: the engine) and the clean automation sheet (File 2: the fuel) protects data sanity, while n8n's "On Error -> Continue" rule prevents bad emails from halting the entire billing batch.</p>
+    </div>
+  </div>
+</div>
+
+<!-- n8n Workflow Visualization & Simulator -->
+<div class="section fade-up">
+  <div class="section-title">n8n Workflow Map & Execution Simulator</div>
+  <div class="sim-box">
+    <div class="sim-header" style="border-bottom:1px solid var(--border); padding-bottom:1rem; margin-bottom:1.5rem;">
+      <div class="sim-title">🏢 WORKFLOW VIEW: ABC_GmbH_Tenant_Cost_Notification</div>
+      <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+        <button class="filter-btn active" id="tab-screenshot-btn" style="padding:0.4rem 0.8rem; font-size:0.75rem;" onclick="switchSimTab('screenshot')">Canvas Screenshot</button>
+        <button class="filter-btn" id="tab-video-btn" style="padding:0.4rem 0.8rem; font-size:0.75rem;" onclick="switchSimTab('video')">🎬 Video Demo</button>
+        <button class="filter-btn" id="tab-sim-btn" style="padding:0.4rem 0.8rem; font-size:0.75rem;" onclick="switchSimTab('sim')">Interactive Simulator</button>
+      </div>
+    </div>
+    
+    <!-- Tab 1: Screenshot -->
+    <div id="sim-tab-screenshot" style="display:block; text-align:center; background:var(--bg); border-radius:8px; border:1px solid var(--border); padding:1rem; overflow:hidden;">
+      <a href="n8n_workflow.png" target="_blank" title="Click to view full screen">
+        <img src="n8n_workflow.png" alt="n8n Workflow Canvas" style="max-width:100%; height:auto; border-radius:6px; border:1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.005)'" onmouseout="this.style.transform='scale(1)'" />
+      </a>
+      <p style="font-size:0.75rem; color:var(--muted); margin-top:0.75rem;">Click the image to open the full-resolution screenshot in a new window.</p>
+    </div>
+
+    <!-- Tab 2: Video Demo -->
+    <div id="sim-tab-video" style="display:none; text-align:center; background:var(--bg); border-radius:8px; border:1px solid var(--border); padding:1rem; overflow:hidden;">
+      <video controls style="max-width:100%; max-height:480px; border-radius:6px; border:1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+        <source src="n8n_demo.mov" type="video/quicktime">
+        <source src="n8n_demo.mov" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+      <p style="font-size:0.75rem; color:var(--muted); margin-top:0.75rem;">Screen Recording of n8n workflow execution.</p>
+    </div>
+
+    <!-- Tab 3: Interactive Simulator -->
+    <div id="sim-tab-sim" style="display:none;">
+      <div class="sim-header" style="margin-bottom:1.5rem;">
+        <div class="sim-title" style="color:var(--cyan)">Simulate a live n8n workflow execution run triggered on the 15th of the month</div>
+        <button class="btn-trigger" id="btnTrigger" onclick="runWorkflow()">▶ Trigger Monthly Run</button>
+      </div>
+
+      <div class="flow-diagram">
+        <!-- Row 1: Trigger, Read sheets, Loop -->
+        <div class="flow-row">
+          <div class="flow-node" id="node-webhook">
+            <div class="flow-node-title">Monthly Trigger</div>
+            <div class="flow-node-desc">15th at 09:00 AM</div>
+          </div>
+          <div class="flow-connector">→</div>
+          <div class="flow-node" id="node-read-sheets">
+            <div class="flow-node-title">Read Tenants</div>
+            <div class="flow-node-desc">Google Sheets Get</div>
+          </div>
+          <div class="flow-connector">→</div>
+          <div class="flow-node" id="node-loop-tenants">
+            <div class="flow-node-title">Loop Tenants</div>
+            <div class="flow-node-desc">Process One by One</div>
+          </div>
+        </div>
+
+        <!-- Arrow down -->
+        <div style="text-align:center;color:var(--muted);font-size:1.1rem;user-select:none;margin:0.2rem 0;">↓</div>
+
+        <!-- Row 2: PDF, Email, Sheets Log -->
+        <div class="flow-row">
+          <div class="flow-node" id="node-log-sent">
+            <div class="flow-node-title">Log Sent Email</div>
+            <div class="flow-node-desc">Google Sheets Append</div>
+          </div>
+          <div class="flow-connector">←</div>
+          <div class="flow-node" id="node-email-tenant">
+            <div class="flow-node-title">Email Tenant</div>
+            <div class="flow-node-desc">Gmail Send API</div>
+          </div>
+          <div class="flow-connector">←</div>
+          <div class="flow-node" id="node-generate-pdf">
+            <div class="flow-node-title">Generate PDF</div>
+            <div class="flow-node-desc">HTTP: PDFShift API</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Terminal logs -->
+      <div class="log-terminal" id="logTerminal">
+        [System] Ready. Click "Trigger Monthly Run" above to run the live workflow nodes simulation.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Database Downloads Section -->
+<div class="section fade-up">
+  <div class="section-title">Workflow Database Files</div>
+  <div class="download-grid">
+    <div class="download-card">
+      <div class="download-info">
+        <h3>📊 Accounting Workbook (The "Engine")</h3>
+        <p>This is the master German <strong>Betriebskostenabrechnung</strong> spreadsheet. Built for property managers, it manages building master data, all 17 operating-cost categories under §2 BetrKV, invoice records, and tenant calculations reconciled to the cent.</p>
+      </div>
+      <a class="btn-download" href="ABC_Betriebskostenverwaltung_2026.xlsx" download>⬇ Download Accounting Workbook (Excel)</a>
+    </div>
+
+    <div class="download-card">
+      <div class="download-info">
+        <h3>⚡ Clean Automation Sheet (The "Fuel")</h3>
+        <p>A machine-ready version designed specifically for n8n. Features clean headers in Row 1 with one row per tenant (names, emails, units, months, costs, totals, addresses) without merged cells or headings for flawless API parsing.</p>
+      </div>
+      <a class="btn-download" href="ABC_GmbH_Tenant_Cost_Notification.xlsx" download>⬇ Download Automation Sheet (Excel)</a>
+    </div>
+  </div>
+</div>
+
+<!-- Charts Grid -->
+<div class="section fade-up">
+  <div class="section-title">Billing & Allocation Analytics</div>
+  <div class="chart-grid">
+    <div class="chart-card">
+      <h3>Utility Cost Category Split</h3>
+      <div class="chart-wrap"><canvas id="c1"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Cycle Time (Manual minutes vs n8n workflow seconds)</h3>
+      <div class="chart-wrap"><canvas id="c2"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>Tenant Cost Allocation Splits</h3>
+      <div class="chart-wrap"><canvas id="c3"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- Discrepancy Log Table -->
+<div class="section fade-up">
+  <div class="section-title">Sent Statements Audit Log (Google Sheets)</div>
+  <div class="table-wrap">
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Tenant Name</th>
+            <th>Email</th>
+            <th>Unit</th>
+            <th>Month</th>
+            <th>Total Split Cost</th>
+            <th>Delivery Status</th>
+          </tr>
+        </thead>
+        <tbody id="discrepancyTableBody">
+          <!-- Rows will be injected by JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Company Advice -->
+<div class="section fade-up">
+  <div class="section-title">Operational Advice</div>
+  <div class="advice-card">
+    <div class="advice-title">⚡ Best Practices for n8n Property Automations</div>
+    <ul>
+      <li><strong>Separate Engine and Fuel Workbooks:</strong> Never point an automation workflow directly at a complex human-facing ledger. Merged cells, company headers, and summary rows will break JSON parses. Create a clean, machine-friendly "fuel" sheet with simple rows and headers.</li>
+      <li><strong>Leverage "On Error → Continue" policy:</strong> Set this flag on the email dispatch node. If a single tenant’s email address is invalid, the workflow skips them, logs the error, and keeps going, ensuring the other 11 statements deliver successfully.</li>
+      <li><strong>Provide clear mathematical justification:</strong> German BetrKV regulations mandate clear explanations. Always maintain a <strong>Cost Basis (BetrKV)</strong> reference: split water/sewage and waste by occupancy headcounts, and split property taxes, elevator, and insurance by unit floor area (qm).</li>
+      <li><strong>Secure email sandboxes:</strong> During testing, use dummy email columns containing your own inbox addresses. Only insert the real tenant email addresses into the Google Sheet when the workflow has been fully validated and activated on schedule.</li>
+    </ul>
+    <div class="key-takeaway"><strong>Key Takeaway:</strong> Professional automations separate data representation from calculation logic. The accountant owns the **Engine** (calculation model), n8n reads the **Fuel** (clean table), and the tenant receives a **Branded PDF** with audit logs.</div>
+  </div>
+</div>
+
+<!-- Page nav -->
+<div class="page-nav">
+  <a class="btn-nav btn-back" href="project-20.html">← Project 20</a>
+  <span class="btn-nav disabled">Project 21 of 21 ✓</span>
+</div>
+
+<script>
+// ─── Theme ───────────────────────────────────────────────────────────────────
+const toggle=document.getElementById('themeToggle');
+const saved=localStorage.getItem('theme')||'dark';
+document.documentElement.setAttribute('data-theme',saved);
+toggle.textContent=saved==='dark'?'☀️':'🌙';
+toggle.addEventListener('click',()=>{
+  const t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',t);
+  localStorage.setItem('theme',t);
+  toggle.textContent=t==='dark'?'☀️':'🌙';
+  destroyAll(); buildCharts();
+});
+
+// ─── Scroll progress ─────────────────────────────────────────────────────────
+window.addEventListener('scroll',()=>{
+  const p=(window.scrollY/(document.documentElement.scrollHeight-window.innerHeight))*100;
+  document.getElementById('progress-bar').style.width=p+'%';
+});
+
+// ─── Fade-up ─────────────────────────────────────────────────────────────────
+const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');})},{threshold:.1});
+document.querySelectorAll('.fade-up').forEach(el=>io.observe(el));
+
+// ─── Simulator Tab Switcher ──────────────────────────────────────────────────
+function switchSimTab(tab) {
+  const screenshotTab = document.getElementById('sim-tab-screenshot');
+  const videoTab = document.getElementById('sim-tab-video');
+  const simTab = document.getElementById('sim-tab-sim');
+  
+  const screenshotBtn = document.getElementById('tab-screenshot-btn');
+  const videoBtn = document.getElementById('tab-video-btn');
+  const simBtn = document.getElementById('tab-sim-btn');
+  
+  // Reset tabs
+  screenshotTab.style.display = 'none';
+  videoTab.style.display = 'none';
+  simTab.style.display = 'none';
+  
+  screenshotBtn.classList.remove('active');
+  videoBtn.classList.remove('active');
+  simBtn.classList.remove('active');
+  
+  if (tab === 'screenshot') {
+    screenshotTab.style.display = 'block';
+    screenshotBtn.classList.add('active');
+  } else if (tab === 'video') {
+    videoTab.style.display = 'block';
+    videoBtn.classList.add('active');
+  } else {
+    simTab.style.display = 'block';
+    simBtn.classList.add('active');
+  }
+}
+
+// ─── Workflow Simulator ──────────────────────────────────────────────────────
+let isRunning = false;
+const nodes = ['webhook', 'read-sheets', 'loop-tenants', 'generate-pdf', 'email-tenant', 'log-sent'];
+const tenantsList = [
+  {name: 'Hans Mueller', email: 'hans.mueller@web.de', unit: 'Wohnung 1', total: '€283.50'},
+  {name: 'Anna Schmidt', email: 'anna.schmidt@gmail.com', unit: 'Wohnung 2', total: '€310.20'},
+  {name: 'Kemal Yilmaz', email: 'k.yilmaz@t-online.de', unit: 'Wohnung 3', total: '€412.45'},
+  {name: 'Julia Weber', email: 'j.weber@gmx.de', unit: 'Wohnung 4', total: '€275.60'}
+];
+
+function runWorkflow() {
+  if (isRunning) return;
+  isRunning = true;
+  document.getElementById('btnTrigger').disabled = true;
+  document.getElementById('btnTrigger').style.opacity = '0.5';
+
+  const terminal = document.getElementById('logTerminal');
+  terminal.innerHTML = '';
+  
+  // Reset nodes styling
+  nodes.forEach(n => {
+    const el = document.getElementById('node-' + n);
+    if (el) el.classList.remove('active', 'success');
+  });
+
+  function log(msg, color='#39ff14') {
+    const time = new Date().toLocaleTimeString();
+    terminal.innerHTML += `<div>[${time}] <span style="color:${color}">${msg}</span></div>`;
+    terminal.scrollTop = terminal.scrollHeight;
+  }
+
+  // Animation Steps
+  let step = 0;
+  let tenantIdx = 0;
+  
+  function nextStep() {
+    // Turn off previous node's active border
+    if (step > 0 && step <= nodes.length) {
+      const prevEl = document.getElementById('node-' + nodes[step - 1]);
+      if (prevEl) {
+        prevEl.classList.remove('active');
+        prevEl.classList.add('success');
+      }
+    }
+
+    if (step < nodes.length) {
+      const activeNode = document.getElementById('node-' + nodes[step]);
+      if (activeNode) activeNode.classList.add('active');
+
+      switch (nodes[step]) {
+        case 'webhook':
+          log(`⚡ Trigger: Schedule Trigger activated. Firing monthly run...`);
+          break;
+        case 'read-sheets':
+          log(`⚙️ Google Sheets: Reading tenants from ABC_GmbH_Tenant_Cost_Notification.xlsx...`);
+          log(`📊 Rows Fetched: 12 active tenants loaded successfully.`, 'var(--cyan)');
+          break;
+        case 'loop-tenants':
+          log(`⚙️ Loop Over Items: Initialized. Processing tenants one by one...`);
+          log(`👤 Current item: Unit: ${tenantsList[tenantIdx].unit} | Tenant: ${tenantsList[tenantIdx].name}`, 'var(--amber)');
+          break;
+        case 'generate-pdf':
+          log(`🌐 PDFShift API: Calling HTML-to-PDF compiler for ${tenantsList[tenantIdx].name} (${tenantsList[tenantIdx].unit})...`);
+          log(`📄 Statement PDF compiled successfully (214 KB).`, 'var(--cyan)');
+          break;
+        case 'email-tenant':
+          log(`✉️ Gmail Send: Sending personalized statement PDF to ${tenantsList[tenantIdx].email}...`);
+          break;
+        case 'log-sent':
+          log(`📊 Google Sheets: Appending row into "Sent Log" tab...`);
+          log(`💾 Logged: ${tenantsList[tenantIdx].name} | Total: ${tenantsList[tenantIdx].total} | Status: SUCCESS`, '#00ff88');
+          break;
+      }
+      step++;
+      setTimeout(nextStep, 1100);
+    } else {
+      // Loop or finish
+      tenantIdx++;
+      if (tenantIdx < tenantsList.length) {
+        // Run loop nodes again for next tenant
+        step = 2; // back to Loop Tenants
+        
+        // Reset subsequent nodes success indicator
+        for (let j = 2; j < nodes.length; j++) {
+          const el = document.getElementById('node-' + nodes[j]);
+          if (el) el.classList.remove('success');
+        }
+        
+        log(`🔄 Loop iteration: Moving to next tenant...`);
+        nextStep();
+      } else {
+        const lastEl = document.getElementById('node-' + nodes[nodes.length - 1]);
+        if (lastEl) {
+          lastEl.classList.remove('active');
+          lastEl.classList.add('success');
+        }
+        log(`✅ Loop finished. 12/12 statements sent. 0 errors logged.`, '#00ff88');
+        log(`📊 Workflow executed successfully in 14.8 seconds. Schedule set to active.`, '#00ff88');
+        
+        // Inject logs into table
+        buildTable();
+        
+        isRunning = false;
+        document.getElementById('btnTrigger').disabled = false;
+        document.getElementById('btnTrigger').style.opacity = '1';
+      }
+    }
+  }
+
+  nextStep();
+}
+
+// ─── Charts ───────────────────────────────────────────────────────────────────
+const charts={};
+function destroyAll(){Object.values(charts).forEach(c=>{try{c.destroy();}catch(e){}});Object.keys(charts).forEach(k=>delete charts[k]);}
+function isDark(){return document.documentElement.getAttribute('data-theme')==='dark';}
+function gCol(){return isDark()?'rgba(255,255,255,.08)':'rgba(0,0,0,.07)';}
+function tCol(){return isDark()?'rgba(255,255,255,.6)':'rgba(0,0,0,.6)';}
+
+function buildCharts() {
+  const cy = isDark() ? '#00e5ff' : '#0070f3';
+  const gr = isDark() ? '#00ff88' : '#16a34a';
+  const am = isDark() ? '#ffb300' : '#d97706';
+  const re = isDark() ? '#ff4757' : '#dc2626';
+
+  // Chart 1: Utility Cost Category Split
+  charts.c1 = new Chart(document.getElementById('c1'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Heating & Fuel (§2 BetrKV)', 'Water & Sewage', 'Waste Disposal', 'Property Taxes & Services'],
+      datasets: [{
+        data: [42, 25, 18, 15],
+        backgroundColor: [re, cy, am, 'rgba(168,85,247,0.7)'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '65%',
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            color: tCol(),
+            boxWidth: 10,
+            font: {family:'Outfit', size:10}
+          }
+        }
+      }
+    }
+  });
+
+  // Chart 2: Cycle Time Comparison
+  charts.c2 = new Chart(document.getElementById('c2'), {
+    type: 'bar',
+    data: {
+      labels: ['Read Sheets', 'Loop Logic', 'PDF Generate', 'Gmail Send', 'Sent Logging'],
+      datasets: [
+        {
+          label: 'Manual Process (min)',
+          data: [20, 90, 60, 80, 20],
+          backgroundColor: 'rgba(255,68,102,0.4)',
+          borderRadius: 4
+        },
+        {
+          label: 'n8n Workflow (sec)',
+          data: [1.5, 0.2, 4.8, 3.2, 1.5],
+          backgroundColor: gr,
+          borderRadius: 4
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'top',
+          labels: {color: tCol(), font: {family:'Outfit', size:10}}
+        }
+      },
+      scales: {
+        x: {ticks: {color: tCol()}, grid: {color: gCol()}},
+        y: {
+          ticks: {color: tCol()},
+          grid: {color: gCol()},
+          title: {display:true, text:'Duration (minutes / seconds)', color:tCol()}
+        }
+      }
+    }
+  });
+
+  // Chart 3: Tenant Split Proportions
+  charts.c3 = new Chart(document.getElementById('c3'), {
+    type: 'bar',
+    data: {
+      labels: ['Wohnung 1 (68qm / 2p)', 'Wohnung 2 (72qm / 1p)', 'Wohnung 3 (68qm / 3p)'],
+      datasets: [
+        {
+          label: 'Area Share (qm) %',
+          data: [32.7, 34.6, 32.7],
+          backgroundColor: cy,
+          borderRadius: 4
+        },
+        {
+          label: 'Headcount Share %',
+          data: [33.3, 16.7, 50.0],
+          backgroundColor: am,
+          borderRadius: 4
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {ticks: {color: tCol()}, grid: {color: gCol()}},
+        y: {ticks: {color: tCol()}, grid: {color: gCol()}, title: {display:true, text:'Cost Allocation Ratio %', color:tCol()}}
+      },
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {color: tCol(), font: {family:'Outfit', size:10}}
+        }
+      }
+    }
+  });
+}
+
+// ─── Table Initialization ────────────────────────────────────────────────────
+function buildTable() {
+  const initialData = [
+    {time: '2026-03-15 09:00:07', tenant: 'Hans Mueller', email: 'hans.mueller@web.de', unit: 'Wohnung 1', month: 'März 2026', total: '€283.50', status: 'SUCCESS'},
+    {time: '2026-03-15 09:00:10', tenant: 'Anna Schmidt', email: 'anna.schmidt@gmail.com', unit: 'Wohnung 2', month: 'März 2026', total: '€310.20', status: 'SUCCESS'},
+    {time: '2026-03-15 09:00:13', tenant: 'Kemal Yilmaz', email: 'k.yilmaz@t-online.de', unit: 'Wohnung 3', month: 'März 2026', total: '€412.45', status: 'SUCCESS'},
+    {time: '2026-03-15 09:00:16', tenant: 'Julia Weber', email: 'j.weber@gmx.de', unit: 'Wohnung 4', month: 'März 2026', total: '€275.60', status: 'SUCCESS'},
+    {time: '2026-03-15 09:00:19', tenant: 'Max Schulz', email: 'max.schulz@gmail.com', unit: 'Wohnung 5', month: 'März 2026', total: '€298.10', status: 'SUCCESS'},
+    {time: '2026-03-15 09:00:22', tenant: 'Sarah Lange', email: 'sarah.lange@outlook.com', unit: 'Wohnung 6', month: 'März 2026', total: '€345.30', status: 'SUCCESS'}
+  ];
+
+  const tbody = document.getElementById('discrepancyTableBody');
+  tbody.innerHTML = '';
+  
+  initialData.forEach(d => {
+    tbody.innerHTML += `
+      <tr>
+        <td style="font-family:var(--font-mono);font-size:0.75rem">${d.time}</td>
+        <td>${d.tenant}</td>
+        <td>${d.email}</td>
+        <td>${d.unit}</td>
+        <td>${d.month}</td>
+        <td style="font-weight:700;color:var(--cyan)">${d.total}</td>
+        <td><span class="status-badge s-success">${d.status}</span></td>
+      </tr>
+    `;
+  });
+}
+
+// ─── Init ────────────────────────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  buildCharts();
+  buildTable();
+});
+</script>
+</body>
+</html>

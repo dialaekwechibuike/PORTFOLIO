@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Supply Chain Control Tower — Interactive Analytics Dashboard</title>
+  <meta name="description" content="A premium interactive Supply Chain Control Tower dashboard showcasing OTIF, inventory turns, logistics costs, carbon tracking, and live shipment telemetry.">
+  
+  <!-- Tailwind is NOT used, custom vanilla CSS style.css is utilized for design aesthetics -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Chart.js CDN for visualizations -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar">
+      <div class="sidebar-top">
+        <a href="#" class="brand">
+          <div class="brand-icon">Ω</div>
+          <div class="brand-info">
+            <h2>LogiChain</h2>
+            <span>Control Tower</span>
+          </div>
+        </a>
+        
+        <ul class="nav-menu">
+          <li class="nav-item active" id="nav-dashboard">
+            <a href="#">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+              </svg>
+              Overview
+            </a>
+          </li>
+          <li class="nav-item" id="nav-shipments">
+            <a href="#shipments-section">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124l-.321-5.121a1.5 1.5 0 00-1.485-1.405h-.062m-2.25 7.5v-6a2.25 2.25 0 00-2.25-2.25H9.75M8.25 12.5h-6.75m16.5 0h.008v.008H18v-.008zm0-3h.008v.008H18V9.5zm-3-3h.008v.008H15V6.5zm0 3h.008v.008H15V9.5zM9.75 15.75h.008v.008H9.75v-.008zm0-3h.008v.008H9.75v-.008zm0-3h.008v.008H9.75V9.5z" />
+              </svg>
+              Active Shipments
+            </a>
+          </li>
+          <li class="nav-item" id="nav-inventory">
+            <a href="#inventory-chart">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+              </svg>
+              Inventory Control
+            </a>
+          </li>
+          <li class="nav-item" id="nav-alerts">
+            <a href="#alerts-section">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a9.04 9.04 0 01-2.357 1.002 9.049 9.049 0 01-2.357-1.002M12 18c-3.197 0-6.143-1.295-8.24-3.445L3.44 14.19C3.12 13.87 3 13.435 3 12.984V7.5a9 9 0 0118 0v5.484c0 .45-.12 1.885-.44 2.206l-.32 3.365a9.042 9.042 0 01-8.24 3.445z" />
+              </svg>
+              Operations Alerts
+            </a>
+          </li>
+        </ul>
+      </div>
+      
+      <div class="sidebar-footer">
+        <div class="user-profile">
+          <img src="../avatar.png" alt="Chibuike Dialaekwe" class="user-avatar" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80'">
+          <div>
+            <div class="user-name">Chibuike Dialaekwe</div>
+            <div class="user-role">SC Analytics Lead</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+    
+    <!-- Main Content Area -->
+    <main>
+      
+      <!-- Top Navigation & Controls -->
+      <header>
+        <div class="header-title">
+          <button id="mobileMenuBtn" class="menu-btn" aria-label="Toggle Navigation">☰</button>
+          <h1>Supply Chain Control Tower</h1>
+          <p>Real-time analytics and global logistics tracking pipeline</p>
+        </div>
+        
+        <div class="controls">
+          <!-- Region Filter Dropdown -->
+          <label for="regionSelect" style="display:none">Filter Region</label>
+          <select id="regionSelect" class="dropdown">
+            <option value="global">🌐 Global Network</option>
+            <option value="europe">🇪🇺 Europe Operations</option>
+            <option value="northamerica">🇺🇸 North America Network</option>
+            <option value="apac">🌏 APAC Logistics</option>
+          </select>
+          
+          <button id="refreshBtn" class="btn-action" aria-label="Simulate Data Refresh">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width:16px;height:16px;">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+            </svg>
+            Simulate Telemetry
+          </button>
+          
+          <!-- Theme Toggle -->
+          <button id="themeToggleBtn" class="btn-toggle-theme" aria-label="Toggle Color Theme">
+            🌞
+          </button>
+        </div>
+      </header>
+      
+      <!-- KPI Scorecard Section -->
+      <section class="kpi-grid" aria-label="Key Performance Indicators">
+        
+        <!-- KPI 1: OTIF -->
+        <div class="card" id="kpi-otif">
+          <div class="card-header-row">
+            <span class="card-title-text">On-Time In-Full (OTIF)</span>
+            <div class="card-icon icon-cyan">🎯</div>
+          </div>
+          <div class="card-value" id="val-otif">96.8%</div>
+          <div class="card-footer-row">
+            <span class="trend-badge trend-up" id="trend-otif">+1.2%</span>
+            <span class="card-footer-text">vs Target 98.5%</span>
+          </div>
+        </div>
+        
+        <!-- KPI 2: Inventory Turn Rate -->
+        <div class="card" id="kpi-inventory">
+          <div class="card-header-row">
+            <span class="card-title-text">Inventory Turns</span>
+            <div class="card-icon icon-green">📦</div>
+          </div>
+          <div class="card-value" id="val-inventory">11.4x</div>
+          <div class="card-footer-row">
+            <span class="trend-badge trend-down" id="trend-inventory">-0.4x</span>
+            <span class="card-footer-text">vs Target 12.0x</span>
+          </div>
+        </div>
+        
+        <!-- KPI 3: Total Logistics Cost -->
+        <div class="card" id="kpi-cost">
+          <div class="card-header-row">
+            <span class="card-title-text">Logistics Cost Savings</span>
+            <div class="card-icon icon-amber">💰</div>
+          </div>
+          <div class="card-value" id="val-cost">$1.15M</div>
+          <div class="card-footer-row">
+            <span class="trend-badge trend-up" id="trend-cost">-$48K</span>
+            <span class="card-footer-text">vs Target budget $1.20M</span>
+          </div>
+        </div>
+        
+        <!-- KPI 4: Carbon Emissions -->
+        <div class="card" id="kpi-carbon">
+          <div class="card-header-row">
+            <span class="card-title-text">Carbon Efficiency</span>
+            <div class="card-icon icon-red">🍃</div>
+          </div>
+          <div class="card-value" id="val-carbon">208 t</div>
+          <div class="card-footer-row">
+            <span class="trend-badge trend-up" id="trend-carbon">-5.2%</span>
+            <span class="card-footer-text">vs Limit 220 tons CO2e</span>
+          </div>
+        </div>
+        
+      </section>
+      
+      <!-- Interactive Global Routing Map -->
+      <section class="card map-card" aria-label="Global Shipment Tracker Map">
+        <div class="card-title-group">
+          <div>
+            <h3>Live Global Transit Corridors</h3>
+            <p style="color:var(--text-muted);font-size:0.8rem;">Visualizing actual shipping freight in active sea & air routes</p>
+          </div>
+          <div style="font-family:'Space Mono', monospace; font-size:0.8rem; color:var(--accent-cyan);" id="activeRouteCount">
+            12 ACTIVE ROUTES IN TRANSIT
+          </div>
+        </div>
+        
+        <div class="map-container">
+          <canvas id="routeCanvas"></canvas>
+          
+          <div class="map-overlay">
+            <div class="map-legend">
+              <div class="legend-item">
+                <span class="legend-dot pulse" style="background-color: var(--accent-cyan);"></span>
+                <span>Active Air freight</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-dot pulse" style="background-color: var(--accent-green);"></span>
+                <span>Active Ocean freight</span>
+              </div>
+              <div class="legend-item">
+                <span class="legend-dot pulse" style="background-color: var(--accent-red);"></span>
+                <span>Delayed Route</span>
+              </div>
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text-dim);">
+              Click canvas to ping new telemetry coordinate
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Visual Analytics Section -->
+      <div class="vis-grid">
+        
+        <!-- Chart 1: Inventory & Demand Forecast -->
+        <div class="card chart-card">
+          <div class="card-title-group">
+            <div>
+              <h3>Inventory Levels vs. Demand Forecast</h3>
+              <p style="color:var(--text-muted);font-size:0.8rem;">30-Day projection based on seasonal ARIMA forecast models</p>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="inventoryChart"></canvas>
+          </div>
+        </div>
+        
+        <!-- Chart 2: Carrier OTIF Performance -->
+        <div class="card chart-card">
+          <div class="card-title-group">
+            <div>
+              <h3>Carrier OTIF Breakdown</h3>
+              <p style="color:var(--text-muted);font-size:0.8rem;">Performance index of core logistics partners</p>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="carrierChart"></canvas>
+          </div>
+        </div>
+        
+      </div>
+      
+      <!-- Operations Grid: Alerts & Shipment Details -->
+      <div class="details-grid">
+        
+        <!-- Left: Alert Desk -->
+        <div class="card list-panel" id="alerts-section">
+          <div class="card-title-group">
+            <div>
+              <h3>Operations Alert Log</h3>
+              <p style="color:var(--text-muted);font-size:0.8rem;">Real-time exceptions requiring immediate dispatcher action</p>
+            </div>
+          </div>
+          <div class="scroll-area" id="alertLogContainer">
+            <!-- Alert Items will be dynamically populated by JS -->
+          </div>
+        </div>
+        
+        <!-- Right: Active Shipments Table -->
+        <div class="card list-panel" id="shipments-section">
+          <div class="card-title-group">
+            <div>
+              <h3>Active Shipments Directory</h3>
+              <p style="color:var(--text-muted);font-size:0.8rem;">Shipment tracking status & dynamic ETA calculations</p>
+            </div>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Shipment ID</th>
+                  <th>Route</th>
+                  <th>Carrier</th>
+                  <th>Status</th>
+                  <th>ETA</th>
+                </tr>
+              </thead>
+              <tbody id="shipmentsTableBody">
+                <!-- Shipment records populated dynamically by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+      </div>
+      
+    </main>
+    
+  </div>
+
+  <!-- JavaScript file for telemetry, interactivity, theme and Chart rendering -->
+  <script src="app.js"></script>
+</body>
+</html>

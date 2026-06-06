@@ -2,7 +2,7 @@
 
 **Live Website:** [chibuike-analytics.tech](https://chibuike-analytics.tech)
 
-Welcome to the source code of my Supply Chain Analytics Portfolio! This repository contains 20 live, functional projects demonstrating how I turn messy data into actionable insights that move key performance indicators (KPIs) in supply chain operations.
+Welcome to the source code of my Supply Chain Analytics Portfolio! This repository contains 21 live, functional projects demonstrating how I turn messy data into actionable insights that move key performance indicators (KPIs) in supply chain operations.
 
 ## 🎯 Focus Areas
 * **Logistics & Routing Optimization**
@@ -17,7 +17,7 @@ Welcome to the source code of my Supply Chain Analytics Portfolio! This reposito
 * **Web:** HTML, CSS, JavaScript (Frontend UI)
 
 ## 📁 Repository Overview
-This repository contains a full static web application consisting of the main portfolio interface and 20 individual HTML/JS interactive dashboard projects. 
+This repository contains a full static web application consisting of the main portfolio interface and 21 individual HTML/JS interactive dashboard projects. 
 
 * `index.html`: The main landing page, hero section, and project gallery grid.
 * `project-*.html`: Individual interactive project breakdowns featuring data, problems, solutions, and impact metrics.
